@@ -3,259 +3,817 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEJDRIX HUD V2 - FIXED LOGIN</title>
+<title>MEJDRIX HUD V2 - TIKFINITY INTEGRATION</title>
 
 <style>
 :root {
-    --fn-blue: #007bff; --fn-yellow: #f4c500; --fn-purple: #8c00ff;
-    --fn-dark: #0a0b10; --fn-card: #1b1c26; --fn-text: #ffffff;
-    --fn-green: #00ff66; --fn-red: #ff003c; --tt-red: #fe2c55;
+    --fn-blue: #007bff;
+    --fn-yellow: #f4c500;
+    --fn-purple: #8c00ff;
+    --fn-dark: #0a0b10;
+    --fn-card: #1b1c26;
+    --fn-text: #ffffff;
+    --fn-green: #00ff66;
+    --fn-pink: #ff007f;
+    --fn-red: #ff003c;
+    --fn-orange: #ffaa00;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --tt-red: #fe2c55;
+    --tt-gray: #444a59;
+    
+    --yt-color: #ff0000;
+    --dc-color: #5865f2;
+    --rbx-color: #2b2d32;
 }
 
 body {
-    margin: 0; background: var(--fn-dark); color: var(--fn-text);
+    margin: 0;
+    background: var(--fn-dark);
+    color: var(--fn-text);
     font-family: 'Burbank Big Condensed', 'Segoe UI', Impact, sans-serif;
-    display: flex; justify-content: center; min-height: 100vh;
-    padding: 20px; box-sizing: border-box; overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow-x: hidden;
 }
 
-/* RIFT POZADÍ */
-body::before {
-    content: ""; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle at 30% 30%, rgba(140, 0, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 70%, rgba(0, 123, 255, 0.1) 0%, transparent 50%), var(--fn-dark);
-    animation: rift 25s linear infinite; z-index: -1;
-}
-@keyframes rift { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 4px; border: 2px solid var(--fn-dark); }
 
-/* LOGIN SCREEN */
-#loginOverlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(10, 11, 16, 0.98); backdrop-filter: blur(12px);
-    z-index: 10000; display: flex; justify-content: center; align-items: center;
-}
-.login-card {
-    background: var(--fn-card); padding: 50px; border: 4px solid var(--fn-yellow);
-    transform: skewX(-5deg); text-align: center; box-shadow: 0 0 50px rgba(244, 197, 0, 0.4);
-}
-.login-card h2 { color: var(--fn-yellow); font-size: 42px; margin-bottom: 30px; text-transform: uppercase; font-style: italic; }
-.login-card input {
-    display: block; width: 300px; padding: 15px; margin: 15px auto;
-    background: #000; border: 2px solid #363a4f; color: white; font-size: 18px; outline: none;
-}
-.login-card button {
-    width: 100%; padding: 15px; background: var(--fn-yellow); color: black;
-    border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 22px;
+/* ===== LOGIN SCREEN ===== */
+#loginScreen {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at 30% 40%, rgba(140,0,255,0.18) 0%, transparent 55%),
+                radial-gradient(circle at 75% 65%, rgba(0,123,255,0.14) 0%, transparent 50%),
+                radial-gradient(circle at 50% 10%, rgba(255,0,127,0.09) 0%, transparent 45%),
+                #0a0b10;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-/* LOADING */
+.login-box {
+    background: linear-gradient(135deg, rgba(27,28,38,0.97), rgba(15,16,23,0.97));
+    border: 3px solid var(--fn-yellow);
+    border-radius: 6px;
+    padding: 44px 48px 36px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(244,197,0,0.12);
+    transform: skewX(-3deg);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 8px; height: 100%;
+    background: var(--fn-yellow);
+}
+
+.login-logo {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--fn-yellow);
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 4px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.7);
+    animation: pulsate 2.5s infinite;
+}
+
+.login-sub {
+    font-size: 14px;
+    color: #8a8f9e;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 32px;
+    font-style: italic;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.login-label {
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8a8f9e;
+    font-style: italic;
+}
+
+.login-input {
+    background: rgba(10,11,16,0.8);
+    border: 2px solid #363a4f;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 700;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.login-input:focus {
+    border-color: var(--fn-yellow);
+    box-shadow: 0 0 12px rgba(244,197,0,0.2);
+}
+
+.login-input.error {
+    border-color: var(--fn-red);
+    box-shadow: 0 0 12px rgba(255,0,60,0.25);
+    animation: shake 0.4s ease;
+}
+
+.login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--fn-yellow), #d4aa00);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    padding: 15px;
+    font-size: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 2px;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #8c7000;
+    transition: all 0.1s ease;
+    margin-top: 8px;
+    font-family: inherit;
+}
+
+.login-btn:hover { filter: brightness(1.1); }
+.login-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
+
+.login-error {
+    font-size: 13px;
+    color: var(--fn-red);
+    font-weight: 900;
+    font-style: italic;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 14px;
+    letter-spacing: 1px;
+    min-height: 18px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.login-error.visible { opacity: 1; }
+
+.login-lock {
+    font-size: 54px;
+    text-align: center;
+    margin-bottom: 16px;
+    display: block;
+    animation: pulsate 2s infinite;
+}
+
+/* LOADING SCREEN */
 #loadingScreen {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #0c0d12; z-index: 9999; display: none;
-    flex-direction: column; justify-content: center; align-items: center;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at center, rgba(37,40,54,0.99) 0%, rgba(12,13,18,1) 100%);
+    backdrop-filter: blur(12px);
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    padding: 60px 20px;
+    box-sizing: border-box;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-.load-bar-bg { width: 400px; height: 20px; background: #111; border: 3px solid #363a4f; margin-top: 20px; overflow: hidden; }
-#loadFill { width: 0%; height: 100%; background: var(--fn-yellow); transition: width 0.1s linear; }
 
-/* MAIN CONTENT */
-#main { display: none; width: 100%; max-width: 950px; flex-direction: column; gap: 25px; animation: fadeIn 0.5s ease; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.load-middle { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; transform: skewX(-7deg); }
+.load-title-main { font-size: 84px; font-weight: 900; color: var(--fn-yellow); font-style: italic; text-transform: uppercase; letter-spacing: 4px; animation: pulsate 2s infinite; text-shadow: 4px 4px 0px rgba(0,0,0,0.8); }
+.load-subtitle { font-size: 22px; color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; margin-top: 10px; margin-bottom: 50px; }
+.load-files-container { display: flex; gap: 20px; margin-bottom: 60px; }
+.file-card { background: linear-gradient(135deg, rgba(42,44,61,0.9), rgba(27,28,38,0.9)); border: 3px solid #363a4f; border-radius: 4px; padding: 15px 25px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
+.file-card.active { opacity: 1; transform: translateY(0) skewX(-7deg); border-color: var(--fn-yellow); }
+.file-icon { font-size: 30px; }
+.file-name { font-size: 14px; color: #8a8f9e; text-transform: uppercase; font-weight: bold; }
+.load-bottom { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; transform: skewX(-7deg); }
+.load-bar-bg { width: 100%; height: 30px; background: #12131a; border: 4px solid #363a4f; border-radius: 4px; overflow: hidden; }
+.load-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ffd700 0%, var(--fn-yellow) 50%, #ffd700 100%); background-size: 200% 100%; transition: width 0.1s linear; }
+.load-status-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+.load-current-file { font-size: 16px; color: #fff; font-style: italic; text-transform: uppercase; letter-spacing: 1px; }
+.load-percent { font-size: 32px; font-weight: 900; color: #fff; font-style: italic; }
 
-.panel {
-    background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95));
-    border: 3px solid #2a2c3d; padding: 25px; transform: skewX(-3deg); border-radius: 6px;
+body::before {
+    content: "";
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 30%, rgba(140,0,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(0,123,255,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 10%, rgba(255,0,127,0.08) 0%, transparent 40%),
+                var(--fn-dark);
+    animation: riftMovement 25s linear infinite;
+    z-index: -1;
+    pointer-events: none;
 }
 
-/* GAME & CHAT */
-.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-.canvas-area { background: #000; height: 380px; position: relative; border: 2px solid #333; overflow: hidden; border-radius: 4px; }
-#player { width: 44px; height: 44px; background: var(--fn-yellow); position: absolute; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 26px; box-shadow: 0 0 20px var(--fn-yellow); z-index: 10; }
-#coin { position: absolute; font-size: 32px; display: none; animation: pulse 1s infinite; }
-@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+@keyframes riftMovement { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
 
-.chat-box { background: #000; height: 380px; border: 2px solid #333; display: flex; flex-direction: column; border-radius: 4px; }
-iframe { flex: 1; border: none; background: transparent; }
+#main { width: 100%; max-width: 950px; display: none; flex-direction: column; gap: 25px; z-index: 1; }
 
-/* TEAM */
-.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
-.card { background: rgba(255,255,255,0.05); padding: 15px; border-left: 5px solid var(--fn-yellow); display: flex; justify-content: space-between; align-items: center; }
-.badge { padding: 4px 10px; font-weight: 900; font-size: 12px; border-radius: 3px; text-transform: uppercase; font-style: italic; }
+.tiktok-live-panel { background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(15,16,23,0.95)); border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px; transform: skewX(-5deg); box-shadow: 0 10px 30px rgba(254,44,85,0.3); display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; transition: all 0.3s ease; }
+.tiktok-live-panel.is-offline { border-color: var(--tt-gray); box-shadow: none; opacity: 0.8; }
+.tt-left { display: flex; align-items: center; gap: 15px; }
+.tt-icon { font-size: 32px; background: #000; padding: 8px 12px; border-radius: 6px; box-shadow: -2px -2px 0px #25f4ee, 2px 2px 0px var(--tt-red); transition: box-shadow 0.3s ease; }
+.tiktok-live-panel.is-offline .tt-icon { box-shadow: -2px -2px 0px #555, 2px 2px 0px #333; }
+.tt-info { display: flex; flex-direction: column; }
+.tt-title { font-size: 26px; font-weight: 900; color: #fff; text-transform: uppercase; font-style: italic; letter-spacing: 1px; }
+.tt-sub { font-size: 14px; color: var(--tt-red); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s; }
+.tiktok-live-panel.is-offline .tt-sub { color: #8a8f9e; }
+.tt-btn { background: var(--tt-red); color: white; text-decoration: none; font-size: 18px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 12px 28px; border-radius: 4px; letter-spacing: 1px; box-shadow: 0 4px 0 #b01b3a, 0 0 15px rgba(254,44,85,0.4); transition: all 0.1s ease; }
+.tt-btn:hover { transform: translateY(-2px); background: #ff3b64; }
+.tt-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b01b3a; }
+.tiktok-live-panel.is-offline .tt-btn { background: var(--tt-gray); box-shadow: 0 4px 0 #2b2e38; color: #aaa; }
 
-.owner { background: var(--fn-yellow); color: black; }
-.mod { background: var(--fn-blue); color: white; }
-.scripter { background: var(--fn-purple); color: white; }
-.traitor { background: var(--fn-red); color: white; }
+.game-section { background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95)); border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px; transform: skewX(-3deg); box-shadow: 0 15px 35px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
+.game-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px; }
+.game-title { font-size: 28px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px; text-shadow: 2px 2px 0px rgba(0,0,0,0.5); }
+.game-select-box { display: flex; align-items: center; gap: 12px; }
+.game-select-box select { background: rgba(27,28,38,0.9); border: 2px solid #363a4f; color: white; font-size: 15px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 8px 16px; border-radius: 4px; outline: none; letter-spacing: 0.5px; cursor: pointer; }
+.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; position: relative; }
+.game-canvas-area { background: #0d0e14; border: 3px solid #2a2c3d; border-radius: 4px; height: 350px; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
+#player { width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px; position: absolute; box-shadow: 0 0 20px var(--fn-yellow); transition: all 0.1s ease-out; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; user-select: none; }
+#coin { width: 32px; height: 32px; position: absolute; font-size: 28px; display: none; justify-content: center; align-items: center; z-index: 1; animation: blink 1.2s infinite ease-in-out; user-select: none; }
+.game-chat-box { background: rgba(10,11,16,0.7); border: 2px solid #363a4f; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; height: 350px; box-sizing: border-box; }
+.game-chat-title { font-size: 14px; color: #8a8f9e; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; text-align: center; letter-spacing: 1px; border-bottom: 1px solid #363a4f; padding-bottom: 6px; font-style: italic; }
+.iframe-container { flex: 1; background: rgba(0,0,0,0.2); border-radius: 4px; overflow: hidden; margin-bottom: 8px; border: 1px solid #2a2c3d; }
+.tikfinity-iframe { width: 100%; height: 100%; border: none; background: transparent; }
+.chat-config-row { display: flex; gap: 6px; }
+.chat-config-row input { flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 8px; font-size: 13px; outline: none; font-style: italic; }
+.chat-config-row button { background: var(--fn-yellow); color: black; border: none; border-radius: 4px; padding: 0 12px; font-size: 13px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-style: italic; }
+
+.socials-panel { background: linear-gradient(135deg, rgba(27,28,38,0.85), rgba(15,16,23,0.85)); border: 3px solid #2a2c3d; border-radius: 6px; padding: 15px 20px; transform: skewX(-5deg); display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+.socials-title { font-size: 20px; font-weight: 900; text-transform: uppercase; font-style: italic; color: var(--fn-yellow); letter-spacing: 1px; }
+.socials-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.social-btn { color: white; text-decoration: none; font-size: 15px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 10px 22px; border-radius: 4px; letter-spacing: 0.5px; transition: all 0.1s ease; display: inline-flex; align-items: center; gap: 8px; }
+.social-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+.btn-tiktok { background: #010101; border: 2px solid var(--tt-red); box-shadow: 0 4px 0 #333; }
+.btn-youtube { background: var(--yt-color); box-shadow: 0 4px 0 #990000; }
+.btn-discord { background: var(--dc-color); box-shadow: 0 4px 0 #3b42a4; }
+.btn-roblox { background: var(--rbx-color); border: 2px solid #535761; box-shadow: 0 4px 0 #18191c; }
+
+.fn-hud { background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95)); border: 3px solid #2a2c3d; border-radius: 6px; padding: 24px; transform: skewX(-5deg); box-shadow: 0 20px 45px rgba(0,0,0,0.7); position: relative; overflow: hidden; }
+.fn-hud::before { content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: var(--fn-yellow); }
+.hud-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px; }
+.hud-title { font-size: 32px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px; }
+.live-badge { background: var(--fn-red); color: #fff; padding: 4px 14px; font-size: 14px; font-weight: bold; border-radius: 4px; animation: blink 1.5s infinite; font-style: italic; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+.stat-box { background: #1f2230; border: 2px solid #363a4f; padding: 14px; text-align: center; border-radius: 4px; }
+.stat-value { font-size: 40px; font-weight: 900; font-style: italic; line-height: 1; }
+.stat-value.fps { color: var(--fn-green); }
+.stat-value.ms { color: var(--fn-yellow); }
+.stat-value.mem { color: var(--fn-blue); }
+.stat-label { font-size: 13px; text-transform: uppercase; color: #8a8f9e; letter-spacing: 1px; margin-top: 5px; font-weight: bold; }
+.fn-input-container { margin-bottom: 20px; }
+.search-input { width: 100%; background: rgba(27,28,38,0.8); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 14px; font-size: 16px; outline: none; box-sizing: border-box; font-style: italic; font-weight: 800; }
+
+#teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 25px; }
+.team-card { background: rgba(37,40,54,0.4); border: 1px solid #363a4f; padding: 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+.team-card:hover { border-color: var(--fn-yellow); background: rgba(54,58,79,0.8); transform: translateY(-2px); }
+.team-card.is-pinned { border-color: var(--fn-yellow); background: rgba(244,197,0,0.05); }
+.team-left-group { display: flex; flex-direction: column; gap: 2px; }
+.team-name { font-size: 18px; font-weight: 800; text-transform: uppercase; font-style: italic; cursor: pointer; }
+.copy-alert { font-size: 11px; color: var(--fn-green); font-weight: bold; font-style: italic; opacity: 0; }
+.team-right { display: flex; align-items: center; gap: 12px; }
+.team-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; font-style: italic; white-space: nowrap; }
+.owner { background: var(--fn-yellow); color: #000; }
+.mod { background: var(--fn-blue); color: #fff; }
+.mod_gifter { background: linear-gradient(135deg, var(--fn-blue), var(--fn-pink)); color: #fff; }
+.mod_helper { background: linear-gradient(135deg, var(--fn-blue), var(--fn-green)); color: #000; }
+.helper { background: var(--fn-green); color: #000; }
+.b_helper { background: #12aa4a; color: #fff; }
+.gifter { background: var(--fn-pink); color: #fff; }
+.scripter { background: var(--fn-purple); color: #fff; }
+.traitor { background: var(--fn-red); color: #fff; }
+.funniest { background: var(--fn-orange); color: #000; }
+.actions { display: flex; gap: 10px; width: 48px; justify-content: center; align-items: center; }
+.actions span { cursor: pointer; font-size: 18px; user-select: none; transition: transform 0.1s ease; text-align: center; }
+.actions span:hover { transform: scale(1.25); }
+
+.meta-section { background: rgba(27,28,38,0.65); border: 2px solid #363a4f; padding: 15px; border-radius: 4px; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; transform: skewX(-5deg); }
+.meta-box h3 { margin: 0 0 5px 0; font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; }
+.meta-box p { margin: 0; font-size: 15px; color: #fff; font-weight: bold; }
+
+.chat-section { background: rgba(27,28,38,0.85); border: 2px solid #363a4f; border-radius: 6px; padding: 20px; transform: skewX(-5deg); }
+.chat-section h2 { font-size: 16px; margin-top: 0; margin-bottom: 12px; color: var(--fn-yellow); text-transform: uppercase; font-style: italic; }
+#chat { height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+#chat::-webkit-scrollbar { width: 5px; }
+#chat::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 10px; }
+.msg { max-width: 85%; padding: 8px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+.msg.user { align-self: flex-end; background: var(--fn-yellow); color: #000; }
+.msg.bot { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; }
+.chat-input-row { display: flex; gap: 10px; }
+.chat-input-row input { flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 12px; font-size: 15px; outline: none; font-style: italic; }
+.chat-input-row button { background: var(--fn-yellow); color: black; border: none; border-radius: 4px; padding: 0 24px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-style: italic; }
+
+.download-box { background: rgba(27,28,38,0.85); border: 3px dashed #363a4f; border-radius: 6px; padding: 25px; text-align: center; transform: skewX(-5deg); }
+.dl-btn { background: linear-gradient(135deg, var(--fn-yellow), #d4aa00); color: black; border: none; border-radius: 4px; padding: 16px 45px; font-size: 22px; font-weight: 900; text-transform: uppercase; font-style: italic; cursor: pointer; box-shadow: 0 6px 0 #8c7000; transition: all 0.1s ease; }
+.dl-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
+
+.coming-soon-panel { background: linear-gradient(135deg, rgba(15,16,23,0.85), rgba(27,28,38,0.85)); border: 2px solid #2a2c3d; border-radius: 6px; padding: 15px; text-align: center; transform: skewX(-5deg); margin-top: 10px; }
+.coming-soon-text { font-size: 24px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #8a8f9e; letter-spacing: 2px; margin: 0; }
+.coming-soon-text span { color: var(--fn-yellow); animation: blink 2s infinite; }
+
+@keyframes pulsate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes shake {
+    0%, 100% { transform: skewX(-3deg) translateX(0); }
+    20% { transform: skewX(-3deg) translateX(-8px); }
+    40% { transform: skewX(-3deg) translateX(8px); }
+    60% { transform: skewX(-3deg) translateX(-5px); }
+    80% { transform: skewX(-3deg) translateX(5px); }
+}
 </style>
 </head>
 <body>
 
-<div id="loginOverlay">
-    <div class="login-card">
-        <h2>🔒 MEJDRIX SYSTEM LOGIN</h2>
-        <input type="text" id="userInput" placeholder="UŽIVATELSKÉ JMÉNO">
-        <input type="password" id="passInput" placeholder="HESLO">
-        <button onclick="checkCredentials()">ODEMKNOUT HUB</button>
-        <p id="errorMsg" style="color:var(--fn-red); font-weight:bold; margin-top:15px; text-transform:uppercase;"></p>
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen">
+    <div class="login-box">
+        <span class="login-lock">🔐</span>
+        <div class="login-logo">MEJDRIX</div>
+        <div class="login-sub">Stream HUD V2 — Přístup pouze pro autorizované</div>
+        <div class="login-field">
+            <label class="login-label">Uživatelské jméno</label>
+            <input id="loginUser" class="login-input" type="text" placeholder="Username..." autocomplete="off" spellcheck="false">
+        </div>
+        <div class="login-field">
+            <label class="login-label">Heslo</label>
+            <input id="loginPass" class="login-input" type="password" placeholder="Password...">
+        </div>
+        <button class="login-btn" id="loginBtn">🔓 PŘIHLÁSIT SE</button>
+        <div class="login-error" id="loginError">❌ Nesprávné přihlašovací údaje!</div>
     </div>
 </div>
 
+<!-- ===== LOADING SCREEN ===== -->
 <div id="loadingScreen">
-    <h1 style="color:var(--fn-yellow); font-style:italic; font-size:35px;">NAČÍTÁNÍ MODULŮ...</h1>
-    <div class="load-bar-bg"><div id="loadFill"></div></div>
-    <p id="loadStatus" style="margin-top:10px; font-weight:bold; color:#8a8f9e;">PŘIPOJOVÁNÍ K TIKFINITY API...</p>
+    <div class="load-middle">
+        <div class="load-title-main">MEJDRIX STREAM HUD V2</div>
+        <div class="load-subtitle">Načítání herních modulů...</div>
+        <div class="load-files-container">
+            <div id="file1" class="file-card"><span class="file-icon">⚙️</span><span class="file-name">Core Engine</span></div>
+            <div id="file2" class="file-card"><span class="file-icon">🕹️</span><span class="file-name">TikTok Plays</span></div>
+            <div id="file3" class="file-card"><span class="file-icon">💬</span><span class="file-name">TikFinity API</span></div>
+        </div>
+    </div>
+    <div class="load-bottom">
+        <div class="load-bar-bg"><div id="loadFill" class="load-bar-fill"></div></div>
+        <div class="load-status-row">
+            <div id="loadStatus" class="load-current-file">Připojování k serverům...</div>
+            <div id="loadPercent" class="load-percent">0%</div>
+        </div>
+    </div>
 </div>
 
+<!-- ===== MAIN APP ===== -->
 <div id="main">
-    <div class="panel" style="border-color:var(--tt-red); display:flex; justify-content:space-between; align-items:center;">
-        <h1 style="margin:0; font-style:italic; letter-spacing:2px;">🔴 MEJDRIX LIVE HUD V2</h1>
-        <div style="background:var(--tt-red); padding:8px 20px; font-weight:900; font-style:italic;">CONNECTED</div>
+
+    <div id="ttPanel" class="tiktok-live-panel is-offline">
+        <div class="tt-left">
+            <div class="tt-icon">📱</div>
+            <div class="tt-info">
+                <span class="tt-title">MEJDRIX TIKTOK LIVE</span>
+                <span id="ttStatus" class="tt-sub">⚪ Kontrola statusu streamu...</span>
+            </div>
+        </div>
+        <a id="ttLink" href="https://www.tiktok.com/@mejdrix/live" target="_blank" class="tt-btn">ZATÍM OFFLINE</a>
     </div>
 
-    <div class="panel">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
-            <span style="color:var(--fn-yellow); font-weight:900; font-size:24px; font-style:italic;">🕹️ TIKTOK PLAYS CONTROL</span>
-            <select id="gameMode" style="background:#000; color:white; border:2px solid #363a4f; padding:5px 10px; font-weight:bold;">
-                <option value="survival">MEJDRIX SURVIVAL</option>
-                <option value="coin">COIN HUNT (MINIGAME)</option>
-            </select>
+    <div class="game-section">
+        <div class="game-header">
+            <div class="game-title">🕹️ MEJDRIX TIKTOK PLAYS</div>
+            <div class="game-select-box">
+                <select id="gameSelector">
+                    <option value="survival">MEJDRIX SURVIVAL</option>
+                    <option value="coin_hunt">SBÍRÁNÍ COINŮ</option>
+                </select>
+            </div>
         </div>
         <div class="game-layout">
-            <div class="canvas-area" id="stage">
+            <div id="gameCanvas" class="game-canvas-area">
                 <div id="player">🤖</div>
                 <div id="coin">💰</div>
             </div>
-            <div class="chat-box">
-                <iframe id="tikChat" src="about:blank"></iframe>
-                <div style="padding:8px; display:flex; gap:5px; background:#161720;">
-                    <input id="tikKey" placeholder="TikFinity ID / URL" style="flex:1; background:#000; color:white; border:1px solid #363a4f; padding:5px;">
-                    <button onclick="updateTikFinity()" style="background:var(--fn-yellow); border:none; padding:5px 15px; font-weight:bold; cursor:pointer;">ULOŽIT</button>
+            <div class="game-chat-box">
+                <div class="game-chat-title">TikTok Chat</div>
+                <div class="iframe-container">
+                    <iframe id="tikfinityIframe" class="tikfinity-iframe" src="about:blank"></iframe>
+                </div>
+                <div class="chat-config-row">
+                    <input id="tikfinityCodeInput" placeholder="Vlož kód nebo celé URL...">
+                    <button id="saveCodeBtn">Uložit</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="panel">
-        <input id="searchBar" placeholder="VYHLEDAT ČLENA TÝMU..." style="width:100%; padding:15px; background:#000; border:2px solid #363a4f; color:white; margin-bottom:20px; box-sizing:border-box; font-weight:bold; font-style:italic;">
-        <div id="teamContainer" class="team-grid"></div>
+    <div class="socials-panel">
+        <span class="socials-title">SOCIÁLNÍ SÍTĚ</span>
+        <div class="socials-buttons">
+            <a href="https://www.tiktok.com/@mejdrix" target="_blank" class="social-btn btn-tiktok">📱 TikTok</a>
+            <a href="https://www.youtube.com/@Mejdrix" target="_blank" class="social-btn btn-youtube">🎥 YouTube</a>
+            <a href="https://discord.com/channels/1491804876978655315/1491804878346129530" target="_blank" class="social-btn btn-discord">💬 Discord</a>
+            <a href="https://www.roblox.com/users/10023963543/profile" target="_blank" class="social-btn btn-roblox">🎮 Roblox</a>
+        </div>
     </div>
+
+    <div class="socials-panel">
+        <span class="socials-title">DEV BY ADAM</span>
+        <div class="socials-buttons">
+            <a href="https://www.tiktok.com/@adamdevrblx" target="_blank" class="social-btn btn-tiktok">📱 TikTok</a>
+            <a href="https://www.youtube.com/@adammatecha8334" target="_blank" class="social-btn btn-youtube">🎥 YouTube</a>
+            <a href="https://www.roblox.com/users/4540263646/profile" target="_blank" class="social-btn btn-roblox">🎮 Roblox</a>
+        </div>
+    </div>
+
+    <div class="fn-hud">
+        <div class="hud-header">
+            <div class="hud-title">MEJDRIX STREAM HUD V2</div>
+            <div class="live-badge">🔴 LIVE MONITOR</div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-box"><div id="fpsVal" class="stat-value fps">60</div><div class="stat-label">FPS</div></div>
+            <div class="stat-box"><div id="msVal" class="stat-value ms">24ms</div><div class="stat-label">MS PING</div></div>
+            <div class="stat-box"><div id="memVal" class="stat-value mem">482 MB</div><div class="stat-label">MEMORY</div></div>
+        </div>
+        <div class="fn-input-container">
+            <input id="search" class="search-input" placeholder="VYHLEDAT UŽIVATELE ZE STREAMU...">
+        </div>
+        <div id="teamGrid"></div>
+    </div>
+
+    <div class="meta-section">
+        <div class="meta-box"><h3>📌 Pinned Users</h3><p id="pinned">žádné</p></div>
+        <div class="meta-box"><h3>⭐ Favorite Users</h3><p id="favs">žádné</p></div>
+    </div>
+
+    <div class="chat-section">
+        <h2>🤖 UPDATE SCRIPT TERMINAL</h2>
+        <div id="chat"></div>
+        <div class="chat-input-row">
+            <input id="aiInput" placeholder="Zadej příkazy /live, /add, /remove...">
+            <button id="send">Odeslat</button>
+        </div>
+    </div>
+
+    <div class="download-box">
+        <button id="downloadBtn" class="dl-btn">⬇️ STÁHNOUT SCRIPT (HTML)</button>
+    </div>
+
+    <div class="coming-soon-panel">
+        <div class="coming-soon-text">🚀 MORE <span>COMING SOON</span>...</div>
+    </div>
+
 </div>
 
 <script>
-// --- KONFIGURACE ---
-const teamList = [
-    { n: "Mejdrix", r: "owner" }, 
-    { n: "ViriBLOX", r: "mod" },
-    { n: "AdamDevRblx", r: "scripter" }, 
-    { n: "Fnaffan", r: "scripter" },
-    { n: "Kifír(Studio)", r: "traitor" }
-];
+/* ===== LOGIN SYSTEM ===== */
+const VALID_USERNAME = "Mejdrixog";
+const VALID_PASSWORD = "MejdrixStreamsV2";
 
-// --- PŘIHLÁŠENÍ ---
-function checkCredentials() {
-    const user = document.getElementById('userInput').value.trim();
-    const pass = document.getElementById('passInput').value.trim();
+const loginScreen  = document.getElementById("loginScreen");
+const loginUserEl  = document.getElementById("loginUser");
+const loginPassEl  = document.getElementById("loginPass");
+const loginBtn     = document.getElementById("loginBtn");
+const loginError   = document.getElementById("loginError");
+const loadingScreen = document.getElementById("loadingScreen");
+const mainEl       = document.getElementById("main");
 
-    // Tady je tvoje nové heslo a jméno
-    if (user === "mejdrixog" && pass === "MejdrixStreamV2") {
-        document.getElementById('loginOverlay').style.display = 'none';
-        launchSystem();
+function attemptLogin() {
+    const u = loginUserEl.value.trim();
+    const p = loginPassEl.value;
+
+    if (u === VALID_USERNAME && p === VALID_PASSWORD) {
+        // Hide login screen
+        loginScreen.style.opacity = "0";
+        loginScreen.style.visibility = "hidden";
+
+        // Show loading screen and start animation
+        loadingScreen.style.display = "flex";
+        startLoadingAnimation();
     } else {
-        document.getElementById('errorMsg').innerText = "❌ PŘÍSTUP ZAMÍTNUT: ŠPATNÉ ÚDAJE";
+        // Shake the box and show error
+        const box = document.querySelector(".login-box");
+        box.style.animation = "none";
+        box.offsetHeight; // reflow
+        box.style.animation = "shake 0.4s ease";
+
+        loginUserEl.classList.add("error");
+        loginPassEl.classList.add("error");
+        loginError.classList.add("visible");
+
+        setTimeout(() => {
+            loginUserEl.classList.remove("error");
+            loginPassEl.classList.remove("error");
+        }, 600);
+
+        loginPassEl.value = "";
+        loginPassEl.focus();
     }
 }
 
-// --- SYSTÉMOVÉ FUNKCE ---
-function launchSystem() {
-    const screen = document.getElementById('loadingScreen');
-    const fill = document.getElementById('loadFill');
-    const status = document.getElementById('loadStatus');
-    screen.style.display = 'flex';
-    
+loginBtn.addEventListener("click", attemptLogin);
+loginPassEl.addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
+loginUserEl.addEventListener("keydown", e => { if (e.key === "Enter") loginPassEl.focus(); });
+
+// Clear error on typing
+loginUserEl.addEventListener("input", () => loginError.classList.remove("visible"));
+loginPassEl.addEventListener("input", () => loginError.classList.remove("visible"));
+
+function startLoadingAnimation() {
+    loadTikFinityChat();
     let progress = 0;
+    const bar     = document.getElementById("loadFill");
+    const percent = document.getElementById("loadPercent");
+    const status  = document.getElementById("loadStatus");
+    const fileCards = [
+        document.getElementById("file1"),
+        document.getElementById("file2"),
+        document.getElementById("file3")
+    ];
+
     const interval = setInterval(() => {
-        progress += 1.5;
-        fill.style.width = progress + "%";
-        
-        if(progress > 30) status.innerText = "NAČÍTÁNÍ GRAFICKÉHO ROZHRANÍ...";
-        if(progress > 70) status.innerText = "SYNCHRONIZACE S ROBLOXEM...";
-        
-        if(progress >= 100) {
+        progress += Math.floor(Math.random() * 4) + 1;
+        if (progress > 100) progress = 100;
+        bar.style.width = progress + "%";
+        percent.innerText = progress + "%";
+
+        if (progress >= 15) fileCards[0].classList.add("active");
+        if (progress >= 45) fileCards[1].classList.add("active");
+        if (progress >= 75) fileCards[2].classList.add("active");
+
+        if (progress === 100) {
             clearInterval(interval);
-            screen.style.display = 'none';
-            document.getElementById('main').style.display = 'flex';
-            initializeHUD();
+            setTimeout(() => {
+                loadingScreen.style.opacity = "0";
+                loadingScreen.style.visibility = "hidden";
+                mainEl.style.display = "flex";
+                checkTikTokLive();
+            }, 400);
         }
-    }, 20);
+    }, 50);
 }
 
-function initializeHUD() {
-    renderTeam();
-    const savedChat = localStorage.getItem('mejdrix_chat_url');
-    if(savedChat) document.getElementById('tikChat').src = savedChat;
+/* ===== TIKFINITY ===== */
+const tikfinityInput  = document.getElementById("tikfinityCodeInput");
+const saveCodeBtn     = document.getElementById("saveCodeBtn");
+const tikfinityIframe = document.getElementById("tikfinityIframe");
+
+function loadTikFinityChat() {
+    let saved = localStorage.getItem("tikfinity_overlay_url");
+    if (saved) { tikfinityIframe.src = saved; tikfinityInput.value = saved; }
+    else { tikfinityIframe.src = "about:blank"; }
 }
 
-function updateTikFinity() {
-    let val = document.getElementById('tikKey').value.trim();
-    if(!val) return;
-    let url = val.includes('http') ? val : `https://tikfinity.zerody.one/authed/chat/${val}`;
-    localStorage.setItem('mejdrix_chat_url', url);
-    document.getElementById('tikChat').src = url;
-    alert("TikFinity bylo aktualizováno!");
-}
+saveCodeBtn.onclick = () => {
+    let val = tikfinityInput.value.trim();
+    if (!val) return;
+    let finalUrl = val.startsWith("http") ? val : `https://tikfinity.zerody.one/authed/chat/${val}`;
+    localStorage.setItem("tikfinity_overlay_url", finalUrl);
+    tikfinityIframe.src = finalUrl;
+    alert("TikFinity kód / URL byl uložen!");
+};
 
-function renderTeam() {
-    const container = document.getElementById('teamContainer');
-    const query = document.getElementById('searchBar').value.toLowerCase();
-    container.innerHTML = "";
-    
-    teamList.filter(u => u.n.toLowerCase().includes(query)).forEach(u => {
-        container.innerHTML += `
-            <div class="card">
-                <b style="font-size:18px;">${u.n}</b> 
-                <span class="badge ${u.r}">${u.r}</span>
-            </div>`;
-    });
-}
-document.getElementById('searchBar').oninput = renderTeam;
+/* ===== HERNÍ ENGINE ===== */
+const player       = document.getElementById("player");
+const coin         = document.getElementById("coin");
+const gameSelector = document.getElementById("gameSelector");
+let playerX = 250, playerY = 150;
+let coinX = 50, coinY = 50;
+const speed = 20;
 
-// --- HERNÍ LOGIKA ---
-let px = 200, py = 150, cx = 60, cy = 60;
-const pObj = document.getElementById('player');
-const cObj = document.getElementById('coin');
-
-window.addEventListener('keydown', e => {
-    const key = e.key.toLowerCase();
-    const step = 20;
-    
-    if(['arrowup','w'].includes(key)) py -= step;
-    if(['arrowdown','s'].includes(key)) py += step;
-    if(['arrowleft','a'].includes(key)) px -= step;
-    if(['arrowright','d'].includes(key)) px += step;
-
-    // Hranice plochy
-    px = Math.max(10, Math.min(px, 540));
-    py = Math.max(10, Math.min(py, 320));
-
-    pObj.style.left = px + "px";
-    pObj.style.top = py + "px";
-    
-    if(document.getElementById('gameMode').value === 'coin') {
-        let dist = Math.sqrt(Math.pow(px-cx, 2) + Math.pow(py-cy, 2));
-        if(dist < 45) moveCoin();
+function updatePlayerPos() {
+    if (playerX < 10) playerX = 10;
+    if (playerX > 530) playerX = 530;
+    if (playerY < 10) playerY = 10;
+    if (playerY > 290) playerY = 290;
+    player.style.left = playerX + "px";
+    player.style.top  = playerY + "px";
+    if (gameSelector.value === "coin_hunt") {
+        let dist = Math.sqrt(Math.pow(playerX - coinX, 2) + Math.pow(playerY - coinY, 2));
+        if (dist < 32) spawnCoin();
     }
+}
+
+function spawnCoin() {
+    coinX = Math.floor(Math.random() * 500) + 15;
+    coinY = Math.floor(Math.random() * 260) + 15;
+    coin.style.left = coinX + "px";
+    coin.style.top  = coinY + "px";
+    coin.style.display = "flex";
+}
+
+window.addEventListener("keydown", (e) => {
+    let key = e.key.toLowerCase();
+    if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(key)) e.preventDefault();
+    if (key === "w" || key === "arrowup")    playerY -= speed;
+    if (key === "s" || key === "arrowdown")  playerY += speed;
+    if (key === "a" || key === "arrowleft")  playerX -= speed;
+    if (key === "d" || key === "arrowright") playerX += speed;
+    updatePlayerPos();
 });
 
-function moveCoin() {
-    cx = Math.floor(Math.random() * 500) + 20;
-    cy = Math.floor(Math.random() * 300) + 20;
-    cObj.style.left = cx + "px";
-    cObj.style.top = cy + "px";
-    cObj.style.display = 'block';
+gameSelector.onchange = () => {
+    if (gameSelector.value === "coin_hunt") spawnCoin();
+    else coin.style.display = "none";
+};
+updatePlayerPos();
+
+/* ===== TIKTOK STATUS ===== */
+let isLive = false;
+const ttPanel  = document.getElementById("ttPanel");
+const ttStatus = document.getElementById("ttStatus");
+const ttLink   = document.getElementById("ttLink");
+
+function checkTikTokLive() {
+    const testUrl  = "https://www.tiktok.com/@mejdrix/live";
+    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(testUrl) + "&cacheBuster=" + Date.now();
+    fetch(proxyUrl).then(r => r.json()).then(data => {
+        let html = data.contents;
+        setLiveState(!!(html && (html.includes("room_id") || html.includes('"liveRoom"') || html.includes("is_live\":true"))));
+    }).catch(() => setLiveState(isLive));
 }
 
-document.getElementById('gameMode').onchange = e => {
-    cObj.style.display = e.target.value === 'coin' ? 'block' : 'none';
-    if(e.target.value === 'coin') moveCoin();
+function setLiveState(liveStatus) {
+    isLive = liveStatus;
+    if (isLive) {
+        ttPanel.classList.remove("is-offline");
+        ttStatus.innerText = "🔴 Sleduj stream v reálném čase";
+        ttStatus.style.color = "var(--tt-red)";
+        ttLink.innerText = "SLEDOVAT LIVE";
+    } else {
+        ttPanel.classList.add("is-offline");
+        ttStatus.innerText = "⚪ Momentálně offline";
+        ttStatus.style.color = "#8a8f9e";
+        ttLink.innerText = "ZATÍM OFFLINE";
+    }
+}
+setInterval(checkTikTokLive, 30000);
+
+/* ===== RENDER ENGINE ===== */
+const defaultUsers = [
+    { name: "Mejdrix", role: "owner" },
+    { name: "ViriBLOX", role: "mod" },
+    { name: "Xentro", role: "mod" },
+    { name: "AdamDevRblx", role: "mod_gifter" },
+    { name: "T4D34S", role: "mod_helper" },
+    { name: "Jammes", role: "mod_gifter" },
+    { name: "Fnaffan", role: "scripter" },
+    { name: "Pettrading", role: "gifter" },
+    { name: "Kebab", role: "b_helper" },
+    { name: "Kifír(Studio)", role: "traitor" },
+    { name: "Daník", role: "funniest" }
+];
+
+let users  = JSON.parse(localStorage.getItem("fn_users")  || JSON.stringify(defaultUsers));
+let favs   = JSON.parse(localStorage.getItem("fn_favs")   || "[]");
+let pinned = JSON.parse(localStorage.getItem("fn_pinned") || "[]");
+
+const roleFormat = {
+    owner: "Owner", mod: "Moderator", mod_gifter: "Mod & Gifter", mod_helper: "Mod & Helper",
+    helper: "Helper", b_helper: "Brutal Helper", gifter: "Gifter", scripter: "Scripter",
+    traitor: "Traitor", funniest: "Funniest"
+};
+
+const teamGrid = document.getElementById("teamGrid");
+const search   = document.getElementById("search");
+
+function copyName(name, elementId) {
+    navigator.clipboard.writeText(name).then(() => {
+        let alertSpan = document.getElementById(`copy-${elementId}`);
+        if (alertSpan) { alertSpan.style.opacity = "1"; setTimeout(() => alertSpan.style.opacity = "0", 1000); }
+    });
+}
+
+function render() {
+    teamGrid.innerHTML = "";
+    let s = search.value.toLowerCase().trim();
+    let filtered = users.filter(u => u.name.toLowerCase().includes(s));
+    filtered.sort((a, b) => (pinned.includes(b.name) ? 1 : 0) - (pinned.includes(a.name) ? 1 : 0));
+
+    filtered.forEach((u, idx) => {
+        let isPinned = pinned.includes(u.name);
+        let isFav    = favs.includes(u.name);
+        let div = document.createElement("div");
+        div.className = `team-card ${isPinned ? 'is-pinned' : ''}`;
+        div.innerHTML = `
+            <div class="team-left-group">
+                <span class="team-name" onclick="copyName('${u.name}', '${idx}')">${u.name}</span>
+                <span id="copy-${idx}" class="copy-alert">Zkopírováno!</span>
+            </div>
+            <div class="team-right">
+                <span class="team-badge ${u.role}">${roleFormat[u.role] || u.role}</span>
+                <div class="actions">
+                    <span class="pin-btn">${isPinned ? '📌' : '📍'}</span>
+                    <span class="fav-btn">${isFav ? '⭐' : '☆'}</span>
+                </div>
+            </div>
+        `;
+        div.querySelector(".pin-btn").onclick = (e) => {
+            e.stopPropagation();
+            pinned = pinned.includes(u.name) ? pinned.filter(x => x !== u.name) : [...pinned, u.name];
+            localStorage.setItem("fn_pinned", JSON.stringify(pinned)); render();
+        };
+        div.querySelector(".fav-btn").onclick = (e) => {
+            e.stopPropagation();
+            favs = favs.includes(u.name) ? favs.filter(x => x !== u.name) : [...favs, u.name];
+            localStorage.setItem("fn_favs", JSON.stringify(favs)); render();
+        };
+        teamGrid.appendChild(div);
+    });
+    document.getElementById("pinned").innerText = pinned.join(", ") || "žádné";
+    document.getElementById("favs").innerText   = favs.join(", ")   || "žádné";
+}
+search.oninput = render;
+render();
+
+/* ===== METRIKY ===== */
+setInterval(() => {
+    document.getElementById("fpsVal").innerText = 60 + Math.floor(Math.random() * 6) - 3;
+    document.getElementById("msVal").innerText  = 20 + Math.floor(Math.random() * 8) - 4 + "ms";
+    document.getElementById("memVal").innerText = 450 + Math.floor(Math.random() * 15) - 7 + " MB";
+}, 1000);
+
+/* ===== TERMINÁL ===== */
+const chat    = document.getElementById("chat");
+const aiInput = document.getElementById("aiInput");
+const send    = document.getElementById("send");
+
+function addMessage(text, type) {
+    let msg = document.createElement("div");
+    msg.className = `msg ${type}`;
+    msg.innerText = text;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+send.onclick = () => {
+    let val = aiInput.value.trim(); if (!val) return;
+    addMessage(val, "user"); aiInput.value = "";
+    if (val.startsWith("/live")) {
+        let param = val.split(" ")[1];
+        if (param === "true" || param === "on") { setLiveState(true); addMessage("🤖 ONLINE", "bot"); }
+        else { setLiveState(false); addMessage("🤖 OFFLINE", "bot"); }
+    } else if (val.startsWith("/add")) {
+        let parts = val.split(" "); let name = parts[1]; let role = parts[2];
+        if (name && role && roleFormat[role]) {
+            users.push({ name, role }); localStorage.setItem("fn_users", JSON.stringify(users)); render();
+            addMessage(`🤖 Uživatel ${name} byl úspěšně přidán.`, "bot");
+        }
+    } else if (val.startsWith("/remove")) {
+        let parts = val.split(" "); let name = parts[1];
+        if (name) {
+            users = users.filter(u => u.name.toLowerCase() !== name.toLowerCase());
+            localStorage.setItem("fn_users", JSON.stringify(users)); render();
+            addMessage(`🤖 Uživatel ${name} byl odebrán.`, "bot");
+        }
+    } else {
+        addMessage("🤖 Neznámý příkaz. Zkus /live, /add nebo /remove.", "bot");
+    }
+};
+
+/* ===== EXPORT ===== */
+document.getElementById("downloadBtn").onclick = () => {
+    const pageSource = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    const blob = new Blob([pageSource], { type: "text/html" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href = url; a.download = "mejdrix_hud_v2.html"; a.click();
+    URL.revokeObjectURL(url);
 };
 </script>
 </body>
