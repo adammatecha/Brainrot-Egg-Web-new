@@ -465,6 +465,245 @@ body {
 
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.7; } }
 @keyframes blink  { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* ========== THEME SWITCHER ========== */
+.theme-panel {
+    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
+    border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 22px 28px;
+    transform: skewX(-5deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.theme-title {
+    font-size: 22px; font-weight: 900; color: var(--fn-yellow);
+    text-transform: uppercase; font-style: italic; letter-spacing: 1.5px;
+}
+.theme-swatches { display: flex; gap: 12px; flex-wrap: wrap; }
+.theme-swatch {
+    width: 44px; height: 44px; border-radius: 6px; border: 3px solid transparent;
+    cursor: pointer; transition: all 0.2s; position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.theme-swatch:hover { transform: scale(1.15); }
+.theme-swatch.active { border-color: #fff; box-shadow: 0 0 16px rgba(255,255,255,0.4); }
+.theme-swatch::after {
+    content: attr(data-label);
+    position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
+    font-size: 10px; font-weight: 900; text-transform: uppercase;
+    color: #8a8f9e; white-space: nowrap; font-style: italic;
+}
+.theme-preview-bar {
+    width: 100%; height: 5px; border-radius: 3px; margin-top: 8px;
+    background: var(--fn-yellow);
+    transition: background 0.4s ease;
+}
+
+/* ========== OVERLAY PREVIEW ========== */
+.overlay-panel {
+    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
+    border: 3px solid #2a2c3d; border-radius: 6px; padding: 22px;
+    transform: skewX(-3deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    position: relative; overflow: hidden;
+}
+.overlay-panel::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 8px; height: 100%; background: var(--fn-yellow);
+}
+.overlay-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 18px;
+}
+.overlay-title {
+    font-size: 24px; font-weight: 900; text-transform: uppercase;
+    color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px;
+}
+.overlay-tabs { display: flex; gap: 8px; }
+.ov-tab {
+    background: rgba(27,28,38,0.9); border: 2px solid #363a4f; color: #8a8f9e;
+    font-size: 13px; font-weight: 900; text-transform: uppercase; font-style: italic;
+    padding: 6px 14px; border-radius: 4px; cursor: pointer; transition: all 0.15s;
+    font-family: inherit;
+}
+.ov-tab.active { background: var(--fn-yellow); color: #000; border-color: var(--fn-yellow); }
+.ov-tab:hover:not(.active) { border-color: var(--fn-yellow); color: #fff; }
+
+.overlay-screen {
+    background: #000; border-radius: 6px; overflow: hidden;
+    aspect-ratio: 16/9; position: relative;
+    border: 2px solid #363a4f;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+}
+.ov-content { position: absolute; inset: 0; display: none; }
+.ov-content.visible { display: block; }
+
+/* --- Layout A: Fortnite-style --- */
+.ov-fn-bg {
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #0d1117 0%, #1a1b2e 50%, #0a0b10 100%);
+    position: relative; overflow: hidden;
+}
+.ov-fn-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(140,0,255,0.12) 0%, transparent 60%),
+                radial-gradient(circle at 80% 30%, rgba(0,123,255,0.1) 0%, transparent 50%);
+}
+.ov-fn-topbar {
+    position: absolute; top: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+    padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;
+}
+.ov-fn-logo { font-size: 20px; font-weight: 900; color: var(--fn-yellow); font-style: italic; letter-spacing: 2px; }
+.ov-fn-live { background: var(--fn-red); color: #fff; font-size: 11px; font-weight: 900; padding: 3px 10px; border-radius: 3px; font-style: italic; animation: blink 1.5s infinite; }
+.ov-fn-stats {
+    position: absolute; top: 10px; right: 16px;
+    display: flex; gap: 10px;
+}
+.ov-fn-stat {
+    background: rgba(0,0,0,0.7); border: 1px solid rgba(244,197,0,0.3);
+    border-radius: 4px; padding: 4px 10px; text-align: center;
+}
+.ov-fn-stat-v { font-size: 16px; font-weight: 900; color: var(--fn-yellow); font-style: italic; }
+.ov-fn-stat-l { font-size: 9px; color: #8a8f9e; text-transform: uppercase; }
+.ov-fn-bottombar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+    padding: 12px 16px; display: flex; justify-content: space-between; align-items: flex-end;
+}
+.ov-fn-name { font-size: 28px; font-weight: 900; color: #fff; font-style: italic; text-transform: uppercase; letter-spacing: 1px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
+.ov-fn-socials { display: flex; gap: 8px; }
+.ov-fn-soc { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 3px; font-style: italic; }
+.ov-fn-soc.tt { background: rgba(254,44,85,0.8); color: #fff; }
+.ov-fn-soc.yt { background: rgba(255,0,0,0.8); color: #fff; }
+.ov-fn-soc.dc { background: rgba(88,101,242,0.8); color: #fff; }
+.ov-fn-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center;
+}
+.ov-fn-game { font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; letter-spacing: 3px; }
+
+/* --- Layout B: Minimal --- */
+.ov-min-bg {
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.95) 100%),
+                linear-gradient(135deg, #0e1015 0%, #151720 100%);
+    position: relative;
+}
+.ov-min-left {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: var(--fn-yellow);
+}
+.ov-min-name {
+    position: absolute; bottom: 18px; left: 22px;
+    font-size: 32px; font-weight: 900; color: #fff; font-style: italic;
+    text-transform: uppercase; letter-spacing: 2px;
+}
+.ov-min-sub {
+    position: absolute; bottom: 8px; left: 22px;
+    font-size: 12px; color: var(--fn-yellow); font-weight: 900;
+    text-transform: uppercase; letter-spacing: 3px; font-style: italic;
+}
+.ov-min-badge {
+    position: absolute; top: 14px; right: 14px;
+    background: var(--fn-red); color: #fff; font-size: 12px; font-weight: 900;
+    padding: 5px 14px; border-radius: 3px; font-style: italic; animation: blink 1.5s infinite;
+}
+.ov-min-grid {
+    position: absolute; top: 14px; left: 14px;
+    display: flex; gap: 8px;
+}
+.ov-min-box {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px; padding: 6px 12px; text-align: center;
+}
+.ov-min-bv { font-size: 18px; font-weight: 900; color: var(--fn-yellow); font-style: italic; }
+.ov-min-bl { font-size: 9px; color: #8a8f9e; text-transform: uppercase; }
+
+/* --- Layout C: Gaming --- */
+.ov-gm-bg {
+    width: 100%; height: 100%;
+    background: #060810;
+    position: relative; overflow: hidden;
+}
+.ov-gm-corner {
+    position: absolute; top: 0; left: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 120px 120px 0 0;
+    border-color: rgba(244,197,0,0.15) transparent transparent transparent;
+}
+.ov-gm-corner2 {
+    position: absolute; bottom: 0; right: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 0 100px 100px;
+    border-color: transparent transparent rgba(140,0,255,0.12) transparent;
+}
+.ov-gm-scanlines {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+}
+.ov-gm-logo {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 42px; font-weight: 900; color: var(--fn-yellow); font-style: italic;
+    text-transform: uppercase; letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(244,197,0,0.5), 3px 3px 0 rgba(0,0,0,0.8);
+}
+.ov-gm-sub {
+    position: absolute; top: calc(50% + 36px); left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: #8a8f9e; text-transform: uppercase; letter-spacing: 5px; font-style: italic;
+}
+.ov-gm-hbar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--fn-yellow), var(--fn-purple), transparent);
+}
+.ov-gm-vbar {
+    position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
+    background: linear-gradient(180deg, transparent, var(--fn-yellow), transparent);
+}
+
+/* ========== KEYBOARD SHORTCUTS ========== */
+.keys-panel {
+    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
+    border: 3px solid #2a2c3d; border-radius: 6px; padding: 22px 28px;
+    transform: skewX(-5deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+.keys-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 18px;
+}
+.keys-title {
+    font-size: 22px; font-weight: 900; text-transform: uppercase;
+    color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px;
+}
+.keys-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 10px;
+}
+.key-row {
+    background: rgba(37,40,54,0.5); border: 1px solid #363a4f;
+    border-radius: 4px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.2s;
+}
+.key-row:hover { border-color: var(--fn-yellow); }
+.key-badges { display: flex; gap: 5px; flex-shrink: 0; }
+.key-badge {
+    background: #1f2230; border: 2px solid #363a4f; border-radius: 4px;
+    padding: 3px 10px; font-size: 13px; font-weight: 900; color: #fff;
+    font-style: italic; min-width: 32px; text-align: center;
+    box-shadow: 0 3px 0 #111;
+    font-family: inherit;
+}
+.key-badge.yellow { border-color: var(--fn-yellow); color: var(--fn-yellow); }
+.key-desc { font-size: 14px; color: #c0c4d0; font-weight: bold; font-style: italic; }
+.key-section-label {
+    grid-column: 1/-1;
+    font-size: 12px; font-weight: 900; color: #8a8f9e;
+    text-transform: uppercase; letter-spacing: 2px; font-style: italic;
+    padding: 6px 0 2px;
+}
 </style>
 </head>
 <body>
@@ -608,6 +847,118 @@ body {
     <div class="term-row">
       <input id="termInput" placeholder="Zadej příkazy /live, /add, /remove...">
       <button id="termSend">Odeslat</button>
+    </div>
+  </div>
+
+  <!-- THEME SWITCHER -->
+  <div class="theme-panel">
+    <span class="theme-title">🎨 Barevné Téma</span>
+    <div style="display:flex;flex-direction:column;gap:10px;flex:1;max-width:600px">
+      <div class="theme-swatches">
+        <div class="theme-swatch active" data-theme="yellow" data-label="Yellow" style="background:#f4c500" onclick="setTheme('yellow',this)"></div>
+        <div class="theme-swatch" data-theme="blue"   data-label="Blue"   style="background:#007bff" onclick="setTheme('blue',this)"></div>
+        <div class="theme-swatch" data-theme="red"    data-label="Red"    style="background:#fe2c55" onclick="setTheme('red',this)"></div>
+        <div class="theme-swatch" data-theme="green"  data-label="Green"  style="background:#00ff66" onclick="setTheme('green',this)"></div>
+        <div class="theme-swatch" data-theme="purple" data-label="Purple" style="background:#8c00ff" onclick="setTheme('purple',this)"></div>
+        <div class="theme-swatch" data-theme="pink"   data-label="Pink"   style="background:#ff007f" onclick="setTheme('pink',this)"></div>
+        <div class="theme-swatch" data-theme="orange" data-label="Orange" style="background:#ffaa00" onclick="setTheme('orange',this)"></div>
+        <div class="theme-swatch" data-theme="white"  data-label="White"  style="background:#ffffff" onclick="setTheme('white',this)"></div>
+      </div>
+      <div class="theme-preview-bar" id="themeBar"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY PREVIEW -->
+  <div class="overlay-panel">
+    <div class="overlay-header">
+      <div class="overlay-title">🖥️ Stream Overlay Preview</div>
+      <div class="overlay-tabs">
+        <button class="ov-tab active" onclick="switchOverlay('fn',this)">Fortnite</button>
+        <button class="ov-tab" onclick="switchOverlay('min',this)">Minimal</button>
+        <button class="ov-tab" onclick="switchOverlay('gm',this)">Gaming</button>
+      </div>
+    </div>
+    <div class="overlay-screen">
+
+      <!-- LAYOUT A: Fortnite -->
+      <div class="ov-content visible" id="ov-fn">
+        <div class="ov-fn-bg">
+          <div class="ov-fn-topbar">
+            <div class="ov-fn-logo">MEJDRIX</div>
+            <div class="ov-fn-live">🔴 LIVE</div>
+          </div>
+          <div class="ov-fn-stats">
+            <div class="ov-fn-stat"><div class="ov-fn-stat-v">2.4K</div><div class="ov-fn-stat-l">Viewers</div></div>
+            <div class="ov-fn-stat"><div class="ov-fn-stat-v">847</div><div class="ov-fn-stat-l">Likes</div></div>
+            <div class="ov-fn-stat"><div class="ov-fn-stat-v" id="ovFps">60</div><div class="ov-fn-stat-l">FPS</div></div>
+          </div>
+          <div class="ov-fn-center">
+            <div class="ov-fn-game">🎮 Fortnite Chapter 6</div>
+          </div>
+          <div class="ov-fn-bottombar">
+            <div class="ov-fn-name">MEJDRIX</div>
+            <div class="ov-fn-socials">
+              <span class="ov-fn-soc tt">📱 TikTok</span>
+              <span class="ov-fn-soc yt">🎥 YouTube</span>
+              <span class="ov-fn-soc dc">💬 Discord</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYOUT B: Minimal -->
+      <div class="ov-content" id="ov-min">
+        <div class="ov-min-bg">
+          <div class="ov-min-left"></div>
+          <div class="ov-min-grid">
+            <div class="ov-min-box"><div class="ov-min-bv">2.4K</div><div class="ov-min-bl">Viewers</div></div>
+            <div class="ov-min-box"><div class="ov-min-bv">847</div><div class="ov-min-bl">Likes</div></div>
+            <div class="ov-min-box"><div class="ov-min-bv" id="ovFps2">60</div><div class="ov-min-bl">FPS</div></div>
+          </div>
+          <div class="ov-min-badge">🔴 LIVE NOW</div>
+          <div class="ov-min-name">MEJDRIX</div>
+          <div class="ov-min-sub">@mejdrix · tiktok &amp; youtube</div>
+        </div>
+      </div>
+
+      <!-- LAYOUT C: Gaming -->
+      <div class="ov-content" id="ov-gm">
+        <div class="ov-gm-bg">
+          <div class="ov-gm-corner"></div>
+          <div class="ov-gm-corner2"></div>
+          <div class="ov-gm-scanlines"></div>
+          <div class="ov-gm-logo">MEJDRIX</div>
+          <div class="ov-gm-sub">STREAM HUD V2</div>
+          <div class="ov-gm-hbar"></div>
+          <div class="ov-gm-vbar"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KEYBOARD SHORTCUTS -->
+  <div class="keys-panel">
+    <div class="keys-header">
+      <div class="keys-title">⌨️ Keyboard Shortcuts</div>
+    </div>
+    <div class="keys-grid">
+      <div class="key-section-label">🕹️ Pohyb hráče</div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">W</span><span class="key-badge">▲</span></div><div class="key-desc">Pohyb nahoru</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">S</span><span class="key-badge">▼</span></div><div class="key-desc">Pohyb dolů</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">A</span><span class="key-badge">◄</span></div><div class="key-desc">Pohyb doleva</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">D</span><span class="key-badge">►</span></div><div class="key-desc">Pohyb doprava</div></div>
+      <div class="key-section-label">💻 Terminál — příkazy</div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/live on</span></div><div class="key-desc">Nastav stream jako ONLINE</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/live off</span></div><div class="key-desc">Nastav stream jako OFFLINE</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/add</span></div><div class="key-desc">/add Jméno role — přidá uživatele</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/remove</span></div><div class="key-desc">/remove Jméno — odebere uživatele</div></div>
+      <div class="key-section-label">🖥️ Overlay Preview</div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge">Tab 1</span></div><div class="key-desc">Fortnite styl overlay</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge">Tab 2</span></div><div class="key-desc">Minimalistický overlay</div></div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge">Tab 3</span></div><div class="key-desc">Gaming styl overlay</div></div>
+      <div class="key-section-label">🎨 Téma</div>
+      <div class="key-row"><div class="key-badges"><span class="key-badge">Klik</span></div><div class="key-desc">Klikni na barvu pro změnu tématu</div></div>
     </div>
   </div>
 
@@ -924,6 +1275,52 @@ function setLiveState(live) {
         stat.innerText = "⚪ Momentálně offline";
         btn.innerText  = "ZATÍM OFFLINE";
     }
+}
+
+// ---- THEME SWITCHER ----
+const THEMES = {
+    yellow: { main: "#f4c500", dark: "#8c7000" },
+    blue:   { main: "#007bff", dark: "#0044aa" },
+    red:    { main: "#fe2c55", dark: "#b01b3a" },
+    green:  { main: "#00ff66", dark: "#00a040" },
+    purple: { main: "#8c00ff", dark: "#5500aa" },
+    pink:   { main: "#ff007f", dark: "#aa0050" },
+    orange: { main: "#ffaa00", dark: "#aa6e00" },
+    white:  { main: "#ffffff", dark: "#aaaaaa" }
+};
+
+function setTheme(name, el) {
+    const t = THEMES[name]; if (!t) return;
+    const root = document.documentElement;
+    root.style.setProperty("--fn-yellow", t.main);
+    document.querySelectorAll(".theme-swatch").forEach(s => s.classList.remove("active"));
+    if (el) el.classList.add("active");
+    document.getElementById("themeBar").style.background = t.main;
+    localStorage.setItem("hud_theme", name);
+}
+
+function loadSavedTheme() {
+    const saved = localStorage.getItem("hud_theme") || "yellow";
+    const el = document.querySelector(`.theme-swatch[data-theme="${saved}"]`);
+    setTheme(saved, el);
+}
+
+// ---- OVERLAY PREVIEW ----
+function switchOverlay(id, btn) {
+    document.querySelectorAll(".ov-content").forEach(c => c.classList.remove("visible"));
+    document.querySelectorAll(".ov-tab").forEach(b => b.classList.remove("active"));
+    document.getElementById("ov-" + id).classList.add("visible");
+    if (btn) btn.classList.add("active");
+}
+
+function initOverlayFps() {
+    setInterval(() => {
+        const v = 58 + Math.floor(Math.random() * 6);
+        const a = document.getElementById("ovFps");
+        const b = document.getElementById("ovFps2");
+        if (a) a.innerText = v;
+        if (b) b.innerText = v;
+    }, 1000);
 }
 
 // ---- DOWNLOAD ----
