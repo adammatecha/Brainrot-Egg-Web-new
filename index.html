@@ -25,41 +25,14 @@
     --rbx-color: #2b2d32;
 }
 
-/* --- NOVÝ LOGIN SCREEN STYLE --- */
-#loginOverlay {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: var(--fn-dark);
-    z-index: 10001;
-    display: none; 
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-.login-card {
-    background: var(--fn-card);
-    padding: 40px;
-    border: 3px solid var(--fn-yellow);
-    transform: skewX(-5deg);
-    text-align: center;
-    box-shadow: 0 0 40px rgba(244, 197, 0, 0.2);
-}
-.login-card h2 { color: var(--fn-yellow); font-style: italic; margin-bottom: 20px; text-transform: uppercase; }
-.login-card input {
-    display: block; width: 260px; padding: 12px; margin: 10px auto;
-    background: #000; border: 2px solid #363a4f; color: white;
-    font-family: inherit; font-weight: bold; outline: none;
-}
-.login-card button {
-    width: 100%; padding: 12px; background: var(--fn-yellow); color: black;
-    border: none; font-weight: 900; cursor: pointer; text-transform: uppercase;
-    margin-top: 10px; transition: transform 0.1s;
-}
-.login-card button:active { transform: scale(0.95); }
-
-/* --- TVOJE PŮVODNÍ STYLY --- */
 body { margin: 0; background: var(--fn-dark); color: var(--fn-text); font-family: 'Burbank Big Condensed', 'Segoe UI', Impact, sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; position: relative; overflow-x: hidden; }
 
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 4px; border: 2px solid var(--fn-dark); }
+
+/* LOADING SCREEN */
 #loadingScreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, rgba(37, 40, 54, 0.99) 0%, rgba(12, 13, 18, 1) 100%); backdrop-filter: blur(12px); z-index: 9999; display: flex; flex-direction: column; justify-content: space-between; align-items: center; color: #fff; padding: 60px 20px; box-sizing: border-box; transition: opacity 0.5s ease, visibility 0.5s ease; }
 .load-middle { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; transform: skewX(-7deg); }
 .load-title-main { font-size: 84px; font-weight: 900; color: var(--fn-yellow); font-style: italic; text-transform: uppercase; letter-spacing: 4px; animation: pulsate 2s infinite; text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8); }
@@ -70,31 +43,51 @@ body { margin: 0; background: var(--fn-dark); color: var(--fn-text); font-family
 .load-bar-bg { width: 100%; max-width: 800px; height: 30px; background: #12131a; border: 4px solid #363a4f; border-radius: 4px; overflow: hidden; }
 .load-bar-fill { width: 0%; height: 100%; background: var(--fn-yellow); transition: width 0.1s linear; }
 
-#main { display: none; width: 100%; max-width: 950px; flex-direction: column; gap: 25px; z-index: 1; }
+#main { width: 100%; max-width: 950px; display: flex; flex-direction: column; gap: 25px; z-index: 1; }
 
-.tiktok-live-panel { background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 16, 23, 0.95)); border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px; transform: skewX(-5deg); box-shadow: 0 10px 30px rgba(254, 44, 85, 0.3); display: flex; justify-content: space-between; align-items: center; }
-.game-section { background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95)); border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px; transform: skewX(-3deg); position: relative; }
-.game-canvas-area { background: #0d0e14; border: 3px solid #2a2c3d; height: 350px; position: relative; overflow: hidden; }
-#player { width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px; position: absolute; box-shadow: 0 0 20px var(--fn-yellow); display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; transition: 0.1s; }
+/* TIKTOK LIVE PANEL */
+.tiktok-live-panel { background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 16, 23, 0.95)); border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px; transform: skewX(-5deg); box-shadow: 0 10px 30px rgba(254, 44, 85, 0.3); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease; }
+.tiktok-live-panel.is-offline { border-color: var(--tt-gray); box-shadow: none; opacity: 0.8; }
+.tt-btn { background: var(--tt-red); color: white; text-decoration: none; font-size: 18px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 12px 28px; border-radius: 4px; box-shadow: 0 4px 0 #b01b3a; }
+
+/* 🎮 GAME SECTION & TIKFINITY CHAT */
+.game-section { background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95)); border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px; transform: skewX(-3deg); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); }
+.game-layout { display: grid; grid-template-columns: 2.5fr 1fr; gap: 20px; }
+.game-canvas-area { background: #0d0e14; border: 3px solid #2a2c3d; border-radius: 4px; height: 350px; position: relative; overflow: hidden; }
+#player { width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px; position: absolute; box-shadow: 0 0 20px var(--fn-yellow); display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; }
 #coin { width: 32px; height: 32px; position: absolute; font-size: 28px; display: none; justify-content: center; align-items: center; z-index: 1; animation: blink 1.2s infinite; }
 
+.game-chat-box { background: rgba(10, 11, 16, 0.7); border: 2px solid #363a4f; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; height: 350px; }
+.iframe-container { flex: 1; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid #2a2c3d; margin-bottom: 8px; }
+.chat-config-row { display: flex; gap: 5px; }
+.chat-config-row input { flex: 1; background: #000; border: 1px solid #363a4f; color: white; padding: 5px; font-size: 12px; }
+.chat-config-row button { background: var(--fn-yellow); border: none; font-weight: 900; cursor: pointer; padding: 5px 10px; }
+
+/* SOCIALS */
+.socials-panel { background: rgba(27, 28, 38, 0.85); border: 3px solid #2a2c3d; border-radius: 6px; padding: 15px 20px; transform: skewX(-5deg); display: flex; justify-content: space-between; align-items: center; }
+.social-btn { color: white; text-decoration: none; font-weight: 900; padding: 10px 20px; border-radius: 4px; text-transform: uppercase; font-style: italic; }
+.btn-tiktok { background: #010101; border: 2px solid var(--tt-red); }
+.btn-youtube { background: var(--yt-color); }
+.btn-discord { background: var(--dc-color); }
+.btn-roblox { background: var(--rbx-color); }
+
+/* FN HUD & TEAM GRID */
 .fn-hud { background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95)); border: 3px solid #2a2c3d; border-radius: 6px; padding: 24px; transform: skewX(-5deg); position: relative; }
 .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-.stat-box { background: #1f2230; border: 2px solid #363a4f; padding: 14px; text-align: center; }
-.stat-value { font-size: 40px; font-weight: 900; font-style: italic; line-height: 1; }
+.stat-box { background: #1f2230; border: 2px solid #363a4f; padding: 14px; text-align: center; border-radius: 4px; }
+.stat-value { font-size: 32px; font-weight: 900; font-style: italic; }
+#teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.team-card { background: rgba(37, 40, 54, 0.4); border: 1px solid #363a4f; padding: 12px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+.team-card.is-pinned { border-color: var(--fn-yellow); background: rgba(244, 197, 0, 0.1); }
+.team-badge { font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; }
 
-#teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 20px; }
-.team-card { background: rgba(37, 40, 54, 0.4); border: 1px solid #363a4f; padding: 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
-.team-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; }
-
-/* Role Colors */
+/* ROLES */
 .owner { background: var(--fn-yellow); color: #000; }
 .mod { background: var(--fn-blue); color: #fff; }
 .scripter { background: var(--fn-purple); color: #fff; }
 .traitor { background: var(--fn-red); color: #fff; }
 
-.chat-section { background: rgba(27, 28, 38, 0.85); border: 2px solid #363a4f; padding: 20px; transform: skewX(-5deg); }
-#chat { height: 150px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.actions span { cursor: pointer; margin-left: 10px; }
 
 @keyframes pulsate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -107,175 +100,210 @@ body { margin: 0; background: var(--fn-dark); color: var(--fn-text); font-family
         <div class="load-title-main">MEJDRIX STREAM HUD V2</div>
         <div class="load-subtitle">Načítání herních modulů...</div>
         <div class="load-files-container">
-            <div id="file1" class="file-card"><span class="file-icon">⚙️</span><span class="file-name">Core</span></div>
-            <div id="file2" class="file-card"><span class="file-icon">🕹️</span><span class="file-name">Plays</span></div>
-            <div id="file3" class="file-card"><span class="file-icon">💬</span><span class="file-name">TikFinity</span></div>
+            <div id="file1" class="file-card">⚙️<span class="file-name">Core</span></div>
+            <div id="file2" class="file-card">🕹️<span class="file-name">Plays</span></div>
+            <div id="file3" class="file-card">💬<span class="file-name">TikFinity</span></div>
         </div>
     </div>
-    <div class="load-bottom" style="width:100%; max-width:800px; transform: skewX(-7deg);">
+    <div class="load-bottom">
         <div class="load-bar-bg"><div id="loadFill" class="load-bar-fill"></div></div>
-        <div style="display:flex; justify-content:space-between; margin-top:10px;">
-            <span id="loadStatus" style="font-style:italic;">Inicializace...</span>
-            <span id="loadPercent" style="font-weight:900; font-size:24px;">0%</span>
+        <div style="display:flex; justify-content:space-between; width:100%; margin-top:10px;">
+            <span id="loadStatus">Inicializace...</span>
+            <span id="loadPercent">0%</span>
         </div>
-    </div>
-</div>
-
-<div id="loginOverlay">
-    <div class="login-card">
-        <h2>🔒 ACCESS REQUIRED</h2>
-        <input type="text" id="userIn" placeholder="UŽIVATELSKÉ JMÉNO">
-        <input type="password" id="passIn" placeholder="HESLO">
-        <button onclick="tryLogin()">ODEMKNOUT HUD</button>
-        <p id="loginError" style="color: var(--fn-red); font-weight: bold; margin-top: 10px;"></p>
     </div>
 </div>
 
 <div id="main">
-    <div id="ttPanel" class="tiktok-live-panel">
-        <div style="display:flex; align-items:center; gap:15px;">
-            <div style="font-size:32px;">📱</div>
-            <div>
-                <div style="font-size:26px; font-weight:900; font-style:italic;">MEJDRIX TIKTOK LIVE</div>
-                <div id="ttStatus" style="color:var(--tt-red); font-weight:bold;">⚪ Kontrola statusu...</div>
+
+    <div id="ttPanel" class="tiktok-live-panel is-offline">
+        <div class="tt-left">
+            <div style="font-size:30px">📱</div>
+            <div class="tt-info">
+                <span class="tt-title">MEJDRIX TIKTOK LIVE</span>
+                <span id="ttStatus" class="tt-sub">⚪ Kontrola statusu...</span>
             </div>
         </div>
-        <a id="ttLink" href="#" class="tt-btn" style="background:var(--tt-red); color:white; padding:12px 24px; text-decoration:none; font-weight:900; border-radius:4px;">LIVE</a>
+        <a id="ttLink" href="https://www.tiktok.com/@mejdrix/live" target="_blank" class="tt-btn">OFFLINE</a>
     </div>
 
     <div class="game-section">
         <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-            <span style="font-size:24px; font-weight:900; color:var(--fn-yellow);">🕹️ TIKTOK PLAYS</span>
+            <div style="font-size:24px; font-weight:900; color:var(--fn-yellow);">🕹️ TIKTOK PLAYS</div>
             <select id="gameSelector" style="background:#000; color:white; border:2px solid #333; padding:5px;">
                 <option value="survival">MEJDRIX SURVIVAL</option>
                 <option value="coin_hunt">SBÍRÁNÍ COINŮ</option>
             </select>
         </div>
-        <div id="gameCanvas" class="game-canvas-area">
-            <div id="player">🤖</div>
-            <div id="coin">💰</div>
+
+        <div class="game-layout">
+            <div id="gameCanvas" class="game-canvas-area">
+                <div id="player">🤖</div>
+                <div id="coin">💰</div>
+            </div>
+            
+            <div class="game-chat-box">
+                <div style="font-size:12px; color:#888; text-align:center; margin-bottom:5px;">TIKFINITY CHAT</div>
+                <div class="iframe-container">
+                    <iframe id="tikfinityIframe" style="width:100%; height:100%; border:none;" src="about:blank"></iframe>
+                </div>
+                <div class="chat-config-row">
+                    <input id="tikfinityInput" placeholder="Kód z TikFinity...">
+                    <button id="saveChatBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="socials-panel">
+        <span style="font-weight:900; color:var(--fn-yellow);">SOCIÁLNÍ SÍTĚ</span>
+        <div style="display:flex; gap:10px;">
+            <a href="#" class="social-btn btn-tiktok">TikTok</a>
+            <a href="#" class="social-btn btn-youtube">YouTube</a>
+            <a href="#" class="social-btn btn-discord">Discord</a>
         </div>
     </div>
 
     <div class="fn-hud">
         <div class="stats-grid">
-            <div class="stat-box"><div class="stat-value" style="color:var(--fn-green)">60</div><div style="color:#8a8f9e">FPS</div></div>
-            <div class="stat-box"><div class="stat-value" style="color:var(--fn-yellow)">24ms</div><div style="color:#8a8f9e">PING</div></div>
-            <div class="stat-box"><div class="stat-value" style="color:var(--fn-blue)">482MB</div><div style="color:#8a8f9e">MEM</div></div>
+            <div class="stat-box"><div class="stat-value" style="color:var(--fn-green)">60</div><div>FPS</div></div>
+            <div class="stat-box"><div class="stat-value" style="color:var(--fn-yellow)">24ms</div><div>PING</div></div>
+            <div class="stat-box"><div class="stat-value" style="color:var(--fn-blue)">480MB</div><div>RAM</div></div>
         </div>
-        <input id="search" style="width:100%; padding:15px; background:#000; border:2px solid #333; color:white; font-weight:800;" placeholder="VYHLEDAT UŽIVATELE...">
+        <input id="search" style="width:100%; padding:15px; background:#000; border:2px solid #333; color:white; font-weight:800; margin-bottom:20px;" placeholder="HLEDAT UŽIVATELE...">
         <div id="teamGrid"></div>
     </div>
 
-    <div class="chat-section">
-        <h2 style="color:var(--fn-yellow); margin-top:0;">🤖 UPDATE TERMINAL</h2>
-        <div id="chat"></div>
-        <div style="display:flex; gap:10px; margin-top:10px;">
-            <input id="aiInput" style="flex:1; padding:12px; background:#000; border:1px solid #444; color:white;" placeholder="Zadej příkaz...">
-            <button onclick="sendTerminalMsg()" style="background:var(--fn-yellow); border:none; padding:0 25px; font-weight:900; cursor:pointer;">ODESLAT</button>
-        </div>
-    </div>
 </div>
 
 <script>
 const defaultUsers = [
     { name: "Mejdrix", role: "owner" },
     { name: "ViriBLOX", role: "mod" },
-    { name: "AdamDevRblx", role: "mod_gifter" },
+    { name: "AdamDevRblx", role: "scripter" },
     { name: "Fnaffan", role: "scripter" },
     { name: "Kifír(Studio)", role: "traitor" }
 ];
 
-const roleFormat = { owner: "Owner", mod: "Moderator", mod_gifter: "Mod & Gifter", scripter: "Scripter", traitor: "Traitor" };
+let users = JSON.parse(localStorage.getItem("mejdrix_users") || JSON.stringify(defaultUsers));
+let pinned = JSON.parse(localStorage.getItem("mejdrix_pinned") || "[]");
 
-// --- LOGIN LOGIC ---
-function tryLogin() {
-    const u = document.getElementById('userIn').value.toLowerCase();
-    const p = document.getElementById('passIn').value;
-    const err = document.getElementById('loginError');
+const roleNames = { owner: "Owner", mod: "Moderator", scripter: "Scripter", traitor: "Traitor" };
 
-    // Tady nastav svoje údaje:
-    if(u === "mejdrix" && p === "mejdrixstreamv2") {
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('main').style.display = 'flex';
-        render(); // Načte seznam uživatelů
-    } else {
-        err.innerText = "❌ ŠPATNÉ JMÉNO NEBO HESLO!";
+/* --- TIKFINITY LOGIC --- */
+const tikInput = document.getElementById("tikfinityInput");
+const saveBtn = document.getElementById("saveChatBtn");
+const chatFrame = document.getElementById("tikfinityIframe");
+
+function loadChat() {
+    let saved = localStorage.getItem("mejdrix_chat_url");
+    if(saved) {
+        chatFrame.src = saved;
+        tikInput.value = saved;
     }
 }
 
-// --- LOADING LOGIC ---
-window.addEventListener("DOMContentLoaded", () => {
-    let progress = 0;
-    const bar = document.getElementById("loadFill");
-    const perc = document.getElementById("loadPercent");
-    const screen = document.getElementById("loadingScreen");
-    
-    const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 3) + 1;
-        if(progress > 100) progress = 100;
-        
-        bar.style.width = progress + "%";
-        perc.innerText = progress + "%";
+saveBtn.onclick = () => {
+    let val = tikInput.value.trim();
+    if(!val) return;
+    let url = val.startsWith("http") ? val : `https://tikfinity.zerody.one/authed/chat/${val}`;
+    localStorage.setItem("mejdrix_chat_url", url);
+    chatFrame.src = url;
+};
 
-        if(progress >= 20) document.getElementById("file1").classList.add("active");
-        if(progress >= 50) document.getElementById("file2").classList.add("active");
-        if(progress >= 80) document.getElementById("file3").classList.add("active");
-
-        if(progress === 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                screen.style.opacity = "0";
-                setTimeout(() => {
-                    screen.style.display = "none";
-                    document.getElementById('loginOverlay').style.display = 'flex';
-                }, 500);
-            }, 500);
-        }
-    }, 40);
-});
-
-// --- RENDER USERS ---
+/* --- RENDER LOGIC --- */
 function render() {
     const grid = document.getElementById("teamGrid");
     const s = document.getElementById("search").value.toLowerCase();
     grid.innerHTML = "";
+
+    let filtered = users.filter(u => u.name.toLowerCase().includes(s));
     
-    defaultUsers.filter(u => u.name.toLowerCase().includes(s)).forEach(u => {
+    // Sort pinned to top
+    filtered.sort((a, b) => (pinned.includes(b.name) ? 1 : 0) - (pinned.includes(a.name) ? 1 : 0));
+
+    filtered.forEach(u => {
+        let isPinned = pinned.includes(u.name);
         const div = document.createElement("div");
-        div.className = "team-card";
+        div.className = `team-card ${isPinned ? 'is-pinned' : ''}`;
         div.innerHTML = `
-            <span style="font-weight:900; font-size:18px;">${u.name}</span>
-            <span class="team-badge ${u.role}">${roleFormat[u.role] || u.role}</span>
+            <span style="font-weight:900;">${u.name}</span>
+            <div class="actions">
+                <span class="team-badge ${u.role}">${roleNames[u.role] || u.role}</span>
+                <span onclick="togglePin('${u.name}')">${isPinned ? '📌' : '📍'}</span>
+            </div>
         `;
         grid.appendChild(div);
     });
 }
+
+function togglePin(name) {
+    if(pinned.includes(name)) pinned = pinned.filter(n => n !== name);
+    else pinned.push(name);
+    localStorage.setItem("mejdrix_pinned", JSON.stringify(pinned));
+    render();
+}
+
 document.getElementById("search").oninput = render;
 
-// --- GAME ENGINE ---
+/* --- GAME LOGIC --- */
 let px = 50, py = 50;
+let cx = 100, cy = 100;
+const playerEl = document.getElementById("player");
+const coinEl = document.getElementById("coin");
+
 window.addEventListener("keydown", (e) => {
     const k = e.key.toLowerCase();
-    const player = document.getElementById("player");
     if(k === "w" || k === "arrowup") py -= 20;
     if(k === "s" || k === "arrowdown") py += 20;
     if(k === "a" || k === "arrowleft") px -= 20;
     if(k === "d" || k === "arrowright") px += 20;
-    player.style.left = px + "px"; player.style.top = py + "px";
+    
+    // Bounds
+    if(px < 0) px = 0; if(px > 500) px = 500;
+    if(py < 0) py = 0; if(py > 300) py = 300;
+
+    playerEl.style.left = px + "px";
+    playerEl.style.top = py + "px";
+
+    // Collision
+    if(document.getElementById("gameSelector").value === "coin_hunt") {
+        let dist = Math.sqrt(Math.pow(px-cx, 2) + Math.pow(py-cy, 2));
+        if(dist < 40) spawnCoin();
+    }
 });
 
-// --- TERMINAL ---
-function sendTerminalMsg() {
-    const input = document.getElementById("aiInput");
-    const chat = document.getElementById("chat");
-    if(!input.value) return;
-    const msg = document.createElement("div");
-    msg.innerHTML = `<span style="color:var(--fn-yellow)">[SYSTEM]:</span> ${input.value}`;
-    chat.appendChild(msg);
-    chat.scrollTop = chat.scrollHeight;
-    input.value = "";
+function spawnCoin() {
+    cx = Math.random() * 450;
+    cy = Math.random() * 280;
+    coinEl.style.left = cx + "px";
+    coinEl.style.top = cy + "px";
+    coinEl.style.display = "flex";
 }
+
+document.getElementById("gameSelector").onchange = (e) => {
+    if(e.target.value === "coin_hunt") spawnCoin();
+    else coinEl.style.display = "none";
+};
+
+/* --- LOADING --- */
+window.addEventListener("DOMContentLoaded", () => {
+    loadChat();
+    render();
+    let prg = 0;
+    const interval = setInterval(() => {
+        prg += 2;
+        document.getElementById("loadFill").style.width = prg + "%";
+        document.getElementById("loadPercent").innerText = prg + "%";
+        if(prg >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                document.getElementById("loadingScreen").style.opacity = "0";
+                setTimeout(() => document.getElementById("loadingScreen").style.display = "none", 500);
+            }, 500);
+        }
+    }, 30);
+});
 </script>
 </body>
 </html>
