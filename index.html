@@ -20,663 +20,81 @@
     --border-color: rgba(255, 255, 255, 0.08);
     --tt-red: #fe2c55;
     --tt-gray: #444a59;
-    
     --yt-color: #ff0000;
     --dc-color: #5865f2;
     --rbx-color: #2b2d32;
 }
 
-body {
-    margin: 0;
-    background: var(--fn-dark);
-    color: var(--fn-text);
-    font-family: 'Burbank Big Condensed', 'Segoe UI', Impact, sans-serif;
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-    overflow-x: hidden;
-}
-
-/* CUSTOM SCROLLBAR */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb {
-    background: var(--fn-yellow);
-    border-radius: 4px;
-    border: 2px solid var(--fn-dark);
-}
-
-/* LOADING SCREEN OVERLAY */
-#loadingScreen {
+/* --- NOVÝ LOGIN SCREEN STYLE --- */
+#loginOverlay {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
-    background: radial-gradient(circle at center, rgba(37, 40, 54, 0.99) 0%, rgba(12, 13, 18, 1) 100%);
-    backdrop-filter: blur(12px);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    color: #fff;
-    padding: 60px 20px;
-    box-sizing: border-box;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.load-middle {
-    flex: 1;
-    display: flex;
+    background: var(--fn-dark);
+    z-index: 10001;
+    display: none; 
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    transform: skewX(-7deg);
 }
-
-.load-title-main {
-    font-size: 84px;
-    font-weight: 900;
-    color: var(--fn-yellow);
-    font-style: italic;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    animation: pulsate 2s infinite;
-    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
-}
-
-.load-subtitle {
-    font-size: 22px;
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin-top: 10px;
-    margin-bottom: 50px;
-}
-
-.load-files-container { display: flex; gap: 20px; margin-bottom: 60px; }
-.file-card {
-    background: linear-gradient(135deg, rgba(42, 44, 61, 0.9), rgba(27, 28, 38, 0.9));
-    border: 3px solid #363a4f;
-    border-radius: 4px;
-    padding: 15px 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s ease;
-}
-
-.file-card.active { opacity: 1; transform: translateY(0) skewX(-7deg); border-color: var(--fn-yellow); }
-.file-icon { font-size: 30px; }
-.file-name { font-size: 14px; color: #8a8f9e; text-transform: uppercase; font-weight: bold; }
-
-.load-bottom {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transform: skewX(-7deg);
-}
-
-.load-bar-bg {
-    width: 100%;
-    height: 30px;
-    background: #12131a;
-    border: 4px solid #363a4f;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.load-bar-fill {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #ffd700 0%, var(--fn-yellow) 50%, #ffd700 100%);
-    background-size: 200% 100%;
-    transition: width 0.1s linear;
-}
-
-.load-status-row {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 15px;
-}
-
-.load-current-file { font-size: 16px; color: #fff; font-style: italic; text-transform: uppercase; letter-spacing: 1px; }
-.load-percent { font-size: 32px; font-weight: 900; color: #fff; font-style: italic; }
-
-/* ANIMOVANÉ RIFT POZADÍ */
-body::before {
-    content: "";
-    position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: 
-        radial-gradient(circle at 30% 30%, rgba(140, 0, 255, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 70% 70%, rgba(0, 123, 255, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 50% 10%, rgba(255, 0, 127, 0.08) 0%, transparent 40%),
-        var(--fn-dark);
-    animation: riftMovement 25s linear infinite;
-    z-index: -1;
-    pointer-events: none;
-}
-
-@keyframes riftMovement {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.1); }
-    100% { transform: rotate(360deg) scale(1); }
-}
-
-#main {
-    width: 100%;
-    max-width: 950px;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    z-index: 1;
-}
-
-/* TIKTOK LIVE PANEL */
-.tiktok-live-panel {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 16, 23, 0.95));
-    border: 3px solid var(--tt-red);
-    border-radius: 6px;
-    padding: 20px;
-    transform: skewX(-5deg);
-    box-shadow: 0 10px 30px rgba(254, 44, 85, 0.3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-    transition: all 0.3s ease;
-}
-
-.tiktok-live-panel.is-offline {
-    border-color: var(--tt-gray);
-    box-shadow: none;
-    opacity: 0.8;
-}
-
-.tt-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.tt-icon {
-    font-size: 32px;
-    background: #000;
-    padding: 8px 12px;
-    border-radius: 6px;
-    box-shadow: -2px -2px 0px #25f4ee, 2px 2px 0px var(--tt-red);
-    transition: box-shadow 0.3s ease;
-}
-
-.tiktok-live-panel.is-offline .tt-icon {
-    box-shadow: -2px -2px 0px #555, 2px 2px 0px #333;
-}
-
-.tt-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.tt-title {
-    font-size: 26px;
-    font-weight: 900;
-    color: #fff;
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 1px;
-}
-
-.tt-sub {
-    font-size: 14px;
-    color: var(--tt-red);
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: color 0.3s;
-}
-
-.tiktok-live-panel.is-offline .tt-sub {
-    color: #8a8f9e;
-}
-
-.tt-btn {
-    background: var(--tt-red);
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 900;
-    text-transform: uppercase;
-    font-style: italic;
-    padding: 12px 28px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 0 #b01b3a, 0 0 15px rgba(254, 44, 85, 0.4);
-    transition: all 0.1s ease;
-}
-
-.tt-btn:hover { transform: translateY(-2px); background: #ff3b64; }
-.tt-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b01b3a; }
-.tiktok-live-panel.is-offline .tt-btn { background: var(--tt-gray); box-shadow: 0 4px 0 #2b2e38; color: #aaa; }
-
-/* 🎮 GAME SECTION */
-.game-section {
-    background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95));
+.login-card {
+    background: var(--fn-card);
+    padding: 40px;
     border: 3px solid var(--fn-yellow);
-    border-radius: 6px;
-    padding: 24px;
-    transform: skewX(-3deg);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-    position: relative;
-    overflow: hidden;
-}
-
-.game-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid #2a2c3d;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-}
-
-.game-title {
-    font-size: 28px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: var(--fn-yellow);
-    font-style: italic;
-    letter-spacing: 1.5px;
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-}
-
-.game-select-box {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.game-select-box select {
-    background: rgba(27, 28, 38, 0.9);
-    border: 2px solid #363a4f;
-    color: white;
-    font-size: 15px;
-    font-weight: 900;
-    text-transform: uppercase;
-    font-style: italic;
-    padding: 8px 16px;
-    border-radius: 4px;
-    outline: none;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-}
-
-.game-layout {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-    position: relative;
-}
-
-/* HERNÍ PLÁTNO */
-.game-canvas-area {
-    background: #0d0e14;
-    border: 3px solid #2a2c3d;
-    border-radius: 4px;
-    height: 350px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-}
-
-#player {
-    width: 44px;
-    height: 44px;
-    background: var(--fn-yellow);
-    border-radius: 6px;
-    position: absolute;
-    box-shadow: 0 0 20px var(--fn-yellow);
-    transition: all 0.1s ease-out;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 26px;
-    z-index: 2;
-    user-select: none;
-}
-
-#coin {
-    width: 32px;
-    height: 32px;
-    position: absolute;
-    font-size: 28px;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-    animation: blink 1.2s infinite ease-in-out;
-    user-select: none;
-}
-
-/* TIKFINITY CHAT BOX */
-.game-chat-box {
-    background: rgba(10, 11, 16, 0.7);
-    border: 2px solid #363a4f;
-    border-radius: 4px;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    height: 350px;
-    box-sizing: border-box;
-}
-
-.game-chat-title {
-    font-size: 14px;
-    color: #8a8f9e;
-    font-weight: 900;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    text-align: center;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #363a4f;
-    padding-bottom: 6px;
-    font-style: italic;
-}
-
-.iframe-container {
-    flex: 1;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 8px;
-    border: 1px solid #2a2c3d;
-}
-
-.tikfinity-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background: transparent;
-}
-
-.chat-config-row { display: flex; gap: 6px; }
-.chat-config-row input {
-    flex: 1;
-    background: rgba(27, 28, 38, 0.9);
-    border: 2px solid #363a4f;
-    border-radius: 4px;
-    color: white;
-    padding: 8px;
-    font-size: 13px;
-    outline: none;
-    font-style: italic;
-}
-
-.chat-config-row button {
-    background: var(--fn-yellow);
-    color: black;
-    border: none;
-    border-radius: 4px;
-    padding: 0 12px;
-    font-size: 13px;
-    font-weight: 900;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-style: italic;
-}
-
-/* SOCIÁLNÍ SÍTĚ */
-.socials-panel {
-    background: linear-gradient(135deg, rgba(27, 28, 38, 0.85), rgba(15, 16, 23, 0.85));
-    border: 3px solid #2a2c3d;
-    border-radius: 6px;
-    padding: 15px 20px;
     transform: skewX(-5deg);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-}
-
-.socials-title {
-    font-size: 20px;
-    font-weight: 900;
-    text-transform: uppercase;
-    font-style: italic;
-    color: var(--fn-yellow);
-    letter-spacing: 1px;
-}
-
-.socials-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
-.social-btn {
-    color: white;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 900;
-    text-transform: uppercase;
-    font-style: italic;
-    padding: 10px 22px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    transition: all 0.1s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.social-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
-.btn-tiktok { background: #010101; border: 2px solid var(--tt-red); box-shadow: 0 4px 0 #333; }
-.btn-youtube { background: var(--yt-color); box-shadow: 0 4px 0 #990000; }
-.btn-discord { background: var(--dc-color); box-shadow: 0 4px 0 #3b42a4; }
-.btn-roblox { background: var(--rbx-color); border: 2px solid #535761; box-shadow: 0 4px 0 #18191c; }
-
-/* FORTNITE STREAM HUD */
-.fn-hud {
-    background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95));
-    border: 3px solid #2a2c3d;
-    border-radius: 6px;
-    padding: 24px;
-    transform: skewX(-5deg);
-    box-shadow: 0 20px 45px rgba(0,0,0,0.7);
-    position: relative;
-    overflow: hidden;
-}
-
-.fn-hud::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 8px; height: 100%;
-    background: var(--fn-yellow);
-}
-
-.hud-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid #2a2c3d;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
-}
-
-.hud-title {
-    font-size: 32px;
-    font-weight: 900;
-    text-transform: uppercase;
-    color: var(--fn-yellow);
-    font-style: italic;
-    letter-spacing: 1.5px;
-}
-
-.live-badge {
-    background: var(--fn-red);
-    color: #fff;
-    padding: 4px 14px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 4px;
-    animation: blink 1.5s infinite;
-    font-style: italic;
-}
-
-/* STATS */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.stat-box {
-    background: #1f2230;
-    border: 2px solid #363a4f;
-    padding: 14px;
     text-align: center;
-    border-radius: 4px;
+    box-shadow: 0 0 40px rgba(244, 197, 0, 0.2);
 }
+.login-card h2 { color: var(--fn-yellow); font-style: italic; margin-bottom: 20px; text-transform: uppercase; }
+.login-card input {
+    display: block; width: 260px; padding: 12px; margin: 10px auto;
+    background: #000; border: 2px solid #363a4f; color: white;
+    font-family: inherit; font-weight: bold; outline: none;
+}
+.login-card button {
+    width: 100%; padding: 12px; background: var(--fn-yellow); color: black;
+    border: none; font-weight: 900; cursor: pointer; text-transform: uppercase;
+    margin-top: 10px; transition: transform 0.1s;
+}
+.login-card button:active { transform: scale(0.95); }
 
+/* --- TVOJE PŮVODNÍ STYLY --- */
+body { margin: 0; background: var(--fn-dark); color: var(--fn-text); font-family: 'Burbank Big Condensed', 'Segoe UI', Impact, sans-serif; display: flex; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; position: relative; overflow-x: hidden; }
+
+#loadingScreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, rgba(37, 40, 54, 0.99) 0%, rgba(12, 13, 18, 1) 100%); backdrop-filter: blur(12px); z-index: 9999; display: flex; flex-direction: column; justify-content: space-between; align-items: center; color: #fff; padding: 60px 20px; box-sizing: border-box; transition: opacity 0.5s ease, visibility 0.5s ease; }
+.load-middle { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; transform: skewX(-7deg); }
+.load-title-main { font-size: 84px; font-weight: 900; color: var(--fn-yellow); font-style: italic; text-transform: uppercase; letter-spacing: 4px; animation: pulsate 2s infinite; text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8); }
+.load-subtitle { font-size: 22px; color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; margin-top: 10px; margin-bottom: 50px; }
+.load-files-container { display: flex; gap: 20px; margin-bottom: 60px; }
+.file-card { background: linear-gradient(135deg, rgba(42, 44, 61, 0.9), rgba(27, 28, 38, 0.9)); border: 3px solid #363a4f; border-radius: 4px; padding: 15px 25px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
+.file-card.active { opacity: 1; transform: translateY(0) skewX(-7deg); border-color: var(--fn-yellow); }
+.load-bar-bg { width: 100%; max-width: 800px; height: 30px; background: #12131a; border: 4px solid #363a4f; border-radius: 4px; overflow: hidden; }
+.load-bar-fill { width: 0%; height: 100%; background: var(--fn-yellow); transition: width 0.1s linear; }
+
+#main { display: none; width: 100%; max-width: 950px; flex-direction: column; gap: 25px; z-index: 1; }
+
+.tiktok-live-panel { background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(15, 16, 23, 0.95)); border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px; transform: skewX(-5deg); box-shadow: 0 10px 30px rgba(254, 44, 85, 0.3); display: flex; justify-content: space-between; align-items: center; }
+.game-section { background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95)); border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px; transform: skewX(-3deg); position: relative; }
+.game-canvas-area { background: #0d0e14; border: 3px solid #2a2c3d; height: 350px; position: relative; overflow: hidden; }
+#player { width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px; position: absolute; box-shadow: 0 0 20px var(--fn-yellow); display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; transition: 0.1s; }
+#coin { width: 32px; height: 32px; position: absolute; font-size: 28px; display: none; justify-content: center; align-items: center; z-index: 1; animation: blink 1.2s infinite; }
+
+.fn-hud { background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95)); border: 3px solid #2a2c3d; border-radius: 6px; padding: 24px; transform: skewX(-5deg); position: relative; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+.stat-box { background: #1f2230; border: 2px solid #363a4f; padding: 14px; text-align: center; }
 .stat-value { font-size: 40px; font-weight: 900; font-style: italic; line-height: 1; }
-.stat-value.fps { color: var(--fn-green); }
-.stat-value.ms { color: var(--fn-yellow); }
-.stat-value.mem { color: var(--fn-blue); }
 
-.stat-label {
-    font-size: 13px;
-    text-transform: uppercase;
-    color: #8a8f9e;
-    letter-spacing: 1px;
-    margin-top: 5px;
-    font-weight: bold;
-}
+#teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 20px; }
+.team-card { background: rgba(37, 40, 54, 0.4); border: 1px solid #363a4f; padding: 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+.team-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; }
 
-/* SEARCH */
-.fn-input-container { margin-bottom: 20px; }
-.search-input {
-    width: 100%;
-    background: rgba(27, 28, 38, 0.8);
-    border: 2px solid #363a4f;
-    border-radius: 4px;
-    color: white;
-    padding: 14px;
-    font-size: 16px;
-    outline: none;
-    box-sizing: border-box;
-    font-style: italic;
-    font-weight: 800;
-}
-
-#teamGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-    margin-bottom: 25px;
-}
-
-.team-card {
-    background: rgba(37, 40, 54, 0.4);
-    border: 1px solid #363a4f;
-    padding: 14px;
-    border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.2s;
-}
-
-.team-card:hover { border-color: var(--fn-yellow); background: rgba(54, 58, 79, 0.8); transform: translateY(-2px); }
-.team-card.is-pinned { border-color: var(--fn-yellow); background: rgba(244, 197, 0, 0.05); }
-
-.team-left-group { display: flex; flex-direction: column; gap: 2px; }
-.team-name { font-size: 18px; font-weight: 800; text-transform: uppercase; font-style: italic; cursor: pointer; }
-.copy-alert { font-size: 11px; color: var(--fn-green); font-weight: bold; font-style: italic; opacity: 0; }
-
-.team-right { display: flex; align-items: center; gap: 12px; }
-.team-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; font-style: italic; white-space: nowrap; }
-
-/* ROLES COLOR */
+/* Role Colors */
 .owner { background: var(--fn-yellow); color: #000; }
 .mod { background: var(--fn-blue); color: #fff; }
-.mod_gifter { background: linear-gradient(135deg, var(--fn-blue), var(--fn-pink)); color: #fff; }
-.mod_helper { background: linear-gradient(135deg, var(--fn-blue), var(--fn-green)); color: #000; }
-.helper { background: var(--fn-green); color: #000; }
-.b_helper { background: #12aa4a; color: #fff; }
-.gifter { background: var(--fn-pink); color: #fff; }
 .scripter { background: var(--fn-purple); color: #fff; }
 .traitor { background: var(--fn-red); color: #fff; }
-.funniest { background: var(--fn-orange); color: #000; }
 
-.actions { display: flex; gap: 10px; width: 48px; justify-content: center; align-items: center; }
-.actions span { cursor: pointer; font-size: 18px; user-select: none; transition: transform 0.1s ease; text-align: center; }
-.actions span:hover { transform: scale(1.25); }
-
-/* PINNED & FAVS */
-.meta-section {
-    background: rgba(27, 28, 38, 0.65);
-    border: 2px solid #363a4f;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 25px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    transform: skewX(-5deg);
-}
-
-.meta-box h3 { margin: 0 0 5px 0; font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; }
-.meta-box p { margin: 0; font-size: 15px; color: #fff; font-weight: bold; }
-
-/* TERMINÁL */
-.chat-section {
-    background: rgba(27, 28, 38, 0.85);
-    border: 2px solid #363a4f;
-    border-radius: 6px;
-    padding: 20px;
-    transform: skewX(-5deg);
-}
-
-.chat-section h2 { font-size: 16px; margin-top: 0; margin-bottom: 12px; color: var(--fn-yellow); text-transform: uppercase; font-style: italic; }
-#chat { height: 150px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); border-radius: 4px; padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
-#chat::-webkit-scrollbar { width: 5px; }
-#chat::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 10px; }
-
-.msg { max-width: 85%; padding: 8px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
-.msg.user { align-self: flex-end; background: var(--fn-yellow); color: #000; }
-.msg.bot { align-self: flex-start; background: rgba(255, 255, 255, 0.08); color: #fff; }
-
-.chat-input-row { display: flex; gap: 10px; }
-.chat-input-row input { flex: 1; background: rgba(27, 28, 38, 0.9); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 12px; font-size: 15px; outline: none; font-style: italic; }
-.chat-input-row button { background: var(--fn-yellow); color: black; border: none; border-radius: 4px; padding: 0 24px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-style: italic; }
-
-/* EXPORT */
-.download-box { background: rgba(27, 28, 38, 0.85); border: 3px dashed #363a4f; border-radius: 6px; padding: 25px; text-align: center; transform: skewX(-5deg); }
-.dl-btn { background: linear-gradient(135deg, var(--fn-yellow), #d4aa00); color: black; border: none; border-radius: 4px; padding: 16px 45px; font-size: 22px; font-weight: 900; text-transform: uppercase; font-style: italic; cursor: pointer; box-shadow: 0 6px 0 #8c7000; transition: all 0.1s ease; }
-.dl-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
-
-.coming-soon-panel { background: linear-gradient(135deg, rgba(15, 16, 23, 0.85), rgba(27, 28, 38, 0.85)); border: 2px solid #2a2c3d; border-radius: 6px; padding: 15px; text-align: center; transform: skewX(-5deg); margin-top: 10px; }
-.coming-soon-text { font-size: 24px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #8a8f9e; letter-spacing: 2px; margin: 0; }
-.coming-soon-text span { color: var(--fn-yellow); animation: blink 2s infinite; }
+.chat-section { background: rgba(27, 28, 38, 0.85); border: 2px solid #363a4f; padding: 20px; transform: skewX(-5deg); }
+#chat { height: 150px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 
 @keyframes pulsate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -689,391 +107,175 @@ body::before {
         <div class="load-title-main">MEJDRIX STREAM HUD V2</div>
         <div class="load-subtitle">Načítání herních modulů...</div>
         <div class="load-files-container">
-            <div id="file1" class="file-card"><span class="file-icon">⚙️</span><span class="file-name">Core Engine</span></div>
-            <div id="file2" class="file-card"><span class="file-icon">🕹️</span><span class="file-name">TikTok Plays</span></div>
-            <div id="file3" class="file-card"><span class="file-icon">💬</span><span class="file-name">TikFinity API</span></div>
+            <div id="file1" class="file-card"><span class="file-icon">⚙️</span><span class="file-name">Core</span></div>
+            <div id="file2" class="file-card"><span class="file-icon">🕹️</span><span class="file-name">Plays</span></div>
+            <div id="file3" class="file-card"><span class="file-icon">💬</span><span class="file-name">TikFinity</span></div>
         </div>
     </div>
-    <div class="load-bottom">
+    <div class="load-bottom" style="width:100%; max-width:800px; transform: skewX(-7deg);">
         <div class="load-bar-bg"><div id="loadFill" class="load-bar-fill"></div></div>
-        <div class="load-status-row">
-            <div id="loadStatus" class="load-current-file">Připojování k serverům...</div>
-            <div id="loadPercent" class="load-percent">0%</div>
+        <div style="display:flex; justify-content:space-between; margin-top:10px;">
+            <span id="loadStatus" style="font-style:italic;">Inicializace...</span>
+            <span id="loadPercent" style="font-weight:900; font-size:24px;">0%</span>
         </div>
     </div>
 </div>
 
-<div id="main">
+<div id="loginOverlay">
+    <div class="login-card">
+        <h2>🔒 ACCESS REQUIRED</h2>
+        <input type="text" id="userIn" placeholder="UŽIVATELSKÉ JMÉNO">
+        <input type="password" id="passIn" placeholder="HESLO">
+        <button onclick="tryLogin()">ODEMKNOUT HUD</button>
+        <p id="loginError" style="color: var(--fn-red); font-weight: bold; margin-top: 10px;"></p>
+    </div>
+</div>
 
-    <div id="ttPanel" class="tiktok-live-panel is-offline">
-        <div class="tt-left">
-            <div class="tt-icon">📱</div>
-            <div class="tt-info">
-                <span class="tt-title">MEJDRIX TIKTOK LIVE</span>
-                <span id="ttStatus" class="tt-sub">⚪ Kontrola statusu streamu...</span>
+<div id="main">
+    <div id="ttPanel" class="tiktok-live-panel">
+        <div style="display:flex; align-items:center; gap:15px;">
+            <div style="font-size:32px;">📱</div>
+            <div>
+                <div style="font-size:26px; font-weight:900; font-style:italic;">MEJDRIX TIKTOK LIVE</div>
+                <div id="ttStatus" style="color:var(--tt-red); font-weight:bold;">⚪ Kontrola statusu...</div>
             </div>
         </div>
-        <a id="ttLink" href="https://www.tiktok.com/@mejdrix/live" target="_blank" class="tt-btn">ZATÍM OFFLINE</a>
+        <a id="ttLink" href="#" class="tt-btn" style="background:var(--tt-red); color:white; padding:12px 24px; text-decoration:none; font-weight:900; border-radius:4px;">LIVE</a>
     </div>
 
     <div class="game-section">
-        <div class="game-header">
-            <div class="game-title">🕹️ MEJDRIX TIKTOK PLAYS</div>
-            <div class="game-select-box">
-                <select id="gameSelector">
-                    <option value="survival">MEJDRIX SURVIVAL</option>
-                    <option value="coin_hunt">SBÍRÁNÍ COINŮ</option>
-                </select>
-            </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <span style="font-size:24px; font-weight:900; color:var(--fn-yellow);">🕹️ TIKTOK PLAYS</span>
+            <select id="gameSelector" style="background:#000; color:white; border:2px solid #333; padding:5px;">
+                <option value="survival">MEJDRIX SURVIVAL</option>
+                <option value="coin_hunt">SBÍRÁNÍ COINŮ</option>
+            </select>
         </div>
-
-        <div class="game-layout">
-            <div id="gameCanvas" class="game-canvas-area">
-                <div id="player">🤖</div>
-                <div id="coin">💰</div>
-            </div>
-            
-            <div class="game-chat-box">
-                <div class="game-chat-title">TikTok Chat</div>
-                <div class="iframe-container">
-                    <iframe id="tikfinityIframe" class="tikfinity-iframe" src="about:blank"></iframe>
-                </div>
-                <div class="chat-config-row">
-                    <input id="tikfinityCodeInput" placeholder="Vlož kód nebo celé URL...">
-                    <button id="saveCodeBtn">Uložit</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="socials-panel">
-        <span class="socials-title">SOCIÁLNÍ SÍTĚ</span>
-        <div class="socials-buttons">
-            <a href="https://www.tiktok.com/@mejdrix" target="_blank" class="social-btn btn-tiktok">📱 TikTok</a>
-            <a href="https://www.youtube.com/@Mejdrix" target="_blank" class="social-btn btn-youtube">🎥 YouTube</a>
-            <a href="https://discord.com/channels/1491804876978655315/1491804878346129530" target="_blank" class="social-btn btn-discord">💬 Discord</a>
-            <a href="https://www.roblox.com/users/10023963543/profile" target="_blank" class="social-btn btn-roblox">🎮 Roblox</a>
-        </div>
-    </div>
-
-    <div class="socials-panel">
-        <span class="socials-title">DEV BY ADAM</span>
-        <div class="socials-buttons">
-            <a href="https://www.tiktok.com/@adamdevrblx" target="_blank" class="social-btn btn-tiktok">📱 TikTok</a>
-            <a href="https://www.youtube.com/@adammatecha8334" target="_blank" class="social-btn btn-youtube">🎥 YouTube</a>
-            <a href="https://www.roblox.com/users/4540263646/profile" target="_blank" class="social-btn btn-roblox">🎮 Roblox</a>
+        <div id="gameCanvas" class="game-canvas-area">
+            <div id="player">🤖</div>
+            <div id="coin">💰</div>
         </div>
     </div>
 
     <div class="fn-hud">
-        <div class="hud-header">
-            <div class="hud-title">MEJDRIX STREAM HUD V2</div>
-            <div class="live-badge">🔴 LIVE MONITOR</div>
-        </div>
         <div class="stats-grid">
-            <div class="stat-box"><div id="fpsVal" class="stat-value fps">60</div><div class="stat-label">FPS</div></div>
-            <div class="stat-box"><div id="msVal" class="stat-value ms">24ms</div><div class="stat-label">MS PING</div></div>
-            <div class="stat-box"><div id="memVal" class="stat-value mem">482 MB</div><div class="stat-label">MEMORY</div></div>
+            <div class="stat-box"><div class="stat-value" style="color:var(--fn-green)">60</div><div style="color:#8a8f9e">FPS</div></div>
+            <div class="stat-box"><div class="stat-value" style="color:var(--fn-yellow)">24ms</div><div style="color:#8a8f9e">PING</div></div>
+            <div class="stat-box"><div class="stat-value" style="color:var(--fn-blue)">482MB</div><div style="color:#8a8f9e">MEM</div></div>
         </div>
-        <div class="fn-input-container">
-            <input id="search" class="search-input" placeholder="VYHLEDAT UŽIVATELE ZE STREAMU...">
-        </div>
+        <input id="search" style="width:100%; padding:15px; background:#000; border:2px solid #333; color:white; font-weight:800;" placeholder="VYHLEDAT UŽIVATELE...">
         <div id="teamGrid"></div>
     </div>
 
-    <div class="meta-section">
-        <div class="meta-box"><h3>📌 Pinned Users</h3><p id="pinned">žádné</p></div>
-        <div class="meta-box"><h3>⭐ Favorite Users</h3><p id="favs">žádné</p></div>
-    </div>
-
     <div class="chat-section">
-        <h2>🤖 UPDATE SCRIPT TERMINAL</h2>
+        <h2 style="color:var(--fn-yellow); margin-top:0;">🤖 UPDATE TERMINAL</h2>
         <div id="chat"></div>
-        <div class="chat-input-row">
-            <input id="aiInput" placeholder="Zadej příkazy /live, /add, /remove...">
-            <button id="send">Odeslat</button>
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <input id="aiInput" style="flex:1; padding:12px; background:#000; border:1px solid #444; color:white;" placeholder="Zadej příkaz...">
+            <button onclick="sendTerminalMsg()" style="background:var(--fn-yellow); border:none; padding:0 25px; font-weight:900; cursor:pointer;">ODESLAT</button>
         </div>
     </div>
-
-    <div class="download-box">
-        <button id="downloadBtn" class="dl-btn">⬇️ STÁHNOUT SCRIPT (HTML)</button>
-    </div>
-
-    <div class="coming-soon-panel">
-        <div class="coming-soon-text">🚀 MORE <span>COMING SOON</span>...</div>
-    </div>
-
 </div>
 
 <script>
 const defaultUsers = [
     { name: "Mejdrix", role: "owner" },
     { name: "ViriBLOX", role: "mod" },
-    { name: "Xentro", role: "mod" },
     { name: "AdamDevRblx", role: "mod_gifter" },
-    { name: "T4D34S", role: "mod_helper" },
-    { name: "Jammes", role: "mod_gifter" },
     { name: "Fnaffan", role: "scripter" },
-    { name: "Pettrading", role: "gifter" },
-    { name: "Kebab", role: "b_helper" },
-    { name: "Kifír(Studio)", role: "traitor" },
-    { name: "Daník", role: "funniest" }
+    { name: "Kifír(Studio)", role: "traitor" }
 ];
 
-let users = JSON.parse(localStorage.getItem("fn_users") || JSON.stringify(defaultUsers));
-let favs = JSON.parse(localStorage.getItem("fn_favs") || "[]");
-let pinned = JSON.parse(localStorage.getItem("fn_pinned") || "[]");
-let isLive = false;
+const roleFormat = { owner: "Owner", mod: "Moderator", mod_gifter: "Mod & Gifter", scripter: "Scripter", traitor: "Traitor" };
 
-const roleFormat = {
-    owner: "Owner", mod: "Moderator", mod_gifter: "Mod & Gifter", mod_helper: "Mod & Helper",
-    helper: "Helper", b_helper: "Brutal Helper", gifter: "Gifter", scripter: "Scripter",
-    traitor: "Traitor", funniest: "Funniest"
-};
+// --- LOGIN LOGIC ---
+function tryLogin() {
+    const u = document.getElementById('userIn').value.toLowerCase();
+    const p = document.getElementById('passIn').value;
+    const err = document.getElementById('loginError');
 
-const teamGrid = document.getElementById("teamGrid");
-const search = document.getElementById("search");
-const ttPanel = document.getElementById("ttPanel");
-const ttStatus = document.getElementById("ttStatus");
-const ttLink = document.getElementById("ttLink");
-
-/* ===== 💬 SPRÁVA TIKFINITY ===== */
-const tikfinityInput = document.getElementById("tikfinityCodeInput");
-const saveCodeBtn = document.getElementById("saveCodeBtn");
-const tikfinityIframe = document.getElementById("tikfinityIframe");
-
-function loadTikFinityChat() {
-    let saved = localStorage.getItem("tikfinity_overlay_url");
-    if (saved) {
-        tikfinityIframe.src = saved;
-        tikfinityInput.value = saved;
+    // Tady nastav svoje údaje:
+    if(u === "mejdrix" && p === "mejdrixstreamv2") {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('main').style.display = 'flex';
+        render(); // Načte seznam uživatelů
     } else {
-        tikfinityIframe.src = "about:blank";
+        err.innerText = "❌ ŠPATNÉ JMÉNO NEBO HESLO!";
     }
 }
 
-saveCodeBtn.onclick = () => {
-    let val = tikfinityInput.value.trim();
-    if (!val) return;
-    let finalUrl = val.startsWith("http") ? val : `https://tikfinity.zerody.one/authed/chat/${val}`;
-    localStorage.setItem("tikfinity_overlay_url", finalUrl);
-    tikfinityIframe.src = finalUrl;
-    alert("TikFinity kód / URL byl uložen!");
-};
-
-/* ===== 🕹️ HERNÍ ENGINE (Pohyb postavičky) ===== */
-const player = document.getElementById("player");
-const coin = document.getElementById("coin");
-const gameCanvas = document.getElementById("gameCanvas");
-const gameSelector = document.getElementById("gameSelector");
-
-let playerX = 250; 
-let playerY = 150;
-let coinX = 50; 
-let coinY = 50;
-const speed = 20; // Rychlost každého kroku
-
-function updatePlayerPos() {
-    // Mantinely hrací plochy
-    if (playerX < 10) playerX = 10;
-    if (playerX > 530) playerX = 530;
-    if (playerY < 10) playerY = 10;
-    if (playerY > 290) playerY = 290;
-
-    player.style.left = playerX + "px";
-    player.style.top = playerY + "px";
-
-    // Kontrola kolize
-    if (gameSelector.value === "coin_hunt") {
-        let dist = Math.sqrt(Math.pow(playerX - coinX, 2) + Math.pow(playerY - coinY, 2));
-        if (dist < 32) { spawnCoin(); }
-    }
-}
-
-function spawnCoin() {
-    coinX = Math.floor(Math.random() * 500) + 15;
-    coinY = Math.floor(Math.random() * 260) + 15;
-    coin.style.left = coinX + "px";
-    coin.style.top = coinY + "px";
-    coin.style.display = "flex";
-}
-
-// OVLÁDÁNÍ KLÁVESNICÍ (Šipky + WASD)
-window.addEventListener("keydown", (e) => {
-    let key = e.key.toLowerCase();
-    
-    // Blokování výchozího chování prohlížeče
-    if (["arrowup", "arrowdown", "arrowleft", "arrowright", " "].includes(key)) {
-        e.preventDefault();
-    }
-
-    if (key === "w" || key === "arrowup") { playerY -= speed; }
-    if (key === "s" || key === "arrowdown") { playerY += speed; }
-    if (key === "a" || key === "arrowleft") { playerX -= speed; }
-    if (key === "d" || key === "arrowright") { playerX += speed; }
-
-    updatePlayerPos();
-});
-
-gameSelector.onchange = () => {
-    if (gameSelector.value === "coin_hunt") { spawnCoin(); } 
-    else { coin.style.display = "none"; }
-};
-
-updatePlayerPos();
-
-/* ===== KONTROLA STATUSU TIKTOK LIVE ===== */
-function checkTikTokLive() {
-    const testUrl = "https://www.tiktok.com/@mejdrix/live";
-    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(testUrl) + "&cacheBuster=" + Date.now();
-    fetch(proxyUrl).then(response => response.json()).then(data => {
-        let html = data.contents;
-        if (html && (html.includes("room_id") || html.includes('"liveRoom"') || html.includes("is_live\":true"))) {
-            setLiveState(true);
-        } else { setLiveState(false); }
-    }).catch(() => { setLiveState(isLive); });
-}
-
-function setLiveState(liveStatus) {
-    isLive = liveStatus;
-    if (isLive) {
-        ttPanel.classList.remove("is-offline");
-        ttStatus.innerText = "🔴 Sleduj stream v reálném čase";
-        ttStatus.style.color = "var(--tt-red)";
-        ttLink.innerText = "SLEDOVAT LIVE";
-    } else {
-        ttPanel.classList.add("is-offline");
-        ttStatus.innerText = "⚪ Momentálně offline";
-        ttStatus.style.color = "#8a8f9e";
-        ttLink.innerText = "ZATÍM OFFLINE";
-    }
-}
-checkTikTokLive();
-setInterval(checkTikTokLive, 30000);
-
-/* ===== LOADING SCREEN ANIMACE ===== */
+// --- LOADING LOGIC ---
 window.addEventListener("DOMContentLoaded", () => {
-    loadTikFinityChat();
     let progress = 0;
     const bar = document.getElementById("loadFill");
-    const percent = document.getElementById("loadPercent");
-    const status = document.getElementById("loadStatus");
+    const perc = document.getElementById("loadPercent");
     const screen = document.getElementById("loadingScreen");
-    const fileCards = [document.getElementById("file1"), document.getElementById("file2"), document.getElementById("file3")];
     
     const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 4) + 1;
-        if (progress > 100) progress = 100;
+        progress += Math.floor(Math.random() * 3) + 1;
+        if(progress > 100) progress = 100;
+        
         bar.style.width = progress + "%";
-        percent.innerText = progress + "%";
-        
-        if (progress >= 15) fileCards[0].classList.add("active");
-        if (progress >= 45) fileCards[1].classList.add("active");
-        if (progress >= 75) fileCards[2].classList.add("active");
-        
-        if (progress === 100) {
+        perc.innerText = progress + "%";
+
+        if(progress >= 20) document.getElementById("file1").classList.add("active");
+        if(progress >= 50) document.getElementById("file2").classList.add("active");
+        if(progress >= 80) document.getElementById("file3").classList.add("active");
+
+        if(progress === 100) {
             clearInterval(interval);
-            setTimeout(() => { screen.style.opacity = "0"; screen.style.visibility = "hidden"; }, 400);
+            setTimeout(() => {
+                screen.style.opacity = "0";
+                setTimeout(() => {
+                    screen.style.display = "none";
+                    document.getElementById('loginOverlay').style.display = 'flex';
+                }, 500);
+            }, 500);
         }
-    }, 50);
+    }, 40);
 });
 
-/* ===== RENDER ENGINE ===== */
-function copyName(name, elementId) {
-    navigator.clipboard.writeText(name).then(() => {
-        let alertSpan = document.getElementById(`copy-${elementId}`);
-        if (alertSpan) { alertSpan.style.opacity = "1"; setTimeout(() => { alertSpan.style.opacity = "0"; }, 1000); }
-    });
-}
-
+// --- RENDER USERS ---
 function render() {
-    teamGrid.innerHTML = "";
-    let s = search.value.toLowerCase().trim();
-    let filtered = users.filter(u => u.name.toLowerCase().includes(s));
-    filtered.sort((a, b) => (pinned.includes(b.name) ? 1 : 0) - (pinned.includes(a.name) ? 1 : 0));
-
-    filtered.forEach((u, idx) => {
-        let isPinned = pinned.includes(u.name);
-        let isFav = favs.includes(u.name);
-        let div = document.createElement("div");
-        div.className = `team-card ${isPinned ? 'is-pinned' : ''}`;
+    const grid = document.getElementById("teamGrid");
+    const s = document.getElementById("search").value.toLowerCase();
+    grid.innerHTML = "";
+    
+    defaultUsers.filter(u => u.name.toLowerCase().includes(s)).forEach(u => {
+        const div = document.createElement("div");
+        div.className = "team-card";
         div.innerHTML = `
-            <div class="team-left-group">
-                <span class="team-name" onclick="copyName('${u.name}', '${idx}')">${u.name}</span>
-                <span id="copy-${idx}" class="copy-alert">Zkopírováno!</span>
-            </div>
-            <div class="team-right">
-                <span class="team-badge ${u.role}">${roleFormat[u.role] || u.role}</span>
-                <div class="actions">
-                    <span class="pin-btn">${isPinned ? '📌' : '📍'}</span>
-                    <span class="fav-btn">${isFav ? '⭐' : '☆'}</span>
-                </div>
-            </div>
+            <span style="font-weight:900; font-size:18px;">${u.name}</span>
+            <span class="team-badge ${u.role}">${roleFormat[u.role] || u.role}</span>
         `;
-        div.querySelector(".pin-btn").onclick = (e) => { e.stopPropagation(); pinned = pinned.includes(u.name) ? pinned.filter(x => x !== u.name) : [...pinned, u.name]; localStorage.setItem("fn_pinned", JSON.stringify(pinned)); render(); };
-        div.querySelector(".fav-btn").onclick = (e) => { e.stopPropagation(); favs = favs.includes(u.name) ? favs.filter(x => x !== u.name) : [...favs, u.name]; localStorage.setItem("fn_favs", JSON.stringify(favs)); render(); };
-        teamGrid.appendChild(div);
+        grid.appendChild(div);
     });
-    document.getElementById("pinned").innerText = pinned.join(", ") || "žádné";
-    document.getElementById("favs").innerText = favs.join(", ") || "žádné";
 }
-search.oninput = render;
-render();
+document.getElementById("search").oninput = render;
 
-/* ===== METRIKY ===== */
-setInterval(() => {
-    document.getElementById("fpsVal").innerText = 60 + Math.floor(Math.random() * 6) - 3;
-    document.getElementById("msVal").innerText = 20 + Math.floor(Math.random() * 8) - 4 + "ms";
-    document.getElementById("memVal").innerText = 450 + Math.floor(Math.random() * 15) - 7 + " MB";
-}, 1000);
+// --- GAME ENGINE ---
+let px = 50, py = 50;
+window.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase();
+    const player = document.getElementById("player");
+    if(k === "w" || k === "arrowup") py -= 20;
+    if(k === "s" || k === "arrowdown") py += 20;
+    if(k === "a" || k === "arrowleft") px -= 20;
+    if(k === "d" || k === "arrowright") px += 20;
+    player.style.left = px + "px"; player.style.top = py + "px";
+});
 
-/* ===== TERMINÁL PŘÍKAZY ===== */
-const chat = document.getElementById("chat");
-const aiInput = document.getElementById("aiInput");
-const send = document.getElementById("send");
-
-function addMessage(text, type) {
-    let msg = document.createElement("div"); msg.className = `msg ${type}`;
-    msg.innerText = text; chat.appendChild(msg); chat.scrollTop = chat.scrollHeight;
+// --- TERMINAL ---
+function sendTerminalMsg() {
+    const input = document.getElementById("aiInput");
+    const chat = document.getElementById("chat");
+    if(!input.value) return;
+    const msg = document.createElement("div");
+    msg.innerHTML = `<span style="color:var(--fn-yellow)">[SYSTEM]:</span> ${input.value}`;
+    chat.appendChild(msg);
+    chat.scrollTop = chat.scrollHeight;
+    input.value = "";
 }
-
-send.onclick = () => {
-    let val = aiInput.value.trim(); if (!val) return;
-    addMessage(val, "user"); aiInput.value = "";
-    if (val.startsWith("/live")) {
-        let param = val.split(" ")[1];
-        if (param === "true" || param === "on") { setLiveState(true); addMessage("🤖 ONLINE", "bot"); } 
-        else { setLiveState(false); addMessage("🤖 OFFLINE", "bot"); }
-    } else if (val.startsWith("/add")) {
-        let parts = val.split(" "); let name = parts[1]; let role = parts[2];
-        if (name && role && roleFormat[role]) {
-            users.push({ name: name, role: role }); localStorage.setItem("fn_users", JSON.stringify(users)); render();
-            addMessage(`🤖 Uživatel ${name} byl úspěšně přidán.`, "bot");
-        }
-    } else if (val.startsWith("/remove")) {
-        let parts = val.split(" "); let name = parts[1];
-        if (name) {
-            users = users.filter(u => u.name.toLowerCase() !== name.toLowerCase());
-            localStorage.setItem("fn_users", JSON.stringify(users)); render();
-            addMessage(`🤖 Uživatel ${name} byl odebrán.`, "bot");
-        }
-    } else {
-        addMessage("🤖 Neznámý příkaz. Zkus /live, /add nebo /remove.", "bot");
-    }
-};
-
-/* ===== EXPORT DO HTML ===== */
-document.getElementById("downloadBtn").onclick = () => {
-    const pageSource = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-    const blob = new Blob([pageSource], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "mejdrix_hud_v2.html";
-    a.click();
-    URL.revokeObjectURL(url);
-};
 </script>
 </body>
-</html>
 </html>
