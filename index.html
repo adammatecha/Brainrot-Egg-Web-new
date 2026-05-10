@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEJDRIX HUD V2 - OFFICIAL</title>
+<title>MEJDRIX HUD V2 - FIXED LOGIN</title>
 
 <style>
 :root {
@@ -19,98 +19,104 @@ body {
     padding: 20px; box-sizing: border-box; overflow-x: hidden;
 }
 
-/* ANIMOVANÉ POZADÍ */
+/* RIFT POZADÍ */
 body::before {
     content: ""; position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
     background: radial-gradient(circle at 30% 30%, rgba(140, 0, 255, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 70% 70%, rgba(0, 123, 255, 0.1) 0%, transparent 50%), var(--fn-dark);
-    animation: rift 20s linear infinite; z-index: -1;
+    animation: rift 25s linear infinite; z-index: -1;
 }
 @keyframes rift { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* --- LOGIN SCREEN --- */
+/* LOGIN SCREEN */
 #loginOverlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(10, 11, 16, 0.98); backdrop-filter: blur(10px);
+    background: rgba(10, 11, 16, 0.98); backdrop-filter: blur(12px);
     z-index: 10000; display: flex; justify-content: center; align-items: center;
 }
 .login-card {
     background: var(--fn-card); padding: 50px; border: 4px solid var(--fn-yellow);
-    transform: skewX(-5deg); text-align: center; box-shadow: 0 0 50px rgba(244, 197, 0, 0.3);
+    transform: skewX(-5deg); text-align: center; box-shadow: 0 0 50px rgba(244, 197, 0, 0.4);
 }
-.login-card h2 { color: var(--fn-yellow); font-style: italic; font-size: 40px; margin-bottom: 30px; text-transform: uppercase; }
+.login-card h2 { color: var(--fn-yellow); font-size: 42px; margin-bottom: 30px; text-transform: uppercase; font-style: italic; }
 .login-card input {
     display: block; width: 300px; padding: 15px; margin: 15px auto;
     background: #000; border: 2px solid #363a4f; color: white; font-size: 18px; outline: none;
 }
 .login-card button {
     width: 100%; padding: 15px; background: var(--fn-yellow); color: black;
-    border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 20px;
+    border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 22px;
 }
 
-/* --- LOADING SCREEN --- */
+/* LOADING */
 #loadingScreen {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: #0c0d12; z-index: 9999; display: none;
     flex-direction: column; justify-content: center; align-items: center;
 }
 .load-bar-bg { width: 400px; height: 20px; background: #111; border: 3px solid #363a4f; margin-top: 20px; overflow: hidden; }
-#loadFill { width: 0%; height: 100%; background: var(--fn-yellow); }
+#loadFill { width: 0%; height: 100%; background: var(--fn-yellow); transition: width 0.1s linear; }
 
-/* --- MAIN HUD --- */
-#main { display: none; width: 100%; max-width: 950px; flex-direction: column; gap: 25px; }
+/* MAIN CONTENT */
+#main { display: none; width: 100%; max-width: 950px; flex-direction: column; gap: 25px; animation: fadeIn 0.5s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .panel {
     background: linear-gradient(135deg, rgba(27, 28, 38, 0.95), rgba(15, 16, 23, 0.95));
     border: 3px solid #2a2c3d; padding: 25px; transform: skewX(-3deg); border-radius: 6px;
 }
 
+/* GAME & CHAT */
 .game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-.canvas-area { background: #000; height: 350px; position: relative; border: 2px solid #333; overflow: hidden; }
-#player { width: 40px; height: 40px; background: var(--fn-yellow); position: absolute; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 0 15px var(--fn-yellow); z-index: 10; }
-#coin { position: absolute; font-size: 30px; display: none; }
+.canvas-area { background: #000; height: 380px; position: relative; border: 2px solid #333; overflow: hidden; border-radius: 4px; }
+#player { width: 44px; height: 44px; background: var(--fn-yellow); position: absolute; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-size: 26px; box-shadow: 0 0 20px var(--fn-yellow); z-index: 10; }
+#coin { position: absolute; font-size: 32px; display: none; animation: pulse 1s infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-.chat-box { background: #000; height: 350px; border: 2px solid #333; display: flex; flex-direction: column; }
-iframe { flex: 1; border: none; }
+.chat-box { background: #000; height: 380px; border: 2px solid #333; display: flex; flex-direction: column; border-radius: 4px; }
+iframe { flex: 1; border: none; background: transparent; }
 
+/* TEAM */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
 .card { background: rgba(255,255,255,0.05); padding: 15px; border-left: 5px solid var(--fn-yellow); display: flex; justify-content: space-between; align-items: center; }
-.badge { padding: 4px 10px; font-weight: 900; font-size: 12px; border-radius: 3px; text-transform: uppercase; }
+.badge { padding: 4px 10px; font-weight: 900; font-size: 12px; border-radius: 3px; text-transform: uppercase; font-style: italic; }
 
 .owner { background: var(--fn-yellow); color: black; }
 .mod { background: var(--fn-blue); color: white; }
 .scripter { background: var(--fn-purple); color: white; }
+.traitor { background: var(--fn-red); color: white; }
 </style>
 </head>
 <body>
 
 <div id="loginOverlay">
     <div class="login-card">
-        <h2>🔒 MEJDRIX ACCESS</h2>
-        <input type="text" id="uIn" placeholder="UŽIVATEL">
-        <input type="password" id="pIn" placeholder="HESLO">
-        <button onclick="login()">VSTOUPIT</button>
-        <p id="err" style="color:var(--fn-red); font-weight:bold; margin-top:15px;"></p>
+        <h2>🔒 MEJDRIX SYSTEM LOGIN</h2>
+        <input type="text" id="userInput" placeholder="UŽIVATELSKÉ JMÉNO">
+        <input type="password" id="passInput" placeholder="HESLO">
+        <button onclick="checkCredentials()">ODEMKNOUT HUB</button>
+        <p id="errorMsg" style="color:var(--fn-red); font-weight:bold; margin-top:15px; text-transform:uppercase;"></p>
     </div>
 </div>
 
 <div id="loadingScreen">
-    <h1 style="color:var(--fn-yellow); font-style:italic;">NAČÍTÁNÍ SYSTÉMU...</h1>
+    <h1 style="color:var(--fn-yellow); font-style:italic; font-size:35px;">NAČÍTÁNÍ MODULŮ...</h1>
     <div class="load-bar-bg"><div id="loadFill"></div></div>
+    <p id="loadStatus" style="margin-top:10px; font-weight:bold; color:#8a8f9e;">PŘIPOJOVÁNÍ K TIKFINITY API...</p>
 </div>
 
 <div id="main">
     <div class="panel" style="border-color:var(--tt-red); display:flex; justify-content:space-between; align-items:center;">
-        <h1 style="margin:0; font-style:italic;">🔴 MEJDRIX LIVE HUD V2</h1>
-        <div style="background:var(--tt-red); padding:5px 15px; font-weight:900;">LIVE MONITOR</div>
+        <h1 style="margin:0; font-style:italic; letter-spacing:2px;">🔴 MEJDRIX LIVE HUD V2</h1>
+        <div style="background:var(--tt-red); padding:8px 20px; font-weight:900; font-style:italic;">CONNECTED</div>
     </div>
 
     <div class="panel">
-        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-            <span style="color:var(--fn-yellow); font-weight:900; font-size:22px;">🕹️ TIKTOK PLAYS</span>
-            <select id="gm" style="background:#000; color:white; border:1px solid #444;">
-                <option value="survival">SURVIVAL</option>
-                <option value="coin">COIN HUNT</option>
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center;">
+            <span style="color:var(--fn-yellow); font-weight:900; font-size:24px; font-style:italic;">🕹️ TIKTOK PLAYS CONTROL</span>
+            <select id="gameMode" style="background:#000; color:white; border:2px solid #363a4f; padding:5px 10px; font-weight:bold;">
+                <option value="survival">MEJDRIX SURVIVAL</option>
+                <option value="coin">COIN HUNT (MINIGAME)</option>
             </select>
         </div>
         <div class="game-layout">
@@ -119,107 +125,137 @@ iframe { flex: 1; border: none; }
                 <div id="coin">💰</div>
             </div>
             <div class="chat-box">
-                <iframe id="chat" src="about:blank"></iframe>
-                <div style="padding:5px; display:flex; gap:5px;">
-                    <input id="key" placeholder="TikFinity ID" style="flex:1; background:#111; color:white; border:1px solid #444;">
-                    <button onclick="setChat()" style="background:var(--fn-yellow); border:none; padding:5px; font-weight:bold; cursor:pointer;">OK</button>
+                <iframe id="tikChat" src="about:blank"></iframe>
+                <div style="padding:8px; display:flex; gap:5px; background:#161720;">
+                    <input id="tikKey" placeholder="TikFinity ID / URL" style="flex:1; background:#000; color:white; border:1px solid #363a4f; padding:5px;">
+                    <button onclick="updateTikFinity()" style="background:var(--fn-yellow); border:none; padding:5px 15px; font-weight:bold; cursor:pointer;">ULOŽIT</button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="panel">
-        <input id="search" placeholder="HLEDAT V TÝMU..." style="width:100%; padding:15px; background:#000; border:2px solid #333; color:white; margin-bottom:20px; box-sizing:border-box;">
-        <div id="grid" class="team-grid"></div>
+        <input id="searchBar" placeholder="VYHLEDAT ČLENA TÝMU..." style="width:100%; padding:15px; background:#000; border:2px solid #363a4f; color:white; margin-bottom:20px; box-sizing:border-box; font-weight:bold; font-style:italic;">
+        <div id="teamContainer" class="team-grid"></div>
     </div>
 </div>
 
 <script>
-const team = [
-    { n: "Mejdrix", r: "owner" }, { n: "ViriBLOX", r: "mod" },
-    { n: "AdamDevRblx", r: "scripter" }, { n: "Fnaffan", r: "scripter" },
+// --- KONFIGURACE ---
+const teamList = [
+    { n: "Mejdrix", r: "owner" }, 
+    { n: "ViriBLOX", r: "mod" },
+    { n: "AdamDevRblx", r: "scripter" }, 
+    { n: "Fnaffan", r: "scripter" },
     { n: "Kifír(Studio)", r: "traitor" }
 ];
 
-function login() {
-    const u = document.getElementById('uIn').value;
-    const p = document.getElementById('pIn').value;
-    // NOVÉ HESLO A JMÉNO ZDE:
-    if (u === "mejdrixog" && p === "MejdrixStreamV2") {
+// --- PŘIHLÁŠENÍ ---
+function checkCredentials() {
+    const user = document.getElementById('userInput').value.trim();
+    const pass = document.getElementById('passInput').value.trim();
+
+    // Tady je tvoje nové heslo a jméno
+    if (user === "mejdrixog" && pass === "MejdrixStreamV2") {
         document.getElementById('loginOverlay').style.display = 'none';
-        startLoad();
+        launchSystem();
     } else {
-        document.getElementById('err').innerText = "❌ ŠPATNÉ ÚDAJE";
+        document.getElementById('errorMsg').innerText = "❌ PŘÍSTUP ZAMÍTNUT: ŠPATNÉ ÚDAJE";
     }
 }
 
-function startLoad() {
-    const s = document.getElementById('loadingScreen');
-    const f = document.getElementById('loadFill');
-    s.style.display = 'flex';
-    let prg = 0;
-    const i = setInterval(() => {
-        prg += 2;
-        f.style.width = prg + "%";
-        if(prg >= 100) {
-            clearInterval(i);
-            s.style.display = 'none';
+// --- SYSTÉMOVÉ FUNKCE ---
+function launchSystem() {
+    const screen = document.getElementById('loadingScreen');
+    const fill = document.getElementById('loadFill');
+    const status = document.getElementById('loadStatus');
+    screen.style.display = 'flex';
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += 1.5;
+        fill.style.width = progress + "%";
+        
+        if(progress > 30) status.innerText = "NAČÍTÁNÍ GRAFICKÉHO ROZHRANÍ...";
+        if(progress > 70) status.innerText = "SYNCHRONIZACE S ROBLOXEM...";
+        
+        if(progress >= 100) {
+            clearInterval(interval);
+            screen.style.display = 'none';
             document.getElementById('main').style.display = 'flex';
-            init();
+            initializeHUD();
         }
-    }, 25);
+    }, 20);
 }
 
-function init() {
-    render();
-    const s = localStorage.getItem('m_chat');
-    if(s) document.getElementById('chat').src = s;
+function initializeHUD() {
+    renderTeam();
+    const savedChat = localStorage.getItem('mejdrix_chat_url');
+    if(savedChat) document.getElementById('tikChat').src = savedChat;
 }
 
-function setChat() {
-    let v = document.getElementById('key').value;
-    let url = v.includes('http') ? v : `https://tikfinity.zerody.one/authed/chat/${v}`;
-    localStorage.setItem('m_chat', url);
-    document.getElementById('chat').src = url;
+function updateTikFinity() {
+    let val = document.getElementById('tikKey').value.trim();
+    if(!val) return;
+    let url = val.includes('http') ? val : `https://tikfinity.zerody.one/authed/chat/${val}`;
+    localStorage.setItem('mejdrix_chat_url', url);
+    document.getElementById('tikChat').src = url;
+    alert("TikFinity bylo aktualizováno!");
 }
 
-function render() {
-    const g = document.getElementById('grid');
-    const s = document.getElementById('search').value.toLowerCase();
-    g.innerHTML = "";
-    team.filter(x => x.n.toLowerCase().includes(s)).forEach(x => {
-        g.innerHTML += `<div class="card"><b>${x.n}</b> <span class="badge ${x.r}">${x.r}</span></div>`;
+function renderTeam() {
+    const container = document.getElementById('teamContainer');
+    const query = document.getElementById('searchBar').value.toLowerCase();
+    container.innerHTML = "";
+    
+    teamList.filter(u => u.n.toLowerCase().includes(query)).forEach(u => {
+        container.innerHTML += `
+            <div class="card">
+                <b style="font-size:18px;">${u.n}</b> 
+                <span class="badge ${u.r}">${u.r}</span>
+            </div>`;
     });
 }
-document.getElementById('search').oninput = render;
+document.getElementById('searchBar').oninput = renderTeam;
 
-// HRA
-let px = 100, py = 100, cx = 50, cy = 50;
-const pEl = document.getElementById('player');
-const cEl = document.getElementById('coin');
+// --- HERNÍ LOGIKA ---
+let px = 200, py = 150, cx = 60, cy = 60;
+const pObj = document.getElementById('player');
+const cObj = document.getElementById('coin');
 
 window.addEventListener('keydown', e => {
-    const k = e.key.toLowerCase();
-    if(k === 'w' || k === 'arrowup') py -= 20;
-    if(k === 's' || k === 'arrowdown') py += 20;
-    if(k === 'a' || k === 'arrowleft') px -= 20;
-    if(k === 'd' || k === 'arrowright') px += 20;
-    pEl.style.left = px + "px"; pEl.style.top = py + "px";
+    const key = e.key.toLowerCase();
+    const step = 20;
     
-    if(document.getElementById('gm').value === 'coin') {
-        if(Math.sqrt(Math.pow(px-cx,2)+Math.pow(py-cy,2)) < 40) spawn();
+    if(['arrowup','w'].includes(key)) py -= step;
+    if(['arrowdown','s'].includes(key)) py += step;
+    if(['arrowleft','a'].includes(key)) px -= step;
+    if(['arrowright','d'].includes(key)) px += step;
+
+    // Hranice plochy
+    px = Math.max(10, Math.min(px, 540));
+    py = Math.max(10, Math.min(py, 320));
+
+    pObj.style.left = px + "px";
+    pObj.style.top = py + "px";
+    
+    if(document.getElementById('gameMode').value === 'coin') {
+        let dist = Math.sqrt(Math.pow(px-cx, 2) + Math.pow(py-cy, 2));
+        if(dist < 45) moveCoin();
     }
 });
 
-function spawn() {
-    cx = Math.random()*500; cy = Math.random()*300;
-    cEl.style.left = cx+"px"; cEl.style.top = cy+"px";
-    cEl.style.display = 'block';
+function moveCoin() {
+    cx = Math.floor(Math.random() * 500) + 20;
+    cy = Math.floor(Math.random() * 300) + 20;
+    cObj.style.left = cx + "px";
+    cObj.style.top = cy + "px";
+    cObj.style.display = 'block';
 }
 
-document.getElementById('gm').onchange = e => {
-    cEl.style.display = e.target.value === 'coin' ? 'block' : 'none';
-    if(e.target.value === 'coin') spawn();
+document.getElementById('gameMode').onchange = e => {
+    cObj.style.display = e.target.value === 'coin' ? 'block' : 'none';
+    if(e.target.value === 'coin') moveCoin();
 };
 </script>
 </body>
