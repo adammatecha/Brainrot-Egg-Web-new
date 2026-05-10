@@ -3,818 +3,940 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEJDRIX HUD V2 - TIKFINITY INTEGRATION</title>
-
+<title>MEJDRIX HUD V2</title>
 <style>
 :root {
-    --fn-blue: #007bff;
-    --fn-yellow: #f4c500;
-    --fn-purple: #8c00ff;
-    --fn-dark: #0a0b10;
-    --fn-card: #1b1c26;
-    --fn-text: #ffffff;
-    --fn-green: #00ff66;
-    --fn-pink: #ff007f;
-    --fn-red: #ff003c;
-    --fn-orange: #ffaa00;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --tt-red: #fe2c55;
-    --tt-gray: #444a59;
-    
-    --yt-color: #ff0000;
-    --dc-color: #5865f2;
-    --rbx-color: #2b2d32;
+    --fn-blue: #007bff; --fn-yellow: #f4c500; --fn-purple: #8c00ff;
+    --fn-dark: #0a0b10; --fn-text: #ffffff; --fn-green: #00ff66;
+    --fn-pink: #ff007f; --fn-red: #ff003c; --fn-orange: #ffaa00;
+    --tt-red: #fe2c55; --tt-gray: #444a59;
+    --yt-color: #ff0000; --dc-color: #5865f2; --rbx-color: #2b2d32;
 }
 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    margin: 0;
     background: var(--fn-dark);
     color: var(--fn-text);
     font-family: 'Burbank Big Condensed', 'Segoe UI', Impact, sans-serif;
-    display: flex;
-    justify-content: center;
     min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
     overflow-x: hidden;
 }
 
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
-::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 4px; border: 2px solid var(--fn-dark); }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 4px; }
 
-/* ===== LOGIN SCREEN ===== */
-#loginScreen {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: radial-gradient(circle at 30% 40%, rgba(140,0,255,0.18) 0%, transparent 55%),
-                radial-gradient(circle at 75% 65%, rgba(0,123,255,0.14) 0%, transparent 50%),
-                radial-gradient(circle at 50% 10%, rgba(255,0,127,0.09) 0%, transparent 45%),
-                #0a0b10;
-    z-index: 10000;
+/* ========== ANIMATED BG ========== */
+.bg-rift {
+    position: fixed; top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(140,0,255,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 70%, rgba(0,123,255,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 50% 10%, rgba(255,0,127,0.08) 0%, transparent 40%);
+    animation: riftMove 25s linear infinite;
+    z-index: 0; pointer-events: none;
+}
+@keyframes riftMove {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ========== SCREEN SYSTEM ========== */
+.screen {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: 100;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+.screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+/* ========== LOGIN SCREEN ========== */
+#screenLogin {
+    background:
+        radial-gradient(circle at 25% 35%, rgba(140,0,255,0.2) 0%, transparent 55%),
+        radial-gradient(circle at 75% 65%, rgba(0,123,255,0.15) 0%, transparent 50%),
+        #0a0b10;
 }
 
 .login-box {
-    background: linear-gradient(135deg, rgba(27,28,38,0.97), rgba(15,16,23,0.97));
+    background: linear-gradient(135deg, rgba(27,28,38,0.98), rgba(15,16,23,0.98));
     border: 3px solid var(--fn-yellow);
     border-radius: 6px;
-    padding: 44px 48px 36px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 40px rgba(244,197,0,0.12);
-    transform: skewX(-3deg);
+    padding: 48px 52px 40px;
+    width: 420px;
+    max-width: 95vw;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 50px rgba(244,197,0,0.1);
     position: relative;
     overflow: hidden;
 }
-
 .login-box::before {
     content: '';
-    position: absolute;
-    top: 0; left: 0; width: 8px; height: 100%;
+    position: absolute; top: 0; left: 0;
+    width: 8px; height: 100%;
     background: var(--fn-yellow);
 }
 
+.login-icon { font-size: 52px; text-align: center; display: block; margin-bottom: 14px; animation: pulse 2s infinite; }
 .login-logo {
-    font-size: 48px;
-    font-weight: 900;
-    color: var(--fn-yellow);
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 3px;
-    text-align: center;
-    margin-bottom: 4px;
-    text-shadow: 3px 3px 0 rgba(0,0,0,0.7);
-    animation: pulsate 2.5s infinite;
+    font-size: 50px; font-weight: 900; color: var(--fn-yellow);
+    text-transform: uppercase; font-style: italic; letter-spacing: 3px;
+    text-align: center; margin-bottom: 6px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.8);
 }
-
 .login-sub {
-    font-size: 14px;
-    color: #8a8f9e;
-    text-transform: uppercase;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-align: center;
-    margin-bottom: 32px;
-    font-style: italic;
+    font-size: 13px; color: #8a8f9e; text-transform: uppercase;
+    font-weight: bold; letter-spacing: 2px; text-align: center;
+    margin-bottom: 36px; font-style: italic;
 }
 
-.login-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 18px;
-}
-
+.login-field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
 .login-label {
-    font-size: 12px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #8a8f9e;
-    font-style: italic;
+    font-size: 12px; font-weight: 900; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #8a8f9e; font-style: italic;
 }
-
 .login-input {
-    background: rgba(10,11,16,0.8);
+    background: rgba(8,9,14,0.9);
     border: 2px solid #363a4f;
-    border-radius: 4px;
-    color: #fff;
-    font-size: 16px;
-    font-style: italic;
-    font-weight: 700;
-    padding: 12px 14px;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 4px; color: #fff;
+    font-size: 16px; font-style: italic; font-weight: 700;
+    padding: 13px 15px; outline: none;
     width: 100%;
-    box-sizing: border-box;
     font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-
-.login-input:focus {
-    border-color: var(--fn-yellow);
-    box-shadow: 0 0 12px rgba(244,197,0,0.2);
-}
-
-.login-input.error {
-    border-color: var(--fn-red);
-    box-shadow: 0 0 12px rgba(255,0,60,0.25);
-    animation: shake 0.4s ease;
-}
+.login-input:focus { border-color: var(--fn-yellow); box-shadow: 0 0 14px rgba(244,197,0,0.2); }
+.login-input.err { border-color: var(--fn-red); box-shadow: 0 0 14px rgba(255,0,60,0.3); }
 
 .login-btn {
-    width: 100%;
+    width: 100%; margin-top: 6px;
     background: linear-gradient(135deg, var(--fn-yellow), #d4aa00);
-    color: #000;
-    border: none;
-    border-radius: 4px;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: 900;
-    text-transform: uppercase;
-    font-style: italic;
-    letter-spacing: 2px;
-    cursor: pointer;
-    box-shadow: 0 6px 0 #8c7000;
-    transition: all 0.1s ease;
-    margin-top: 8px;
+    color: #000; border: none; border-radius: 4px;
+    padding: 16px; font-size: 20px; font-weight: 900;
+    text-transform: uppercase; font-style: italic; letter-spacing: 2px;
+    cursor: pointer; box-shadow: 0 6px 0 #8c7000;
     font-family: inherit;
+    transition: filter 0.15s, transform 0.1s, box-shadow 0.1s;
 }
-
 .login-btn:hover { filter: brightness(1.1); }
 .login-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
 
-.login-error {
-    font-size: 13px;
-    color: var(--fn-red);
-    font-weight: 900;
-    font-style: italic;
-    text-transform: uppercase;
-    text-align: center;
-    margin-top: 14px;
-    letter-spacing: 1px;
-    min-height: 18px;
-    opacity: 0;
-    transition: opacity 0.2s;
+.login-err {
+    font-size: 13px; color: var(--fn-red); font-weight: 900;
+    font-style: italic; text-transform: uppercase; text-align: center;
+    margin-top: 16px; letter-spacing: 1px; min-height: 18px;
+    opacity: 0; transition: opacity 0.2s;
+}
+.login-err.show { opacity: 1; }
+
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-10px); }
+    40% { transform: translateX(10px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
 }
 
-.login-error.visible { opacity: 1; }
-
-.login-lock {
-    font-size: 54px;
-    text-align: center;
-    margin-bottom: 16px;
-    display: block;
-    animation: pulsate 2s infinite;
-}
-
-/* LOADING SCREEN */
-#loadingScreen {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
+/* ========== LOADING SCREEN ========== */
+#screenLoad {
     background: radial-gradient(circle at center, rgba(37,40,54,0.99) 0%, rgba(12,13,18,1) 100%);
-    backdrop-filter: blur(12px);
-    z-index: 9999;
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    color: #fff;
-    padding: 60px 20px;
-    box-sizing: border-box;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-.load-middle { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; transform: skewX(-7deg); }
-.load-title-main { font-size: 84px; font-weight: 900; color: var(--fn-yellow); font-style: italic; text-transform: uppercase; letter-spacing: 4px; animation: pulsate 2s infinite; text-shadow: 4px 4px 0px rgba(0,0,0,0.8); }
-.load-subtitle { font-size: 22px; color: #fff; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; margin-top: 10px; margin-bottom: 50px; }
-.load-files-container { display: flex; gap: 20px; margin-bottom: 60px; }
-.file-card { background: linear-gradient(135deg, rgba(42,44,61,0.9), rgba(27,28,38,0.9)); border: 3px solid #363a4f; border-radius: 4px; padding: 15px 25px; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
-.file-card.active { opacity: 1; transform: translateY(0) skewX(-7deg); border-color: var(--fn-yellow); }
+.load-middle {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    width: 100%;
+}
+.load-skew { transform: skewX(-7deg); display: flex; flex-direction: column; align-items: center; }
+.load-title {
+    font-size: clamp(40px, 8vw, 84px);
+    font-weight: 900; color: var(--fn-yellow);
+    font-style: italic; text-transform: uppercase;
+    letter-spacing: 4px; animation: pulse 2s infinite;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.8);
+}
+.load-subtitle {
+    font-size: 20px; color: #fff; text-transform: uppercase;
+    font-weight: bold; letter-spacing: 2px;
+    margin-top: 10px; margin-bottom: 50px;
+}
+.load-files { display: flex; gap: 20px; margin-bottom: 60px; flex-wrap: wrap; justify-content: center; }
+.file-card {
+    background: linear-gradient(135deg, rgba(42,44,61,0.9), rgba(27,28,38,0.9));
+    border: 3px solid #363a4f; border-radius: 4px;
+    padding: 15px 25px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0; transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+.file-card.active { opacity: 1; transform: translateY(0); border-color: var(--fn-yellow); }
 .file-icon { font-size: 30px; }
 .file-name { font-size: 14px; color: #8a8f9e; text-transform: uppercase; font-weight: bold; }
-.load-bottom { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; transform: skewX(-7deg); }
-.load-bar-bg { width: 100%; height: 30px; background: #12131a; border: 4px solid #363a4f; border-radius: 4px; overflow: hidden; }
-.load-bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ffd700 0%, var(--fn-yellow) 50%, #ffd700 100%); background-size: 200% 100%; transition: width 0.1s linear; }
-.load-status-row { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-.load-current-file { font-size: 16px; color: #fff; font-style: italic; text-transform: uppercase; letter-spacing: 1px; }
-.load-percent { font-size: 32px; font-weight: 900; color: #fff; font-style: italic; }
 
-body::before {
-    content: "";
-    position: fixed;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background: radial-gradient(circle at 30% 30%, rgba(140,0,255,0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 70%, rgba(0,123,255,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 50% 10%, rgba(255,0,127,0.08) 0%, transparent 40%),
-                var(--fn-dark);
-    animation: riftMovement 25s linear infinite;
-    z-index: -1;
-    pointer-events: none;
+.load-bottom {
+    width: 100%; max-width: 800px; padding: 0 20px 60px;
+    display: flex; flex-direction: column; align-items: center;
+    transform: skewX(-7deg);
+}
+.load-bar-bg {
+    width: 100%; height: 30px;
+    background: #12131a; border: 4px solid #363a4f; border-radius: 4px; overflow: hidden;
+}
+.load-bar-fill {
+    width: 0%; height: 100%;
+    background: linear-gradient(90deg, #ffd700, var(--fn-yellow), #ffd700);
+    transition: width 0.1s linear;
+}
+.load-status-row {
+    width: 100%; display: flex;
+    justify-content: space-between; align-items: center; margin-top: 15px;
+}
+.load-file-txt { font-size: 16px; color: #fff; font-style: italic; text-transform: uppercase; }
+.load-pct { font-size: 32px; font-weight: 900; color: #fff; font-style: italic; }
+
+/* ========== MAIN APP ========== */
+#appMain {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 950px;
+    margin: 0 auto;
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 25px;
 }
 
-@keyframes riftMovement { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
-
-#main { width: 100%; max-width: 950px; display: none; flex-direction: column; gap: 25px; z-index: 1; }
-
-.tiktok-live-panel { background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(15,16,23,0.95)); border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px; transform: skewX(-5deg); box-shadow: 0 10px 30px rgba(254,44,85,0.3); display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; transition: all 0.3s ease; }
-.tiktok-live-panel.is-offline { border-color: var(--tt-gray); box-shadow: none; opacity: 0.8; }
+/* TT PANEL */
+.tiktok-panel {
+    background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(15,16,23,0.95));
+    border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px;
+    transform: skewX(-5deg);
+    box-shadow: 0 10px 30px rgba(254,44,85,0.3);
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.3s;
+}
+.tiktok-panel.offline { border-color: var(--tt-gray); box-shadow: none; opacity: 0.8; }
 .tt-left { display: flex; align-items: center; gap: 15px; }
-.tt-icon { font-size: 32px; background: #000; padding: 8px 12px; border-radius: 6px; box-shadow: -2px -2px 0px #25f4ee, 2px 2px 0px var(--tt-red); transition: box-shadow 0.3s ease; }
-.tiktok-live-panel.is-offline .tt-icon { box-shadow: -2px -2px 0px #555, 2px 2px 0px #333; }
-.tt-info { display: flex; flex-direction: column; }
-.tt-title { font-size: 26px; font-weight: 900; color: #fff; text-transform: uppercase; font-style: italic; letter-spacing: 1px; }
-.tt-sub { font-size: 14px; color: var(--tt-red); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s; }
-.tiktok-live-panel.is-offline .tt-sub { color: #8a8f9e; }
-.tt-btn { background: var(--tt-red); color: white; text-decoration: none; font-size: 18px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 12px 28px; border-radius: 4px; letter-spacing: 1px; box-shadow: 0 4px 0 #b01b3a, 0 0 15px rgba(254,44,85,0.4); transition: all 0.1s ease; }
-.tt-btn:hover { transform: translateY(-2px); background: #ff3b64; }
+.tt-icon {
+    font-size: 32px; background: #000; padding: 8px 12px; border-radius: 6px;
+    box-shadow: -2px -2px 0 #25f4ee, 2px 2px 0 var(--tt-red); transition: box-shadow 0.3s;
+}
+.tiktok-panel.offline .tt-icon { box-shadow: -2px -2px 0 #555, 2px 2px 0 #333; }
+.tt-name { font-size: 26px; font-weight: 900; text-transform: uppercase; font-style: italic; }
+.tt-status { font-size: 14px; color: var(--tt-red); font-weight: bold; text-transform: uppercase; transition: color 0.3s; }
+.tiktok-panel.offline .tt-status { color: #8a8f9e; }
+.tt-btn {
+    background: var(--tt-red); color: #fff; text-decoration: none;
+    font-size: 18px; font-weight: 900; text-transform: uppercase; font-style: italic;
+    padding: 12px 28px; border-radius: 4px; letter-spacing: 1px;
+    box-shadow: 0 4px 0 #b01b3a, 0 0 15px rgba(254,44,85,0.4); transition: all 0.1s;
+}
+.tt-btn:hover { transform: translateY(-2px); }
 .tt-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b01b3a; }
-.tiktok-live-panel.is-offline .tt-btn { background: var(--tt-gray); box-shadow: 0 4px 0 #2b2e38; color: #aaa; }
+.tiktok-panel.offline .tt-btn { background: var(--tt-gray); box-shadow: 0 4px 0 #2b2e38; color: #aaa; }
 
-.game-section { background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95)); border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px; transform: skewX(-3deg); box-shadow: 0 15px 35px rgba(0,0,0,0.6); position: relative; overflow: hidden; }
-.game-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px; }
-.game-title { font-size: 28px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px; text-shadow: 2px 2px 0px rgba(0,0,0,0.5); }
-.game-select-box { display: flex; align-items: center; gap: 12px; }
-.game-select-box select { background: rgba(27,28,38,0.9); border: 2px solid #363a4f; color: white; font-size: 15px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 8px 16px; border-radius: 4px; outline: none; letter-spacing: 0.5px; cursor: pointer; }
-.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; position: relative; }
-.game-canvas-area { background: #0d0e14; border: 3px solid #2a2c3d; border-radius: 4px; height: 350px; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); }
-#player { width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px; position: absolute; box-shadow: 0 0 20px var(--fn-yellow); transition: all 0.1s ease-out; display: flex; justify-content: center; align-items: center; font-size: 26px; z-index: 2; user-select: none; }
-#coin { width: 32px; height: 32px; position: absolute; font-size: 28px; display: none; justify-content: center; align-items: center; z-index: 1; animation: blink 1.2s infinite ease-in-out; user-select: none; }
-.game-chat-box { background: rgba(10,11,16,0.7); border: 2px solid #363a4f; border-radius: 4px; padding: 10px; display: flex; flex-direction: column; height: 350px; box-sizing: border-box; }
-.game-chat-title { font-size: 14px; color: #8a8f9e; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; text-align: center; letter-spacing: 1px; border-bottom: 1px solid #363a4f; padding-bottom: 6px; font-style: italic; }
-.iframe-container { flex: 1; background: rgba(0,0,0,0.2); border-radius: 4px; overflow: hidden; margin-bottom: 8px; border: 1px solid #2a2c3d; }
+/* GAME SECTION */
+.game-section {
+    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
+    border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px;
+    transform: skewX(-3deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+}
+.game-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px;
+}
+.game-title { font-size: 28px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px; }
+.game-select select {
+    background: rgba(27,28,38,0.9); border: 2px solid #363a4f; color: white;
+    font-size: 15px; font-weight: 900; text-transform: uppercase; font-style: italic;
+    padding: 8px 16px; border-radius: 4px; outline: none; cursor: pointer; font-family: inherit;
+}
+.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+.game-canvas {
+    background: #0d0e14; border: 3px solid #2a2c3d; border-radius: 4px;
+    height: 350px; position: relative; overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+}
+#player {
+    width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px;
+    position: absolute; box-shadow: 0 0 20px var(--fn-yellow);
+    display: flex; justify-content: center; align-items: center;
+    font-size: 26px; z-index: 2; user-select: none;
+    transition: left 0.08s, top 0.08s;
+}
+#coin {
+    width: 32px; height: 32px; position: absolute; font-size: 28px;
+    display: none; justify-content: center; align-items: center;
+    z-index: 1; animation: blink 1.2s infinite; user-select: none;
+}
+
+.game-chat-box {
+    background: rgba(10,11,16,0.7); border: 2px solid #363a4f; border-radius: 4px;
+    padding: 10px; display: flex; flex-direction: column; height: 350px;
+}
+.chat-box-title {
+    font-size: 14px; color: #8a8f9e; font-weight: 900; text-transform: uppercase;
+    text-align: center; letter-spacing: 1px;
+    border-bottom: 1px solid #363a4f; padding-bottom: 6px; margin-bottom: 8px; font-style: italic;
+}
+.iframe-wrap {
+    flex: 1; background: rgba(0,0,0,0.2); border-radius: 4px;
+    overflow: hidden; margin-bottom: 8px; border: 1px solid #2a2c3d;
+}
 .tikfinity-iframe { width: 100%; height: 100%; border: none; background: transparent; }
-.chat-config-row { display: flex; gap: 6px; }
-.chat-config-row input { flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 8px; font-size: 13px; outline: none; font-style: italic; }
-.chat-config-row button { background: var(--fn-yellow); color: black; border: none; border-radius: 4px; padding: 0 12px; font-size: 13px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-style: italic; }
+.chat-cfg { display: flex; gap: 6px; }
+.chat-cfg input {
+    flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f;
+    border-radius: 4px; color: white; padding: 8px; font-size: 13px;
+    outline: none; font-style: italic; font-family: inherit;
+}
+.chat-cfg button {
+    background: var(--fn-yellow); color: black; border: none; border-radius: 4px;
+    padding: 0 12px; font-size: 13px; font-weight: 900; cursor: pointer;
+    text-transform: uppercase; font-style: italic; font-family: inherit;
+}
 
-.socials-panel { background: linear-gradient(135deg, rgba(27,28,38,0.85), rgba(15,16,23,0.85)); border: 3px solid #2a2c3d; border-radius: 6px; padding: 15px 20px; transform: skewX(-5deg); display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-.socials-title { font-size: 20px; font-weight: 900; text-transform: uppercase; font-style: italic; color: var(--fn-yellow); letter-spacing: 1px; }
-.socials-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
-.social-btn { color: white; text-decoration: none; font-size: 15px; font-weight: 900; text-transform: uppercase; font-style: italic; padding: 10px 22px; border-radius: 4px; letter-spacing: 0.5px; transition: all 0.1s ease; display: inline-flex; align-items: center; gap: 8px; }
-.social-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
-.btn-tiktok { background: #010101; border: 2px solid var(--tt-red); box-shadow: 0 4px 0 #333; }
-.btn-youtube { background: var(--yt-color); box-shadow: 0 4px 0 #990000; }
-.btn-discord { background: var(--dc-color); box-shadow: 0 4px 0 #3b42a4; }
-.btn-roblox { background: var(--rbx-color); border: 2px solid #535761; box-shadow: 0 4px 0 #18191c; }
+/* SOCIALS */
+.socials-panel {
+    background: linear-gradient(135deg, rgba(27,28,38,0.85), rgba(15,16,23,0.85));
+    border: 3px solid #2a2c3d; border-radius: 6px; padding: 15px 20px;
+    transform: skewX(-5deg);
+    display: flex; flex-wrap: wrap; gap: 15px;
+    align-items: center; justify-content: space-between;
+}
+.socials-title { font-size: 20px; font-weight: 900; text-transform: uppercase; font-style: italic; color: var(--fn-yellow); }
+.socials-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.soc-btn {
+    color: white; text-decoration: none; font-size: 15px; font-weight: 900;
+    text-transform: uppercase; font-style: italic; padding: 10px 22px;
+    border-radius: 4px; letter-spacing: 0.5px; transition: all 0.1s;
+    display: inline-flex; align-items: center; gap: 8px;
+}
+.soc-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+.soc-tt  { background: #010101; border: 2px solid var(--tt-red); box-shadow: 0 4px 0 #333; }
+.soc-yt  { background: var(--yt-color); box-shadow: 0 4px 0 #990000; }
+.soc-dc  { background: var(--dc-color); box-shadow: 0 4px 0 #3b42a4; }
+.soc-rbx { background: var(--rbx-color); border: 2px solid #535761; box-shadow: 0 4px 0 #18191c; }
 
-.fn-hud { background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95)); border: 3px solid #2a2c3d; border-radius: 6px; padding: 24px; transform: skewX(-5deg); box-shadow: 0 20px 45px rgba(0,0,0,0.7); position: relative; overflow: hidden; }
-.fn-hud::before { content: ''; position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: var(--fn-yellow); }
-.hud-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px; }
-.hud-title { font-size: 32px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px; }
-.live-badge { background: var(--fn-red); color: #fff; padding: 4px 14px; font-size: 14px; font-weight: bold; border-radius: 4px; animation: blink 1.5s infinite; font-style: italic; }
-.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+/* FN HUD */
+.fn-hud {
+    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
+    border: 3px solid #2a2c3d; border-radius: 6px; padding: 24px;
+    transform: skewX(-5deg);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+    position: relative; overflow: hidden;
+}
+.fn-hud::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    width: 8px; height: 100%; background: var(--fn-yellow);
+}
+.hud-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px;
+}
+.hud-title { font-size: 32px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; }
+.live-badge {
+    background: var(--fn-red); color: #fff; padding: 4px 14px;
+    font-size: 14px; font-weight: bold; border-radius: 4px;
+    animation: blink 1.5s infinite; font-style: italic;
+}
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; margin-bottom: 25px; }
 .stat-box { background: #1f2230; border: 2px solid #363a4f; padding: 14px; text-align: center; border-radius: 4px; }
-.stat-value { font-size: 40px; font-weight: 900; font-style: italic; line-height: 1; }
-.stat-value.fps { color: var(--fn-green); }
-.stat-value.ms { color: var(--fn-yellow); }
-.stat-value.mem { color: var(--fn-blue); }
-.stat-label { font-size: 13px; text-transform: uppercase; color: #8a8f9e; letter-spacing: 1px; margin-top: 5px; font-weight: bold; }
-.fn-input-container { margin-bottom: 20px; }
-.search-input { width: 100%; background: rgba(27,28,38,0.8); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 14px; font-size: 16px; outline: none; box-sizing: border-box; font-style: italic; font-weight: 800; }
+.stat-val { font-size: 40px; font-weight: 900; font-style: italic; line-height: 1; }
+.stat-val.fps { color: var(--fn-green); }
+.stat-val.ms  { color: var(--fn-yellow); }
+.stat-val.mem { color: var(--fn-blue); }
+.stat-lbl { font-size: 13px; text-transform: uppercase; color: #8a8f9e; letter-spacing: 1px; margin-top: 5px; font-weight: bold; }
 
-#teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 25px; }
-.team-card { background: rgba(37,40,54,0.4); border: 1px solid #363a4f; padding: 14px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+.search-wrap { margin-bottom: 20px; }
+.search-input {
+    width: 100%; background: rgba(27,28,38,0.8); border: 2px solid #363a4f;
+    border-radius: 4px; color: white; padding: 14px; font-size: 16px;
+    outline: none; font-style: italic; font-weight: 800; font-family: inherit;
+}
+
+#teamGrid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+    gap: 12px; margin-bottom: 25px;
+}
+.team-card {
+    background: rgba(37,40,54,0.4); border: 1px solid #363a4f;
+    padding: 14px; border-radius: 4px;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.2s;
+}
 .team-card:hover { border-color: var(--fn-yellow); background: rgba(54,58,79,0.8); transform: translateY(-2px); }
-.team-card.is-pinned { border-color: var(--fn-yellow); background: rgba(244,197,0,0.05); }
-.team-left-group { display: flex; flex-direction: column; gap: 2px; }
-.team-name { font-size: 18px; font-weight: 800; text-transform: uppercase; font-style: italic; cursor: pointer; }
-.copy-alert { font-size: 11px; color: var(--fn-green); font-weight: bold; font-style: italic; opacity: 0; }
-.team-right { display: flex; align-items: center; gap: 12px; }
-.team-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 4px; text-transform: uppercase; font-style: italic; white-space: nowrap; }
-.owner { background: var(--fn-yellow); color: #000; }
-.mod { background: var(--fn-blue); color: #fff; }
-.mod_gifter { background: linear-gradient(135deg, var(--fn-blue), var(--fn-pink)); color: #fff; }
-.mod_helper { background: linear-gradient(135deg, var(--fn-blue), var(--fn-green)); color: #000; }
-.helper { background: var(--fn-green); color: #000; }
-.b_helper { background: #12aa4a; color: #fff; }
-.gifter { background: var(--fn-pink); color: #fff; }
-.scripter { background: var(--fn-purple); color: #fff; }
-.traitor { background: var(--fn-red); color: #fff; }
-.funniest { background: var(--fn-orange); color: #000; }
-.actions { display: flex; gap: 10px; width: 48px; justify-content: center; align-items: center; }
-.actions span { cursor: pointer; font-size: 18px; user-select: none; transition: transform 0.1s ease; text-align: center; }
-.actions span:hover { transform: scale(1.25); }
+.team-card.pinned { border-color: var(--fn-yellow); background: rgba(244,197,0,0.05); }
+.t-left { display: flex; flex-direction: column; gap: 2px; }
+.t-name { font-size: 18px; font-weight: 800; text-transform: uppercase; font-style: italic; cursor: pointer; }
+.t-copied { font-size: 11px; color: var(--fn-green); font-weight: bold; opacity: 0; font-style: italic; }
+.t-right { display: flex; align-items: center; gap: 12px; }
+.t-badge {
+    font-size: 11px; font-weight: 900; padding: 4px 10px;
+    border-radius: 4px; text-transform: uppercase; font-style: italic; white-space: nowrap;
+}
+.r-owner    { background: var(--fn-yellow); color: #000; }
+.r-mod      { background: var(--fn-blue); color: #fff; }
+.r-mod_gifter  { background: linear-gradient(135deg, var(--fn-blue), var(--fn-pink)); color: #fff; }
+.r-mod_helper  { background: linear-gradient(135deg, var(--fn-blue), var(--fn-green)); color: #000; }
+.r-helper   { background: var(--fn-green); color: #000; }
+.r-b_helper { background: #12aa4a; color: #fff; }
+.r-gifter   { background: var(--fn-pink); color: #fff; }
+.r-scripter { background: var(--fn-purple); color: #fff; }
+.r-traitor  { background: var(--fn-red); color: #fff; }
+.r-funniest { background: var(--fn-orange); color: #000; }
+.t-actions { display: flex; gap: 10px; }
+.t-actions span { cursor: pointer; font-size: 18px; user-select: none; transition: transform 0.1s; }
+.t-actions span:hover { transform: scale(1.25); }
 
-.meta-section { background: rgba(27,28,38,0.65); border: 2px solid #363a4f; padding: 15px; border-radius: 4px; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; transform: skewX(-5deg); }
-.meta-box h3 { margin: 0 0 5px 0; font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; }
-.meta-box p { margin: 0; font-size: 15px; color: #fff; font-weight: bold; }
+/* META */
+.meta-section {
+    background: rgba(27,28,38,0.65); border: 2px solid #363a4f;
+    padding: 15px; border-radius: 4px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+    transform: skewX(-5deg);
+}
+.meta-box h3 { font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; margin-bottom: 5px; }
+.meta-box p  { font-size: 15px; color: #fff; font-weight: bold; }
 
-.chat-section { background: rgba(27,28,38,0.85); border: 2px solid #363a4f; border-radius: 6px; padding: 20px; transform: skewX(-5deg); }
-.chat-section h2 { font-size: 16px; margin-top: 0; margin-bottom: 12px; color: var(--fn-yellow); text-transform: uppercase; font-style: italic; }
-#chat { height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+/* TERMINAL */
+.terminal-section {
+    background: rgba(27,28,38,0.85); border: 2px solid #363a4f;
+    border-radius: 6px; padding: 20px; transform: skewX(-5deg);
+}
+.terminal-section h2 { font-size: 16px; margin-bottom: 12px; color: var(--fn-yellow); text-transform: uppercase; font-style: italic; }
+#chat {
+    height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3);
+    border-radius: 4px; padding: 12px; margin-bottom: 12px;
+    display: flex; flex-direction: column; gap: 8px;
+}
 #chat::-webkit-scrollbar { width: 5px; }
 #chat::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 10px; }
 .msg { max-width: 85%; padding: 8px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
 .msg.user { align-self: flex-end; background: var(--fn-yellow); color: #000; }
-.msg.bot { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; }
-.chat-input-row { display: flex; gap: 10px; }
-.chat-input-row input { flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f; border-radius: 4px; color: white; padding: 12px; font-size: 15px; outline: none; font-style: italic; }
-.chat-input-row button { background: var(--fn-yellow); color: black; border: none; border-radius: 4px; padding: 0 24px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-style: italic; }
+.msg.bot  { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; }
+.term-row { display: flex; gap: 10px; }
+.term-row input {
+    flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f;
+    border-radius: 4px; color: white; padding: 12px; font-size: 15px;
+    outline: none; font-style: italic; font-family: inherit;
+}
+.term-row button {
+    background: var(--fn-yellow); color: black; border: none; border-radius: 4px;
+    padding: 0 24px; font-weight: 900; cursor: pointer;
+    text-transform: uppercase; font-style: italic; font-family: inherit;
+}
 
-.download-box { background: rgba(27,28,38,0.85); border: 3px dashed #363a4f; border-radius: 6px; padding: 25px; text-align: center; transform: skewX(-5deg); }
-.dl-btn { background: linear-gradient(135deg, var(--fn-yellow), #d4aa00); color: black; border: none; border-radius: 4px; padding: 16px 45px; font-size: 22px; font-weight: 900; text-transform: uppercase; font-style: italic; cursor: pointer; box-shadow: 0 6px 0 #8c7000; transition: all 0.1s ease; }
+/* DOWNLOAD */
+.dl-box {
+    background: rgba(27,28,38,0.85); border: 3px dashed #363a4f;
+    border-radius: 6px; padding: 25px; text-align: center; transform: skewX(-5deg);
+}
+.dl-btn {
+    background: linear-gradient(135deg, var(--fn-yellow), #d4aa00);
+    color: black; border: none; border-radius: 4px;
+    padding: 16px 45px; font-size: 22px; font-weight: 900;
+    text-transform: uppercase; font-style: italic; cursor: pointer;
+    box-shadow: 0 6px 0 #8c7000; transition: all 0.1s; font-family: inherit;
+}
 .dl-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
 
-.coming-soon-panel { background: linear-gradient(135deg, rgba(15,16,23,0.85), rgba(27,28,38,0.85)); border: 2px solid #2a2c3d; border-radius: 6px; padding: 15px; text-align: center; transform: skewX(-5deg); margin-top: 10px; }
-.coming-soon-text { font-size: 24px; font-weight: 900; text-transform: uppercase; font-style: italic; color: #8a8f9e; letter-spacing: 2px; margin: 0; }
-.coming-soon-text span { color: var(--fn-yellow); animation: blink 2s infinite; }
-
-@keyframes pulsate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-@keyframes shake {
-    0%, 100% { transform: skewX(-3deg) translateX(0); }
-    20% { transform: skewX(-3deg) translateX(-8px); }
-    40% { transform: skewX(-3deg) translateX(8px); }
-    60% { transform: skewX(-3deg) translateX(-5px); }
-    80% { transform: skewX(-3deg) translateX(5px); }
+/* COMING SOON */
+.coming-panel {
+    background: linear-gradient(135deg, rgba(15,16,23,0.85), rgba(27,28,38,0.85));
+    border: 2px solid #2a2c3d; border-radius: 6px; padding: 15px;
+    text-align: center; transform: skewX(-5deg);
 }
+.coming-text {
+    font-size: 24px; font-weight: 900; text-transform: uppercase;
+    font-style: italic; color: #8a8f9e; letter-spacing: 2px;
+}
+.coming-text span { color: var(--fn-yellow); animation: blink 2s infinite; }
+
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.7; } }
+@keyframes blink  { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 </style>
 </head>
 <body>
 
-<!-- ===== LOGIN SCREEN ===== -->
-<div id="loginScreen">
-    <div class="login-box">
-        <span class="login-lock">🔐</span>
-        <div class="login-logo">MEJDRIX</div>
-        <div class="login-sub">Stream HUD V2 — Přístup pouze pro autorizované</div>
-        <div class="login-field">
-            <label class="login-label">Uživatelské jméno</label>
-            <input id="loginUser" class="login-input" type="text" placeholder="Username..." autocomplete="off" spellcheck="false">
-        </div>
-        <div class="login-field">
-            <label class="login-label">Heslo</label>
-            <input id="loginPass" class="login-input" type="password" placeholder="Password...">
-        </div>
-        <button class="login-btn" id="loginBtn">🔓 PŘIHLÁSIT SE</button>
-        <div class="login-error" id="loginError">❌ Nesprávné přihlašovací údaje!</div>
+<div class="bg-rift"></div>
+
+<!-- ======== LOGIN SCREEN ======== -->
+<div class="screen" id="screenLogin">
+  <div class="login-box" id="loginBox">
+    <span class="login-icon">🔐</span>
+    <div class="login-logo">MEJDRIX</div>
+    <div class="login-sub">Stream HUD V2 — Přístup pouze pro autorizované</div>
+
+    <div class="login-field">
+      <label class="login-label">Uživatelské jméno</label>
+      <input class="login-input" id="inUser" type="text" placeholder="Username..." autocomplete="off" spellcheck="false">
     </div>
+    <div class="login-field">
+      <label class="login-label">Heslo</label>
+      <input class="login-input" id="inPass" type="password" placeholder="Password...">
+    </div>
+    <button class="login-btn" id="btnLogin">🔓 PŘIHLÁSIT SE</button>
+    <div class="login-err" id="loginErr">❌ Nesprávné přihlašovací údaje!</div>
+  </div>
 </div>
 
-<!-- ===== LOADING SCREEN ===== -->
-<div id="loadingScreen">
-    <div class="load-middle">
-        <div class="load-title-main">MEJDRIX STREAM HUD V2</div>
-        <div class="load-subtitle">Načítání herních modulů...</div>
-        <div class="load-files-container">
-            <div id="file1" class="file-card"><span class="file-icon">⚙️</span><span class="file-name">Core Engine</span></div>
-            <div id="file2" class="file-card"><span class="file-icon">🕹️</span><span class="file-name">TikTok Plays</span></div>
-            <div id="file3" class="file-card"><span class="file-icon">💬</span><span class="file-name">TikFinity API</span></div>
-        </div>
+<!-- ======== LOADING SCREEN ======== -->
+<div class="screen hidden" id="screenLoad">
+  <div class="load-middle">
+    <div class="load-skew">
+      <div class="load-title">MEJDRIX STREAM HUD V2</div>
+      <div class="load-subtitle">Načítání herních modulů...</div>
+      <div class="load-files">
+        <div class="file-card" id="fc1"><span class="file-icon">⚙️</span><span class="file-name">Core Engine</span></div>
+        <div class="file-card" id="fc2"><span class="file-icon">🕹️</span><span class="file-name">TikTok Plays</span></div>
+        <div class="file-card" id="fc3"><span class="file-icon">💬</span><span class="file-name">TikFinity API</span></div>
+      </div>
     </div>
-    <div class="load-bottom">
-        <div class="load-bar-bg"><div id="loadFill" class="load-bar-fill"></div></div>
-        <div class="load-status-row">
-            <div id="loadStatus" class="load-current-file">Připojování k serverům...</div>
-            <div id="loadPercent" class="load-percent">0%</div>
-        </div>
+  </div>
+  <div class="load-bottom">
+    <div class="load-bar-bg"><div class="load-bar-fill" id="loadBar"></div></div>
+    <div class="load-status-row">
+      <div class="load-file-txt" id="loadTxt">Připojování k serverům...</div>
+      <div class="load-pct" id="loadPct">0%</div>
     </div>
+  </div>
 </div>
 
-<!-- ===== MAIN APP ===== -->
-<div id="main">
+<!-- ======== MAIN APP ======== -->
+<div id="appMain">
 
-    <div id="ttPanel" class="tiktok-live-panel is-offline">
-        <div class="tt-left">
-            <div class="tt-icon">📱</div>
-            <div class="tt-info">
-                <span class="tt-title">MEJDRIX TIKTOK LIVE</span>
-                <span id="ttStatus" class="tt-sub">⚪ Kontrola statusu streamu...</span>
-            </div>
-        </div>
-        <a id="ttLink" href="https://www.tiktok.com/@mejdrix/live" target="_blank" class="tt-btn">ZATÍM OFFLINE</a>
+  <!-- TT PANEL -->
+  <div class="tiktok-panel offline" id="ttPanel">
+    <div class="tt-left">
+      <div class="tt-icon">📱</div>
+      <div>
+        <div class="tt-name">MEJDRIX TIKTOK LIVE</div>
+        <div class="tt-status" id="ttStatus">⚪ Kontrola statusu streamu...</div>
+      </div>
     </div>
+    <a class="tt-btn" id="ttBtn" href="https://www.tiktok.com/@mejdrix/live" target="_blank">ZATÍM OFFLINE</a>
+  </div>
 
-    <div class="game-section">
-        <div class="game-header">
-            <div class="game-title">🕹️ MEJDRIX TIKTOK PLAYS</div>
-            <div class="game-select-box">
-                <select id="gameSelector">
-                    <option value="survival">MEJDRIX SURVIVAL</option>
-                    <option value="coin_hunt">SBÍRÁNÍ COINŮ</option>
-                </select>
-            </div>
-        </div>
-        <div class="game-layout">
-            <div id="gameCanvas" class="game-canvas-area">
-                <div id="player">🤖</div>
-                <div id="coin">💰</div>
-            </div>
-            <div class="game-chat-box">
-                <div class="game-chat-title">TikTok Chat</div>
-                <div class="iframe-container">
-                    <iframe id="tikfinityIframe" class="tikfinity-iframe" src="about:blank"></iframe>
-                </div>
-                <div class="chat-config-row">
-                    <input id="tikfinityCodeInput" placeholder="Vlož kód nebo celé URL...">
-                    <button id="saveCodeBtn">Uložit</button>
-                </div>
-            </div>
-        </div>
+  <!-- GAME -->
+  <div class="game-section">
+    <div class="game-header">
+      <div class="game-title">🕹️ MEJDRIX TIKTOK PLAYS</div>
+      <div class="game-select">
+        <select id="gameMode">
+          <option value="survival">MEJDRIX SURVIVAL</option>
+          <option value="coins">SBÍRÁNÍ COINŮ</option>
+        </select>
+      </div>
     </div>
-
-    <div class="socials-panel">
-        <span class="socials-title">SOCIÁLNÍ SÍTĚ</span>
-        <div class="socials-buttons">
-            <a href="https://www.tiktok.com/@mejdrix" target="_blank" class="social-btn btn-tiktok">📱 TikTok</a>
-            <a href="https://www.youtube.com/@Mejdrix" target="_blank" class="social-btn btn-youtube">🎥 YouTube</a>
-            <a href="https://discord.com/channels/1491804876978655315/1491804878346129530" target="_blank" class="social-btn btn-discord">💬 Discord</a>
-            <a href="https://www.roblox.com/users/10023963543/profile" target="_blank" class="social-btn btn-roblox">🎮 Roblox</a>
+    <div class="game-layout">
+      <div class="game-canvas" id="gameCanvas">
+        <div id="player">🤖</div>
+        <div id="coin">💰</div>
+      </div>
+      <div class="game-chat-box">
+        <div class="chat-box-title">TikTok Chat</div>
+        <div class="iframe-wrap">
+          <iframe class="tikfinity-iframe" id="tikIframe" src="about:blank"></iframe>
         </div>
-    </div>
-
-    <div class="socials-panel">
-        <span class="socials-title">DEV BY ADAM</span>
-        <div class="socials-buttons">
-            <a href="https://www.tiktok.com/@adamdevrblx" target="_blank" class="social-btn btn-tiktok">📱 TikTok</a>
-            <a href="https://www.youtube.com/@adammatecha8334" target="_blank" class="social-btn btn-youtube">🎥 YouTube</a>
-            <a href="https://www.roblox.com/users/4540263646/profile" target="_blank" class="social-btn btn-roblox">🎮 Roblox</a>
+        <div class="chat-cfg">
+          <input id="tikInput" placeholder="Vlož kód nebo celé URL...">
+          <button id="tikSave">Uložit</button>
         </div>
+      </div>
     </div>
+  </div>
 
-    <div class="fn-hud">
-        <div class="hud-header">
-            <div class="hud-title">MEJDRIX STREAM HUD V2</div>
-            <div class="live-badge">🔴 LIVE MONITOR</div>
-        </div>
-        <div class="stats-grid">
-            <div class="stat-box"><div id="fpsVal" class="stat-value fps">60</div><div class="stat-label">FPS</div></div>
-            <div class="stat-box"><div id="msVal" class="stat-value ms">24ms</div><div class="stat-label">MS PING</div></div>
-            <div class="stat-box"><div id="memVal" class="stat-value mem">482 MB</div><div class="stat-label">MEMORY</div></div>
-        </div>
-        <div class="fn-input-container">
-            <input id="search" class="search-input" placeholder="VYHLEDAT UŽIVATELE ZE STREAMU...">
-        </div>
-        <div id="teamGrid"></div>
+  <!-- SOCIALS 1 -->
+  <div class="socials-panel">
+    <span class="socials-title">SOCIÁLNÍ SÍTĚ</span>
+    <div class="socials-btns">
+      <a href="https://www.tiktok.com/@mejdrix" target="_blank" class="soc-btn soc-tt">📱 TikTok</a>
+      <a href="https://www.youtube.com/@Mejdrix" target="_blank" class="soc-btn soc-yt">🎥 YouTube</a>
+      <a href="https://discord.com/channels/1491804876978655315/1491804878346129530" target="_blank" class="soc-btn soc-dc">💬 Discord</a>
+      <a href="https://www.roblox.com/users/10023963543/profile" target="_blank" class="soc-btn soc-rbx">🎮 Roblox</a>
     </div>
+  </div>
 
-    <div class="meta-section">
-        <div class="meta-box"><h3>📌 Pinned Users</h3><p id="pinned">žádné</p></div>
-        <div class="meta-box"><h3>⭐ Favorite Users</h3><p id="favs">žádné</p></div>
+  <!-- SOCIALS 2 -->
+  <div class="socials-panel">
+    <span class="socials-title">DEV BY ADAM</span>
+    <div class="socials-btns">
+      <a href="https://www.tiktok.com/@adamdevrblx" target="_blank" class="soc-btn soc-tt">📱 TikTok</a>
+      <a href="https://www.youtube.com/@adammatecha8334" target="_blank" class="soc-btn soc-yt">🎥 YouTube</a>
+      <a href="https://www.roblox.com/users/4540263646/profile" target="_blank" class="soc-btn soc-rbx">🎮 Roblox</a>
     </div>
+  </div>
 
-    <div class="chat-section">
-        <h2>🤖 UPDATE SCRIPT TERMINAL</h2>
-        <div id="chat"></div>
-        <div class="chat-input-row">
-            <input id="aiInput" placeholder="Zadej příkazy /live, /add, /remove...">
-            <button id="send">Odeslat</button>
-        </div>
+  <!-- FN HUD -->
+  <div class="fn-hud">
+    <div class="hud-header">
+      <div class="hud-title">MEJDRIX STREAM HUD V2</div>
+      <div class="live-badge">🔴 LIVE MONITOR</div>
     </div>
-
-    <div class="download-box">
-        <button id="downloadBtn" class="dl-btn">⬇️ STÁHNOUT SCRIPT (HTML)</button>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val fps" id="sFps">60</div><div class="stat-lbl">FPS</div></div>
+      <div class="stat-box"><div class="stat-val ms"  id="sMs">24ms</div><div class="stat-lbl">MS PING</div></div>
+      <div class="stat-box"><div class="stat-val mem" id="sMem">482 MB</div><div class="stat-lbl">MEMORY</div></div>
     </div>
-
-    <div class="coming-soon-panel">
-        <div class="coming-soon-text">🚀 MORE <span>COMING SOON</span>...</div>
+    <div class="search-wrap">
+      <input class="search-input" id="searchBox" placeholder="VYHLEDAT UŽIVATELE ZE STREAMU...">
     </div>
+    <div id="teamGrid"></div>
+  </div>
 
-</div>
+  <!-- META -->
+  <div class="meta-section">
+    <div class="meta-box"><h3>📌 Pinned Users</h3><p id="mPinned">žádné</p></div>
+    <div class="meta-box"><h3>⭐ Favorite Users</h3><p id="mFavs">žádné</p></div>
+  </div>
+
+  <!-- TERMINAL -->
+  <div class="terminal-section">
+    <h2>🤖 UPDATE SCRIPT TERMINAL</h2>
+    <div id="chat"></div>
+    <div class="term-row">
+      <input id="termInput" placeholder="Zadej příkazy /live, /add, /remove...">
+      <button id="termSend">Odeslat</button>
+    </div>
+  </div>
+
+  <!-- DOWNLOAD -->
+  <div class="dl-box">
+    <button class="dl-btn" id="dlBtn">⬇️ STÁHNOUT SCRIPT (HTML)</button>
+  </div>
+
+  <!-- COMING SOON -->
+  <div class="coming-panel">
+    <div class="coming-text">🚀 MORE <span>COMING SOON</span>...</div>
+  </div>
+
+</div><!-- end appMain -->
 
 <script>
-/* ===== LOGIN SYSTEM ===== */
-const VALID_USERNAME = "Mejdrixog";
-const VALID_PASSWORD = "MejdrixStreamsV2";
+// ============================================================
+//  LOGIN SYSTEM
+// ============================================================
+const CREDS = { user: "Mejdrixog", pass: "MejdrixStreamsV2" };
 
-const loginScreen  = document.getElementById("loginScreen");
-const loginUserEl  = document.getElementById("loginUser");
-const loginPassEl  = document.getElementById("loginPass");
-const loginBtn     = document.getElementById("loginBtn");
-const loginError   = document.getElementById("loginError");
-const loadingScreen = document.getElementById("loadingScreen");
-const mainEl       = document.getElementById("main");
+const screenLogin = document.getElementById("screenLogin");
+const screenLoad  = document.getElementById("screenLoad");
+const appMain     = document.getElementById("appMain");
+const loginBox    = document.getElementById("loginBox");
+const inUser      = document.getElementById("inUser");
+const inPass      = document.getElementById("inPass");
+const btnLogin    = document.getElementById("btnLogin");
+const loginErr    = document.getElementById("loginErr");
 
-function attemptLogin() {
-    const u = loginUserEl.value.trim();
-    const p = loginPassEl.value;
-
-    if (u === VALID_USERNAME && p === VALID_PASSWORD) {
-        // Hide login screen
-        loginScreen.style.opacity = "0";
-        loginScreen.style.visibility = "hidden";
-
-        // Show loading screen and start animation
-        loadingScreen.style.display = "flex";
-        startLoadingAnimation();
-    } else {
-        // Shake the box and show error
-        const box = document.querySelector(".login-box");
-        box.style.animation = "none";
-        box.offsetHeight; // reflow
-        box.style.animation = "shake 0.4s ease";
-
-        loginUserEl.classList.add("error");
-        loginPassEl.classList.add("error");
-        loginError.classList.add("visible");
-
+function doLogin() {
+    if (inUser.value.trim() === CREDS.user && inPass.value === CREDS.pass) {
+        // success → fade out login, show loading
+        screenLogin.classList.add("hidden");
         setTimeout(() => {
-            loginUserEl.classList.remove("error");
-            loginPassEl.classList.remove("error");
-        }, 600);
-
-        loginPassEl.value = "";
-        loginPassEl.focus();
-    }
-}
-
-loginBtn.addEventListener("click", attemptLogin);
-loginPassEl.addEventListener("keydown", e => { if (e.key === "Enter") attemptLogin(); });
-loginUserEl.addEventListener("keydown", e => { if (e.key === "Enter") loginPassEl.focus(); });
-
-// Clear error on typing
-loginUserEl.addEventListener("input", () => loginError.classList.remove("visible"));
-loginPassEl.addEventListener("input", () => loginError.classList.remove("visible"));
-
-function startLoadingAnimation() {
-    loadTikFinityChat();
-    let progress = 0;
-    const bar     = document.getElementById("loadFill");
-    const percent = document.getElementById("loadPercent");
-    const status  = document.getElementById("loadStatus");
-    const fileCards = [
-        document.getElementById("file1"),
-        document.getElementById("file2"),
-        document.getElementById("file3")
-    ];
-
-    const interval = setInterval(() => {
-        progress += Math.floor(Math.random() * 4) + 1;
-        if (progress > 100) progress = 100;
-        bar.style.width = progress + "%";
-        percent.innerText = progress + "%";
-
-        if (progress >= 15) fileCards[0].classList.add("active");
-        if (progress >= 45) fileCards[1].classList.add("active");
-        if (progress >= 75) fileCards[2].classList.add("active");
-
-        if (progress === 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-                loadingScreen.style.opacity = "0";
-                loadingScreen.style.visibility = "hidden";
-                mainEl.style.display = "flex";
-                checkTikTokLive();
-            }, 400);
-        }
-    }, 50);
-}
-
-/* ===== TIKFINITY ===== */
-const tikfinityInput  = document.getElementById("tikfinityCodeInput");
-const saveCodeBtn     = document.getElementById("saveCodeBtn");
-const tikfinityIframe = document.getElementById("tikfinityIframe");
-
-function loadTikFinityChat() {
-    let saved = localStorage.getItem("tikfinity_overlay_url");
-    if (saved) { tikfinityIframe.src = saved; tikfinityInput.value = saved; }
-    else { tikfinityIframe.src = "about:blank"; }
-}
-
-saveCodeBtn.onclick = () => {
-    let val = tikfinityInput.value.trim();
-    if (!val) return;
-    let finalUrl = val.startsWith("http") ? val : `https://tikfinity.zerody.one/authed/chat/${val}`;
-    localStorage.setItem("tikfinity_overlay_url", finalUrl);
-    tikfinityIframe.src = finalUrl;
-    alert("TikFinity kód / URL byl uložen!");
-};
-
-/* ===== HERNÍ ENGINE ===== */
-const player       = document.getElementById("player");
-const coin         = document.getElementById("coin");
-const gameSelector = document.getElementById("gameSelector");
-let playerX = 250, playerY = 150;
-let coinX = 50, coinY = 50;
-const speed = 20;
-
-function updatePlayerPos() {
-    if (playerX < 10) playerX = 10;
-    if (playerX > 530) playerX = 530;
-    if (playerY < 10) playerY = 10;
-    if (playerY > 290) playerY = 290;
-    player.style.left = playerX + "px";
-    player.style.top  = playerY + "px";
-    if (gameSelector.value === "coin_hunt") {
-        let dist = Math.sqrt(Math.pow(playerX - coinX, 2) + Math.pow(playerY - coinY, 2));
-        if (dist < 32) spawnCoin();
-    }
-}
-
-function spawnCoin() {
-    coinX = Math.floor(Math.random() * 500) + 15;
-    coinY = Math.floor(Math.random() * 260) + 15;
-    coin.style.left = coinX + "px";
-    coin.style.top  = coinY + "px";
-    coin.style.display = "flex";
-}
-
-window.addEventListener("keydown", (e) => {
-    let key = e.key.toLowerCase();
-    if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(key)) e.preventDefault();
-    if (key === "w" || key === "arrowup")    playerY -= speed;
-    if (key === "s" || key === "arrowdown")  playerY += speed;
-    if (key === "a" || key === "arrowleft")  playerX -= speed;
-    if (key === "d" || key === "arrowright") playerX += speed;
-    updatePlayerPos();
-});
-
-gameSelector.onchange = () => {
-    if (gameSelector.value === "coin_hunt") spawnCoin();
-    else coin.style.display = "none";
-};
-updatePlayerPos();
-
-/* ===== TIKTOK STATUS ===== */
-let isLive = false;
-const ttPanel  = document.getElementById("ttPanel");
-const ttStatus = document.getElementById("ttStatus");
-const ttLink   = document.getElementById("ttLink");
-
-function checkTikTokLive() {
-    const testUrl  = "https://www.tiktok.com/@mejdrix/live";
-    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(testUrl) + "&cacheBuster=" + Date.now();
-    fetch(proxyUrl).then(r => r.json()).then(data => {
-        let html = data.contents;
-        setLiveState(!!(html && (html.includes("room_id") || html.includes('"liveRoom"') || html.includes("is_live\":true"))));
-    }).catch(() => setLiveState(isLive));
-}
-
-function setLiveState(liveStatus) {
-    isLive = liveStatus;
-    if (isLive) {
-        ttPanel.classList.remove("is-offline");
-        ttStatus.innerText = "🔴 Sleduj stream v reálném čase";
-        ttStatus.style.color = "var(--tt-red)";
-        ttLink.innerText = "SLEDOVAT LIVE";
+            screenLogin.style.display = "none";
+            screenLoad.classList.remove("hidden");
+            runLoadingScreen();
+        }, 400);
     } else {
-        ttPanel.classList.add("is-offline");
-        ttStatus.innerText = "⚪ Momentálně offline";
-        ttStatus.style.color = "#8a8f9e";
-        ttLink.innerText = "ZATÍM OFFLINE";
+        // fail → shake + error
+        inUser.classList.add("err");
+        inPass.classList.add("err");
+        loginErr.classList.add("show");
+        loginBox.style.animation = "none";
+        void loginBox.offsetWidth;
+        loginBox.style.animation = "shake 0.45s ease";
+        inPass.value = "";
+        setTimeout(() => {
+            inUser.classList.remove("err");
+            inPass.classList.remove("err");
+        }, 700);
     }
 }
-setInterval(checkTikTokLive, 30000);
 
-/* ===== RENDER ENGINE ===== */
+btnLogin.addEventListener("click", doLogin);
+inPass.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
+inUser.addEventListener("keydown", e => { if (e.key === "Enter") inPass.focus(); });
+inUser.addEventListener("input",  () => loginErr.classList.remove("show"));
+inPass.addEventListener("input",  () => loginErr.classList.remove("show"));
+inUser.focus();
+
+// ============================================================
+//  LOADING ANIMATION  (only called after successful login)
+// ============================================================
+function runLoadingScreen() {
+    const bar  = document.getElementById("loadBar");
+    const pct  = document.getElementById("loadPct");
+    const fc1  = document.getElementById("fc1");
+    const fc2  = document.getElementById("fc2");
+    const fc3  = document.getElementById("fc3");
+    let p = 0;
+
+    const iv = setInterval(() => {
+        p += Math.floor(Math.random() * 4) + 1;
+        if (p > 100) p = 100;
+        bar.style.width = p + "%";
+        pct.innerText   = p + "%";
+        if (p >= 15) fc1.classList.add("active");
+        if (p >= 50) fc2.classList.add("active");
+        if (p >= 80) fc3.classList.add("active");
+        if (p >= 100) {
+            clearInterval(iv);
+            setTimeout(() => {
+                screenLoad.classList.add("hidden");
+                setTimeout(() => { screenLoad.style.display = "none"; }, 400);
+                appMain.style.display = "flex";
+                initApp(); // start the real app only now
+            }, 450);
+        }
+    }, 55);
+}
+
+// ============================================================
+//  APP INIT  (called once after loading screen)
+// ============================================================
+function initApp() {
+    initTikfinity();
+    initGame();
+    initTeamGrid();
+    initMetrics();
+    initTerminal();
+    initDownload();
+    checkTikTokLive();
+    setInterval(checkTikTokLive, 30000);
+}
+
+// ---- TIKFINITY ----
+function initTikfinity() {
+    const iframe  = document.getElementById("tikIframe");
+    const input   = document.getElementById("tikInput");
+    const saveBtn = document.getElementById("tikSave");
+    const saved   = localStorage.getItem("tikfinity_url");
+    if (saved) { iframe.src = saved; input.value = saved; }
+    saveBtn.onclick = () => {
+        let v = input.value.trim(); if (!v) return;
+        let url = v.startsWith("http") ? v : "https://tikfinity.zerody.one/authed/chat/" + v;
+        localStorage.setItem("tikfinity_url", url);
+        iframe.src = url;
+        alert("TikFinity URL uložena!");
+    };
+}
+
+// ---- GAME ----
+function initGame() {
+    const player  = document.getElementById("player");
+    const coin    = document.getElementById("coin");
+    const canvas  = document.getElementById("gameCanvas");
+    const modeEl  = document.getElementById("gameMode");
+    const W = 584, H = 344, S = 22;
+    let px = 270, py = 150, cx = 60, cy = 60;
+
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+    function place() {
+        player.style.left = px + "px";
+        player.style.top  = py + "px";
+        if (modeEl.value === "coins") {
+            let d = Math.hypot(px - cx, py - cy);
+            if (d < 34) spawnCoin();
+        }
+    }
+    function spawnCoin() {
+        cx = Math.floor(Math.random() * (W - 40)) + 10;
+        cy = Math.floor(Math.random() * (H - 40)) + 10;
+        coin.style.left    = cx + "px";
+        coin.style.top     = cy + "px";
+        coin.style.display = "flex";
+    }
+    modeEl.onchange = () => {
+        if (modeEl.value === "coins") spawnCoin();
+        else coin.style.display = "none";
+    };
+    window.addEventListener("keydown", e => {
+        const k = e.key;
+        if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(k)) e.preventDefault();
+        if (k === "ArrowUp"    || k === "w" || k === "W") py = clamp(py - S, 5, H - 48);
+        if (k === "ArrowDown"  || k === "s" || k === "S") py = clamp(py + S, 5, H - 48);
+        if (k === "ArrowLeft"  || k === "a" || k === "A") px = clamp(px - S, 5, W - 48);
+        if (k === "ArrowRight" || k === "d" || k === "D") px = clamp(px + S, 5, W - 48);
+        place();
+    });
+    place();
+}
+
+// ---- TEAM GRID ----
 const defaultUsers = [
-    { name: "Mejdrix", role: "owner" },
-    { name: "ViriBLOX", role: "mod" },
-    { name: "Xentro", role: "mod" },
-    { name: "AdamDevRblx", role: "mod_gifter" },
-    { name: "T4D34S", role: "mod_helper" },
-    { name: "Jammes", role: "mod_gifter" },
-    { name: "Fnaffan", role: "scripter" },
-    { name: "Pettrading", role: "gifter" },
-    { name: "Kebab", role: "b_helper" },
-    { name: "Kifír(Studio)", role: "traitor" },
-    { name: "Daník", role: "funniest" }
+    { name: "Mejdrix",       role: "owner"      },
+    { name: "ViriBLOX",      role: "mod"        },
+    { name: "Xentro",        role: "mod"        },
+    { name: "AdamDevRblx",   role: "mod_gifter" },
+    { name: "T4D34S",        role: "mod_helper" },
+    { name: "Jammes",        role: "mod_gifter" },
+    { name: "Fnaffan",       role: "scripter"   },
+    { name: "Pettrading",    role: "gifter"     },
+    { name: "Kebab",         role: "b_helper"   },
+    { name: "Kifír(Studio)", role: "traitor"    },
+    { name: "Daník",         role: "funniest"   }
 ];
+const roleLabel = {
+    owner:"Owner", mod:"Moderator", mod_gifter:"Mod & Gifter",
+    mod_helper:"Mod & Helper", helper:"Helper", b_helper:"Brutal Helper",
+    gifter:"Gifter", scripter:"Scripter", traitor:"Traitor", funniest:"Funniest"
+};
 
 let users  = JSON.parse(localStorage.getItem("fn_users")  || JSON.stringify(defaultUsers));
 let favs   = JSON.parse(localStorage.getItem("fn_favs")   || "[]");
 let pinned = JSON.parse(localStorage.getItem("fn_pinned") || "[]");
 
-const roleFormat = {
-    owner: "Owner", mod: "Moderator", mod_gifter: "Mod & Gifter", mod_helper: "Mod & Helper",
-    helper: "Helper", b_helper: "Brutal Helper", gifter: "Gifter", scripter: "Scripter",
-    traitor: "Traitor", funniest: "Funniest"
-};
-
-const teamGrid = document.getElementById("teamGrid");
-const search   = document.getElementById("search");
-
-function copyName(name, elementId) {
-    navigator.clipboard.writeText(name).then(() => {
-        let alertSpan = document.getElementById(`copy-${elementId}`);
-        if (alertSpan) { alertSpan.style.opacity = "1"; setTimeout(() => alertSpan.style.opacity = "0", 1000); }
-    });
+function saveMeta() {
+    localStorage.setItem("fn_users",  JSON.stringify(users));
+    localStorage.setItem("fn_favs",   JSON.stringify(favs));
+    localStorage.setItem("fn_pinned", JSON.stringify(pinned));
 }
 
-function render() {
-    teamGrid.innerHTML = "";
-    let s = search.value.toLowerCase().trim();
-    let filtered = users.filter(u => u.name.toLowerCase().includes(s));
-    filtered.sort((a, b) => (pinned.includes(b.name) ? 1 : 0) - (pinned.includes(a.name) ? 1 : 0));
+function initTeamGrid() {
+    const grid   = document.getElementById("teamGrid");
+    const search = document.getElementById("searchBox");
+    search.addEventListener("input", renderGrid);
+    renderGrid();
+}
 
-    filtered.forEach((u, idx) => {
-        let isPinned = pinned.includes(u.name);
-        let isFav    = favs.includes(u.name);
-        let div = document.createElement("div");
-        div.className = `team-card ${isPinned ? 'is-pinned' : ''}`;
-        div.innerHTML = `
-            <div class="team-left-group">
-                <span class="team-name" onclick="copyName('${u.name}', '${idx}')">${u.name}</span>
-                <span id="copy-${idx}" class="copy-alert">Zkopírováno!</span>
+function renderGrid() {
+    const grid   = document.getElementById("teamGrid");
+    const search = document.getElementById("searchBox");
+    const q = search.value.toLowerCase().trim();
+    grid.innerHTML = "";
+
+    let list = users.filter(u => u.name.toLowerCase().includes(q));
+    list.sort((a, b) => (pinned.includes(b.name) ? 1 : 0) - (pinned.includes(a.name) ? 1 : 0));
+
+    list.forEach((u, i) => {
+        const ip = pinned.includes(u.name), iv = favs.includes(u.name);
+        const card = document.createElement("div");
+        card.className = "team-card" + (ip ? " pinned" : "");
+        card.innerHTML = `
+            <div class="t-left">
+                <span class="t-name" data-name="${u.name}">${u.name}</span>
+                <span class="t-copied" id="cp${i}">Zkopírováno!</span>
             </div>
-            <div class="team-right">
-                <span class="team-badge ${u.role}">${roleFormat[u.role] || u.role}</span>
-                <div class="actions">
-                    <span class="pin-btn">${isPinned ? '📌' : '📍'}</span>
-                    <span class="fav-btn">${isFav ? '⭐' : '☆'}</span>
+            <div class="t-right">
+                <span class="t-badge r-${u.role}">${roleLabel[u.role] || u.role}</span>
+                <div class="t-actions">
+                    <span class="pin-btn">${ip ? "📌" : "📍"}</span>
+                    <span class="fav-btn">${iv ? "⭐" : "☆"}</span>
                 </div>
-            </div>
-        `;
-        div.querySelector(".pin-btn").onclick = (e) => {
+            </div>`;
+        card.querySelector(".t-name").onclick = () => {
+            navigator.clipboard.writeText(u.name);
+            const el = document.getElementById("cp" + i);
+            if (el) { el.style.opacity = "1"; setTimeout(() => el.style.opacity = "0", 1000); }
+        };
+        card.querySelector(".pin-btn").onclick = e => {
             e.stopPropagation();
             pinned = pinned.includes(u.name) ? pinned.filter(x => x !== u.name) : [...pinned, u.name];
-            localStorage.setItem("fn_pinned", JSON.stringify(pinned)); render();
+            saveMeta(); renderGrid();
         };
-        div.querySelector(".fav-btn").onclick = (e) => {
+        card.querySelector(".fav-btn").onclick = e => {
             e.stopPropagation();
             favs = favs.includes(u.name) ? favs.filter(x => x !== u.name) : [...favs, u.name];
-            localStorage.setItem("fn_favs", JSON.stringify(favs)); render();
+            saveMeta(); renderGrid();
         };
-        teamGrid.appendChild(div);
+        grid.appendChild(card);
     });
-    document.getElementById("pinned").innerText = pinned.join(", ") || "žádné";
-    document.getElementById("favs").innerText   = favs.join(", ")   || "žádné";
-}
-search.oninput = render;
-render();
-
-/* ===== METRIKY ===== */
-setInterval(() => {
-    document.getElementById("fpsVal").innerText = 60 + Math.floor(Math.random() * 6) - 3;
-    document.getElementById("msVal").innerText  = 20 + Math.floor(Math.random() * 8) - 4 + "ms";
-    document.getElementById("memVal").innerText = 450 + Math.floor(Math.random() * 15) - 7 + " MB";
-}, 1000);
-
-/* ===== TERMINÁL ===== */
-const chat    = document.getElementById("chat");
-const aiInput = document.getElementById("aiInput");
-const send    = document.getElementById("send");
-
-function addMessage(text, type) {
-    let msg = document.createElement("div");
-    msg.className = `msg ${type}`;
-    msg.innerText = text;
-    chat.appendChild(msg);
-    chat.scrollTop = chat.scrollHeight;
+    document.getElementById("mPinned").innerText = pinned.join(", ") || "žádné";
+    document.getElementById("mFavs").innerText   = favs.join(", ")   || "žádné";
 }
 
-send.onclick = () => {
-    let val = aiInput.value.trim(); if (!val) return;
-    addMessage(val, "user"); aiInput.value = "";
-    if (val.startsWith("/live")) {
-        let param = val.split(" ")[1];
-        if (param === "true" || param === "on") { setLiveState(true); addMessage("🤖 ONLINE", "bot"); }
-        else { setLiveState(false); addMessage("🤖 OFFLINE", "bot"); }
-    } else if (val.startsWith("/add")) {
-        let parts = val.split(" "); let name = parts[1]; let role = parts[2];
-        if (name && role && roleFormat[role]) {
-            users.push({ name, role }); localStorage.setItem("fn_users", JSON.stringify(users)); render();
-            addMessage(`🤖 Uživatel ${name} byl úspěšně přidán.`, "bot");
-        }
-    } else if (val.startsWith("/remove")) {
-        let parts = val.split(" "); let name = parts[1];
-        if (name) {
-            users = users.filter(u => u.name.toLowerCase() !== name.toLowerCase());
-            localStorage.setItem("fn_users", JSON.stringify(users)); render();
-            addMessage(`🤖 Uživatel ${name} byl odebrán.`, "bot");
-        }
-    } else {
-        addMessage("🤖 Neznámý příkaz. Zkus /live, /add nebo /remove.", "bot");
+// ---- METRICS ----
+function initMetrics() {
+    setInterval(() => {
+        document.getElementById("sFps").innerText = 58 + Math.floor(Math.random() * 6) + "";
+        document.getElementById("sMs").innerText  = (18 + Math.floor(Math.random() * 10)) + "ms";
+        document.getElementById("sMem").innerText = (450 + Math.floor(Math.random() * 20)) + " MB";
+    }, 1000);
+}
+
+// ---- TERMINAL ----
+function initTerminal() {
+    const chatEl = document.getElementById("chat");
+    const inp    = document.getElementById("termInput");
+    const btn    = document.getElementById("termSend");
+
+    function addMsg(txt, type) {
+        const m = document.createElement("div");
+        m.className = "msg " + type; m.innerText = txt;
+        chatEl.appendChild(m); chatEl.scrollTop = chatEl.scrollHeight;
     }
-};
+    function handle() {
+        const v = inp.value.trim(); if (!v) return;
+        addMsg(v, "user"); inp.value = "";
+        if (v.startsWith("/live")) {
+            const p = v.split(" ")[1];
+            setLiveState(p === "true" || p === "on");
+            addMsg("🤖 Status upraven.", "bot");
+        } else if (v.startsWith("/add ")) {
+            const [, name, role] = v.split(" ");
+            if (name && role && roleLabel[role]) {
+                users.push({ name, role }); saveMeta(); renderGrid();
+                addMsg("🤖 Uživatel " + name + " přidán.", "bot");
+            } else addMsg("🤖 Použití: /add Jméno role", "bot");
+        } else if (v.startsWith("/remove ")) {
+            const name = v.split(" ")[1];
+            users = users.filter(u => u.name.toLowerCase() !== name.toLowerCase());
+            saveMeta(); renderGrid();
+            addMsg("🤖 Uživatel " + name + " odebrán.", "bot");
+        } else {
+            addMsg("🤖 Neznámý příkaz. Zkus /live on|off, /add Jméno role, /remove Jméno", "bot");
+        }
+    }
+    btn.onclick = handle;
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") handle(); });
+}
 
-/* ===== EXPORT ===== */
-document.getElementById("downloadBtn").onclick = () => {
-    const pageSource = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-    const blob = new Blob([pageSource], { type: "text/html" });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement("a");
-    a.href = url; a.download = "mejdrix_hud_v2.html"; a.click();
-    URL.revokeObjectURL(url);
-};
+// ---- TIKTOK LIVE STATUS ----
+let isLive = false;
+function checkTikTokLive() {
+    const url = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.tiktok.com/@mejdrix/live") + "&t=" + Date.now();
+    fetch(url).then(r => r.json()).then(d => {
+        const h = d.contents || "";
+        setLiveState(h.includes("room_id") || h.includes('"liveRoom"') || h.includes('is_live":true'));
+    }).catch(() => {});
+}
+function setLiveState(live) {
+    isLive = live;
+    const panel = document.getElementById("ttPanel");
+    const stat  = document.getElementById("ttStatus");
+    const btn   = document.getElementById("ttBtn");
+    if (live) {
+        panel.classList.remove("offline");
+        stat.innerText = "🔴 Sleduj stream v reálném čase";
+        btn.innerText  = "SLEDOVAT LIVE";
+    } else {
+        panel.classList.add("offline");
+        stat.innerText = "⚪ Momentálně offline";
+        btn.innerText  = "ZATÍM OFFLINE";
+    }
+}
+
+// ---- DOWNLOAD ----
+function initDownload() {
+    document.getElementById("dlBtn").onclick = () => {
+        const src  = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        const blob = new Blob([src], { type: "text/html" });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement("a");
+        a.href = url; a.download = "mejdrix_hud_v2.html"; a.click();
+        URL.revokeObjectURL(url);
+    };
+}
 </script>
 </body>
 </html>
