@@ -5,1334 +5,1137 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MEJDRIX HUD V2</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+
 :root {
-    --fn-blue: #007bff; --fn-yellow: #f4c500; --fn-purple: #8c00ff;
-    --fn-dark: #0a0b10; --fn-text: #ffffff; --fn-green: #00ff66;
-    --fn-pink: #ff007f; --fn-red: #ff003c; --fn-orange: #ffaa00;
-    --tt-red: #fe2c55; --tt-gray: #444a59;
-    --yt-color: #ff0000; --dc-color: #5865f2; --rbx-color: #2b2d32;
+  --accent: #f4c500;
+  --accent2: #ff6b00;
+  --bg: #07080f;
+  --bg2: #0f1018;
+  --card: #12131e;
+  --card2: #1a1b28;
+  --border: #252638;
+  --border2: #2e3048;
+  --text: #ffffff;
+  --muted: #6b6f85;
+  --green: #00e676;
+  --blue: #2979ff;
+  --pink: #f50057;
+  --purple: #7c4dff;
+  --red: #ff1744;
+  --orange: #ff9100;
+  --tt-red: #fe2c55;
+  --yt: #ff0000;
+  --dc: #5865f2;
+  --rbx: #2b2d32;
+  --glow: rgba(244,197,0,0.18);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*{box-sizing:border-box;margin:0;padding:0}
 
 body {
-    background: var(--fn-dark);
-    color: var(--fn-text);
-    font-family: 'Burbank Big Condensed', 'Segoe UI', Impact, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow Condensed', 'Segoe UI', Impact, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 4px; }
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.3)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
 
-/* ========== ANIMATED BG ========== */
-.bg-rift {
-    position: fixed; top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background:
-        radial-gradient(circle at 30% 30%, rgba(140,0,255,0.15) 0%, transparent 50%),
-        radial-gradient(circle at 70% 70%, rgba(0,123,255,0.12) 0%, transparent 50%),
-        radial-gradient(circle at 50% 10%, rgba(255,0,127,0.08) 0%, transparent 40%);
-    animation: riftMove 25s linear infinite;
-    z-index: 0; pointer-events: none;
-}
-@keyframes riftMove {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(180deg) scale(1.1); }
-    100% { transform: rotate(360deg) scale(1); }
+/* ── ANIMATED BACKGROUND ── */
+#bgCanvas {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
 }
 
-/* ========== SCREEN SYSTEM ========== */
+/* ── SCREENS ── */
 .screen {
-    position: fixed; top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  transition: opacity .5s ease, visibility .5s ease;
 }
-.screen.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
+.screen.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* ── LOGIN ── */
+#sLogin {
+  background: radial-gradient(ellipse at 30% 40%, rgba(124,77,255,.22) 0%, transparent 55%),
+              radial-gradient(ellipse at 75% 70%, rgba(41,121,255,.18) 0%, transparent 50%),
+              var(--bg);
 }
 
-/* ========== LOGIN SCREEN ========== */
-#screenLogin {
-    background:
-        radial-gradient(circle at 25% 35%, rgba(140,0,255,0.2) 0%, transparent 55%),
-        radial-gradient(circle at 75% 65%, rgba(0,123,255,0.15) 0%, transparent 50%),
-        #0a0b10;
+.login-wrap {
+  position: relative;
+  width: 420px; max-width: 96vw;
 }
 
-.login-box {
-    background: linear-gradient(135deg, rgba(27,28,38,0.98), rgba(15,16,23,0.98));
-    border: 3px solid var(--fn-yellow);
-    border-radius: 6px;
-    padding: 48px 52px 40px;
-    width: 420px;
-    max-width: 95vw;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 50px rgba(244,197,0,0.1);
-    position: relative;
-    overflow: hidden;
-}
-.login-box::before {
-    content: '';
-    position: absolute; top: 0; left: 0;
-    width: 8px; height: 100%;
-    background: var(--fn-yellow);
+.login-glow {
+  position: absolute; inset: -2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--purple), var(--blue));
+  filter: blur(12px);
+  opacity: .55;
+  z-index: -1;
+  animation: glowPulse 3s ease-in-out infinite;
 }
 
-.login-icon { font-size: 52px; text-align: center; display: block; margin-bottom: 14px; animation: pulse 2s infinite; }
-.login-logo {
-    font-size: 50px; font-weight: 900; color: var(--fn-yellow);
-    text-transform: uppercase; font-style: italic; letter-spacing: 3px;
-    text-align: center; margin-bottom: 6px;
-    text-shadow: 3px 3px 0 rgba(0,0,0,0.8);
+.login-card {
+  background: linear-gradient(160deg, rgba(22,23,36,.98), rgba(12,13,20,.99));
+  border: 1.5px solid rgba(244,197,0,.35);
+  border-radius: 12px;
+  padding: 52px 48px 44px;
+  position: relative;
+  overflow: hidden;
+}
+.login-card::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--accent), transparent);
+}
+
+.login-emblem {
+  font-size: 56px; text-align: center; display: block;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 20px rgba(244,197,0,.6));
+  animation: floatEmoji 3s ease-in-out infinite;
+}
+.login-title {
+  font-size: 54px; font-weight: 900; font-style: italic;
+  color: var(--accent); text-align: center;
+  text-transform: uppercase; letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(244,197,0,.4), 3px 3px 0 rgba(0,0,0,.8);
+  margin-bottom: 6px;
 }
 .login-sub {
-    font-size: 13px; color: #8a8f9e; text-transform: uppercase;
-    font-weight: bold; letter-spacing: 2px; text-align: center;
-    margin-bottom: 36px; font-style: italic;
+  font-size: 13px; color: var(--muted); text-align: center;
+  text-transform: uppercase; letter-spacing: 2.5px; font-weight: 700;
+  margin-bottom: 38px; font-style: italic;
 }
 
-.login-field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 20px; }
-.login-label {
-    font-size: 12px; font-weight: 900; text-transform: uppercase;
-    letter-spacing: 1.5px; color: #8a8f9e; font-style: italic;
+.lf { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.lf label {
+  font-size: 11px; font-weight: 900; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--muted); font-style: italic;
 }
-.login-input {
-    background: rgba(8,9,14,0.9);
-    border: 2px solid #363a4f;
-    border-radius: 4px; color: #fff;
-    font-size: 16px; font-style: italic; font-weight: 700;
-    padding: 13px 15px; outline: none;
-    width: 100%;
-    font-family: inherit;
-    transition: border-color 0.2s, box-shadow 0.2s;
+.lf input {
+  background: rgba(7,8,15,.85);
+  border: 1.5px solid var(--border2);
+  border-radius: 7px; color: #fff;
+  font-size: 17px; font-style: italic; font-weight: 700;
+  padding: 14px 16px; outline: none; width: 100%;
+  font-family: inherit;
+  transition: border-color .2s, box-shadow .2s;
 }
-.login-input:focus { border-color: var(--fn-yellow); box-shadow: 0 0 14px rgba(244,197,0,0.2); }
-.login-input.err { border-color: var(--fn-red); box-shadow: 0 0 14px rgba(255,0,60,0.3); }
+.lf input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(244,197,0,.12); }
+.lf input.err   { border-color: var(--red);    box-shadow: 0 0 0 3px rgba(255,23,68,.15); }
 
 .login-btn {
-    width: 100%; margin-top: 6px;
-    background: linear-gradient(135deg, var(--fn-yellow), #d4aa00);
-    color: #000; border: none; border-radius: 4px;
-    padding: 16px; font-size: 20px; font-weight: 900;
-    text-transform: uppercase; font-style: italic; letter-spacing: 2px;
-    cursor: pointer; box-shadow: 0 6px 0 #8c7000;
-    font-family: inherit;
-    transition: filter 0.15s, transform 0.1s, box-shadow 0.1s;
+  width: 100%; margin-top: 8px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  color: #000; border: none; border-radius: 7px;
+  padding: 16px; font-size: 20px; font-weight: 900;
+  text-transform: uppercase; font-style: italic; letter-spacing: 2px;
+  cursor: pointer; font-family: inherit;
+  box-shadow: 0 6px 0 #7a4800, 0 10px 25px rgba(244,197,0,.25);
+  transition: filter .15s, transform .1s, box-shadow .1s;
 }
-.login-btn:hover { filter: brightness(1.1); }
-.login-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
+.login-btn:hover  { filter: brightness(1.1); }
+.login-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #7a4800; }
 
 .login-err {
-    font-size: 13px; color: var(--fn-red); font-weight: 900;
-    font-style: italic; text-transform: uppercase; text-align: center;
-    margin-top: 16px; letter-spacing: 1px; min-height: 18px;
-    opacity: 0; transition: opacity 0.2s;
+  text-align: center; font-size: 13px; color: var(--red);
+  font-weight: 900; font-style: italic; text-transform: uppercase;
+  letter-spacing: 1px; margin-top: 16px; opacity: 0;
+  transition: opacity .2s;
 }
 .login-err.show { opacity: 1; }
 
 @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20% { transform: translateX(-10px); }
-    40% { transform: translateX(10px); }
-    60% { transform: translateX(-6px); }
-    80% { transform: translateX(6px); }
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+}
+@keyframes glowPulse { 0%,100%{opacity:.55} 50%{opacity:.85} }
+@keyframes floatEmoji { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+@keyframes blink  { 0%,100%{opacity:1} 50%{opacity:.25} }
+@keyframes spin   { to{transform:rotate(360deg)} }
+@keyframes slideUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes shimmer {
+  0%  { background-position: -200% center; }
+  100%{ background-position:  200% center; }
 }
 
-/* ========== LOADING SCREEN ========== */
-#screenLoad {
-    background: radial-gradient(circle at center, rgba(37,40,54,0.99) 0%, rgba(12,13,18,1) 100%);
+/* ── LOADING ── */
+#sLoad {
+  background: radial-gradient(ellipse at center, rgba(22,23,36,.99) 0%, var(--bg) 100%);
+}
+.load-inner { width: 100%; max-width: 700px; padding: 0 24px; display: flex; flex-direction: column; align-items: center; gap: 0; }
+.load-logo {
+  font-size: clamp(44px, 9vw, 88px);
+  font-weight: 900; font-style: italic; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 5px;
+  text-shadow: 0 0 40px rgba(244,197,0,.5), 4px 4px 0 rgba(0,0,0,.9);
+  animation: pulse 2s infinite; margin-bottom: 8px;
+}
+.load-sub {
+  font-size: 16px; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 3px; font-weight: 700; font-style: italic;
+  margin-bottom: 48px;
+}
+.load-cards { display: flex; gap: 16px; margin-bottom: 52px; flex-wrap: wrap; justify-content: center; }
+.load-card {
+  background: var(--card); border: 2px solid var(--border2);
+  border-radius: 8px; padding: 16px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; transform: translateY(16px);
+  transition: all .5s ease;
+  min-width: 110px;
+}
+.load-card.on { opacity: 1; transform: translateY(0); border-color: var(--accent); }
+.load-card span:first-child { font-size: 28px; }
+.load-card span:last-child { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 900; font-style: italic; letter-spacing: 1px; }
+
+.load-bar-wrap { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+.load-bar {
+  height: 100%; width: 0%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  box-shadow: 0 0 12px rgba(244,197,0,.6);
+  transition: width .08s linear;
+}
+.load-row { width: 100%; display: flex; justify-content: space-between; }
+.load-txt { font-size: 14px; color: var(--muted); font-style: italic; text-transform: uppercase; }
+.load-pct { font-size: 28px; font-weight: 900; font-style: italic; color: var(--accent); }
+
+/* ── APP ── */
+#app {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 980px;
+  margin: 0 auto; padding: 28px 20px;
+  display: none; flex-direction: column; gap: 20px;
 }
 
-.load-middle {
-    flex: 1; display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    width: 100%;
+/* ── SECTION BASE ── */
+.panel {
+  background: linear-gradient(160deg, var(--card2), var(--card));
+  border: 1.5px solid var(--border2);
+  border-radius: 12px;
+  position: relative; overflow: hidden;
 }
-.load-skew { transform: skewX(-7deg); display: flex; flex-direction: column; align-items: center; }
-.load-title {
-    font-size: clamp(40px, 8vw, 84px);
-    font-weight: 900; color: var(--fn-yellow);
-    font-style: italic; text-transform: uppercase;
-    letter-spacing: 4px; animation: pulse 2s infinite;
-    text-shadow: 4px 4px 0 rgba(0,0,0,0.8);
-}
-.load-subtitle {
-    font-size: 20px; color: #fff; text-transform: uppercase;
-    font-weight: bold; letter-spacing: 2px;
-    margin-top: 10px; margin-bottom: 50px;
-}
-.load-files { display: flex; gap: 20px; margin-bottom: 60px; flex-wrap: wrap; justify-content: center; }
-.file-card {
-    background: linear-gradient(135deg, rgba(42,44,61,0.9), rgba(27,28,38,0.9));
-    border: 3px solid #363a4f; border-radius: 4px;
-    padding: 15px 25px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    opacity: 0; transform: translateY(20px);
-    transition: all 0.5s ease;
-}
-.file-card.active { opacity: 1; transform: translateY(0); border-color: var(--fn-yellow); }
-.file-icon { font-size: 30px; }
-.file-name { font-size: 14px; color: #8a8f9e; text-transform: uppercase; font-weight: bold; }
-
-.load-bottom {
-    width: 100%; max-width: 800px; padding: 0 20px 60px;
-    display: flex; flex-direction: column; align-items: center;
-    transform: skewX(-7deg);
-}
-.load-bar-bg {
-    width: 100%; height: 30px;
-    background: #12131a; border: 4px solid #363a4f; border-radius: 4px; overflow: hidden;
-}
-.load-bar-fill {
-    width: 0%; height: 100%;
-    background: linear-gradient(90deg, #ffd700, var(--fn-yellow), #ffd700);
-    transition: width 0.1s linear;
-}
-.load-status-row {
-    width: 100%; display: flex;
-    justify-content: space-between; align-items: center; margin-top: 15px;
-}
-.load-file-txt { font-size: 16px; color: #fff; font-style: italic; text-transform: uppercase; }
-.load-pct { font-size: 32px; font-weight: 900; color: #fff; font-style: italic; }
-
-/* ========== MAIN APP ========== */
-#appMain {
-    position: relative; z-index: 1;
-    width: 100%; max-width: 950px;
-    margin: 0 auto;
-    padding: 20px;
-    display: none;
-    flex-direction: column;
-    gap: 25px;
+.panel::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 30%, var(--accent2) 70%, transparent 100%);
+  opacity: .7;
 }
 
-/* TT PANEL */
-.tiktok-panel {
-    background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(15,16,23,0.95));
-    border: 3px solid var(--tt-red); border-radius: 6px; padding: 20px;
-    transform: skewX(-5deg);
-    box-shadow: 0 10px 30px rgba(254,44,85,0.3);
-    display: flex; justify-content: space-between; align-items: center;
-    transition: all 0.3s;
+/* ── TOP BANNER ── */
+.top-banner {
+  background: linear-gradient(135deg, rgba(7,8,15,.95), rgba(18,19,30,.95));
+  border: 1.5px solid var(--border2);
+  border-radius: 12px; padding: 6px 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  position: relative; overflow: hidden;
 }
-.tiktok-panel.offline { border-color: var(--tt-gray); box-shadow: none; opacity: 0.8; }
-.tt-left { display: flex; align-items: center; gap: 15px; }
-.tt-icon {
-    font-size: 32px; background: #000; padding: 8px 12px; border-radius: 6px;
-    box-shadow: -2px -2px 0 #25f4ee, 2px 2px 0 var(--tt-red); transition: box-shadow 0.3s;
+.top-banner::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(90deg, rgba(244,197,0,.03) 0%, transparent 60%);
 }
-.tiktok-panel.offline .tt-icon { box-shadow: -2px -2px 0 #555, 2px 2px 0 #333; }
-.tt-name { font-size: 26px; font-weight: 900; text-transform: uppercase; font-style: italic; }
-.tt-status { font-size: 14px; color: var(--tt-red); font-weight: bold; text-transform: uppercase; transition: color 0.3s; }
-.tiktok-panel.offline .tt-status { color: #8a8f9e; }
-.tt-btn {
-    background: var(--tt-red); color: #fff; text-decoration: none;
-    font-size: 18px; font-weight: 900; text-transform: uppercase; font-style: italic;
-    padding: 12px 28px; border-radius: 4px; letter-spacing: 1px;
-    box-shadow: 0 4px 0 #b01b3a, 0 0 15px rgba(254,44,85,0.4); transition: all 0.1s;
+.banner-left { display: flex; align-items: center; gap: 14px; }
+.banner-logo {
+  font-size: 30px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; letter-spacing: 3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.tt-btn:hover { transform: translateY(-2px); }
-.tt-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #b01b3a; }
-.tiktok-panel.offline .tt-btn { background: var(--tt-gray); box-shadow: 0 4px 0 #2b2e38; color: #aaa; }
+.banner-ver {
+  font-size: 11px; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 2px; font-weight: 700; font-style: italic;
+  background: var(--border2); padding: 3px 10px; border-radius: 20px;
+}
+.banner-right { display: flex; align-items: center; gap: 10px; }
+.banner-time {
+  font-size: 22px; font-weight: 900; font-style: italic;
+  color: var(--accent); letter-spacing: 2px;
+  text-shadow: 0 0 15px rgba(244,197,0,.4);
+}
+.banner-date { font-size: 12px; color: var(--muted); text-transform: uppercase; font-style: italic; text-align: right; }
 
-/* GAME SECTION */
-.game-section {
-    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
-    border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 24px;
-    transform: skewX(-3deg);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+/* ── TT PANEL ── */
+.tt-panel {
+  padding: 18px 24px; border-radius: 12px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  background: linear-gradient(135deg, rgba(254,44,85,.08), rgba(7,8,15,.98));
+  border: 1.5px solid rgba(254,44,85,.4);
+  box-shadow: 0 8px 30px rgba(254,44,85,.12), inset 0 1px 0 rgba(255,255,255,.05);
+  transition: all .3s;
 }
-.game-header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px;
+.tt-panel.off { border-color: var(--border2); background: linear-gradient(135deg, rgba(30,31,44,.9), var(--card)); box-shadow: none; }
+.tt-left-row { display: flex; align-items: center; gap: 16px; }
+.tt-icon-wrap {
+  width: 52px; height: 52px; border-radius: 10px; background: #000;
+  display: flex; align-items: center; justify-content: center; font-size: 26px;
+  box-shadow: -3px -3px 0 #25f4ee, 3px 3px 0 var(--tt-red);
+  transition: box-shadow .3s; flex-shrink: 0;
 }
-.game-title { font-size: 28px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px; }
-.game-select select {
-    background: rgba(27,28,38,0.9); border: 2px solid #363a4f; color: white;
-    font-size: 15px; font-weight: 900; text-transform: uppercase; font-style: italic;
-    padding: 8px 16px; border-radius: 4px; outline: none; cursor: pointer; font-family: inherit;
-}
-.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+.tt-panel.off .tt-icon-wrap { box-shadow: -2px -2px 0 #444, 2px 2px 0 #333; }
+.tt-name { font-size: 24px; font-weight: 900; text-transform: uppercase; font-style: italic; }
+.tt-status { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--tt-red); margin-top: 2px; transition: color .3s; }
+.tt-panel.off .tt-status { color: var(--muted); }
 
+.tt-live-btn {
+  background: linear-gradient(135deg, var(--tt-red), #c01a42);
+  color: #fff; text-decoration: none;
+  font-size: 16px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 12px 28px; border-radius: 7px;
+  box-shadow: 0 5px 0 #7a0f28, 0 8px 20px rgba(254,44,85,.3);
+  transition: all .1s; white-space: nowrap;
+}
+.tt-live-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
+.tt-live-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #7a0f28; }
+.tt-panel.off .tt-live-btn { background: var(--border2); box-shadow: 0 4px 0 #111; color: var(--muted); }
+
+/* ── STATS ROW ── */
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.stat-card {
+  background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 10px; padding: 18px 16px; text-align: center;
+  position: relative; overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.stat-card::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
+  border-radius: 0 0 10px 10px;
+}
+.stat-card.fps::after { background: var(--green); }
+.stat-card.ms::after  { background: var(--accent); }
+.stat-card.mem::after { background: var(--blue); }
+.stat-val {
+  font-size: 42px; font-weight: 900; font-style: italic;
+  line-height: 1; margin-bottom: 4px;
+}
+.stat-val.fps { color: var(--green); text-shadow: 0 0 20px rgba(0,230,118,.35); }
+.stat-val.ms  { color: var(--accent); text-shadow: 0 0 20px rgba(244,197,0,.35); }
+.stat-val.mem { color: var(--blue);   text-shadow: 0 0 20px rgba(41,121,255,.35); }
+.stat-lbl { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: 2px; font-weight: 700; }
+
+/* ── SECTION HEADER ── */
+.sec-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px 0;
+}
+.sec-title {
+  font-size: 22px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--accent);
+}
+.sec-badge {
+  font-size: 11px; font-weight: 900; text-transform: uppercase;
+  font-style: italic; letter-spacing: 1px;
+  padding: 4px 12px; border-radius: 20px;
+  background: rgba(244,197,0,.12); color: var(--accent);
+  border: 1px solid rgba(244,197,0,.25);
+}
+
+/* ── GAME SECTION ── */
+.game-wrap { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
+.game-top { display: flex; justify-content: space-between; align-items: center; }
+.game-mode-select {
+  background: var(--card); border: 1.5px solid var(--border2);
+  color: #fff; font-size: 14px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; padding: 8px 16px; border-radius: 7px;
+  outline: none; cursor: pointer; font-family: inherit;
+  transition: border-color .2s;
+}
+.game-mode-select:focus { border-color: var(--accent); }
+.game-layout { display: grid; grid-template-columns: 1fr 320px; gap: 14px; }
 .game-canvas {
-    background: #0d0e14; border: 3px solid #2a2c3d; border-radius: 4px;
-    height: 350px; position: relative; overflow: hidden;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+  background: radial-gradient(ellipse at center, #0d0e1a, #070810);
+  border: 1.5px solid var(--border2); border-radius: 10px;
+  height: 340px; position: relative; overflow: hidden;
+}
+.game-canvas::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(circle at 30% 70%, rgba(124,77,255,.06) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(41,121,255,.06) 0%, transparent 50%);
 }
 #player {
-    width: 44px; height: 44px; background: var(--fn-yellow); border-radius: 6px;
-    position: absolute; box-shadow: 0 0 20px var(--fn-yellow);
-    display: flex; justify-content: center; align-items: center;
-    font-size: 26px; z-index: 2; user-select: none;
-    transition: left 0.08s, top 0.08s;
+  width: 44px; height: 44px; background: var(--accent);
+  border-radius: 8px; position: absolute;
+  box-shadow: 0 0 25px rgba(244,197,0,.7), 0 0 8px rgba(244,197,0,.4);
+  display: flex; justify-content: center; align-items: center;
+  font-size: 24px; z-index: 2; user-select: none;
+  transition: left .07s, top .07s;
 }
 #coin {
-    width: 32px; height: 32px; position: absolute; font-size: 28px;
-    display: none; justify-content: center; align-items: center;
-    z-index: 1; animation: blink 1.2s infinite; user-select: none;
+  width: 32px; height: 32px; position: absolute; font-size: 26px;
+  display: none; justify-content: center; align-items: center; z-index: 1;
+  animation: blink 1.2s infinite; user-select: none;
+  filter: drop-shadow(0 0 8px rgba(244,197,0,.8));
 }
-
-.game-chat-box {
-    background: rgba(10,11,16,0.7); border: 2px solid #363a4f; border-radius: 4px;
-    padding: 10px; display: flex; flex-direction: column; height: 350px;
+.game-chat-panel {
+  background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 10px; padding: 12px;
+  display: flex; flex-direction: column; height: 340px;
 }
-.chat-box-title {
-    font-size: 14px; color: #8a8f9e; font-weight: 900; text-transform: uppercase;
-    text-align: center; letter-spacing: 1px;
-    border-bottom: 1px solid #363a4f; padding-bottom: 6px; margin-bottom: 8px; font-style: italic;
+.chat-panel-title {
+  font-size: 13px; font-weight: 900; text-transform: uppercase;
+  color: var(--muted); text-align: center; letter-spacing: 1.5px;
+  font-style: italic; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border2); margin-bottom: 8px;
 }
-.iframe-wrap {
-    flex: 1; background: rgba(0,0,0,0.2); border-radius: 4px;
-    overflow: hidden; margin-bottom: 8px; border: 1px solid #2a2c3d;
-}
+.iframe-wrap { flex: 1; background: rgba(0,0,0,.3); border-radius: 7px; overflow: hidden; margin-bottom: 8px; }
 .tikfinity-iframe { width: 100%; height: 100%; border: none; background: transparent; }
 .chat-cfg { display: flex; gap: 6px; }
 .chat-cfg input {
-    flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f;
-    border-radius: 4px; color: white; padding: 8px; font-size: 13px;
-    outline: none; font-style: italic; font-family: inherit;
+  flex: 1; background: rgba(7,8,15,.9); border: 1.5px solid var(--border2);
+  border-radius: 6px; color: #fff; padding: 8px 10px; font-size: 13px;
+  outline: none; font-style: italic; font-family: inherit;
+  transition: border-color .2s;
 }
+.chat-cfg input:focus { border-color: var(--accent); }
 .chat-cfg button {
-    background: var(--fn-yellow); color: black; border: none; border-radius: 4px;
-    padding: 0 12px; font-size: 13px; font-weight: 900; cursor: pointer;
-    text-transform: uppercase; font-style: italic; font-family: inherit;
+  background: var(--accent); color: #000; border: none; border-radius: 6px;
+  padding: 0 14px; font-size: 13px; font-weight: 900; cursor: pointer;
+  text-transform: uppercase; font-style: italic; font-family: inherit;
 }
 
-/* SOCIALS */
-.socials-panel {
-    background: linear-gradient(135deg, rgba(27,28,38,0.85), rgba(15,16,23,0.85));
-    border: 3px solid #2a2c3d; border-radius: 6px; padding: 15px 20px;
-    transform: skewX(-5deg);
-    display: flex; flex-wrap: wrap; gap: 15px;
-    align-items: center; justify-content: space-between;
+/* ── SOCIALS ── */
+.socials-wrap {
+  padding: 18px 24px; display: flex;
+  justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
 }
-.socials-title { font-size: 20px; font-weight: 900; text-transform: uppercase; font-style: italic; color: var(--fn-yellow); }
-.socials-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.socials-label {
+  font-size: 20px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; color: var(--accent); letter-spacing: 1.5px;
+}
+.socials-btns { display: flex; flex-wrap: wrap; gap: 10px; }
 .soc-btn {
-    color: white; text-decoration: none; font-size: 15px; font-weight: 900;
-    text-transform: uppercase; font-style: italic; padding: 10px 22px;
-    border-radius: 4px; letter-spacing: 0.5px; transition: all 0.1s;
-    display: inline-flex; align-items: center; gap: 8px;
+  color: #fff; text-decoration: none;
+  font-size: 14px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; padding: 10px 20px; border-radius: 7px;
+  display: inline-flex; align-items: center; gap: 8px; letter-spacing: .5px;
+  transition: filter .15s, transform .1s;
+  white-space: nowrap;
 }
-.soc-btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
-.soc-tt  { background: #010101; border: 2px solid var(--tt-red); box-shadow: 0 4px 0 #333; }
-.soc-yt  { background: var(--yt-color); box-shadow: 0 4px 0 #990000; }
-.soc-dc  { background: var(--dc-color); box-shadow: 0 4px 0 #3b42a4; }
-.soc-rbx { background: var(--rbx-color); border: 2px solid #535761; box-shadow: 0 4px 0 #18191c; }
+.soc-btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.soc-tt  { background: #010101; border: 1.5px solid var(--tt-red); box-shadow: 0 4px 0 #1a0008; }
+.soc-yt  { background: var(--yt);  box-shadow: 0 4px 0 #7a0000; }
+.soc-dc  { background: var(--dc);  box-shadow: 0 4px 0 #2c3280; }
+.soc-rbx { background: var(--rbx); border: 1.5px solid #444; box-shadow: 0 4px 0 #111; }
 
-/* FN HUD */
-.fn-hud {
-    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
-    border: 3px solid #2a2c3d; border-radius: 6px; padding: 24px;
-    transform: skewX(-5deg);
-    box-shadow: 0 20px 45px rgba(0,0,0,0.7);
-    position: relative; overflow: hidden;
-}
-.fn-hud::before {
-    content: ''; position: absolute; top: 0; left: 0;
-    width: 8px; height: 100%; background: var(--fn-yellow);
-}
+/* ── HUD + TEAM ── */
+.hud-wrap { padding: 20px 24px; }
 .hud-header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 20px; padding-bottom: 14px;
+  border-bottom: 1.5px solid var(--border2);
 }
-.hud-title { font-size: 32px; font-weight: 900; text-transform: uppercase; color: var(--fn-yellow); font-style: italic; }
-.live-badge {
-    background: var(--fn-red); color: #fff; padding: 4px 14px;
-    font-size: 14px; font-weight: bold; border-radius: 4px;
-    animation: blink 1.5s infinite; font-style: italic;
+.hud-title {
+  font-size: 28px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; margin-bottom: 25px; }
-.stat-box { background: #1f2230; border: 2px solid #363a4f; padding: 14px; text-align: center; border-radius: 4px; }
-.stat-val { font-size: 40px; font-weight: 900; font-style: italic; line-height: 1; }
-.stat-val.fps { color: var(--fn-green); }
-.stat-val.ms  { color: var(--fn-yellow); }
-.stat-val.mem { color: var(--fn-blue); }
-.stat-lbl { font-size: 13px; text-transform: uppercase; color: #8a8f9e; letter-spacing: 1px; margin-top: 5px; font-weight: bold; }
+.live-pill {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,23,68,.12); border: 1.5px solid rgba(255,23,68,.35);
+  border-radius: 20px; padding: 5px 14px;
+}
+.live-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: blink 1.2s infinite; }
+.live-text { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--red); font-style: italic; }
 
-.search-wrap { margin-bottom: 20px; }
-.search-input {
-    width: 100%; background: rgba(27,28,38,0.8); border: 2px solid #363a4f;
-    border-radius: 4px; color: white; padding: 14px; font-size: 16px;
-    outline: none; font-style: italic; font-weight: 800; font-family: inherit;
+.search-box {
+  width: 100%; background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 8px; color: #fff; padding: 14px 18px; font-size: 15px;
+  outline: none; font-style: italic; font-weight: 700; margin-bottom: 16px;
+  font-family: inherit; transition: border-color .2s, box-shadow .2s;
 }
+.search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(244,197,0,.08); }
 
-#teamGrid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
-    gap: 12px; margin-bottom: 25px;
-}
+#teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(285px,1fr)); gap: 10px; margin-bottom: 20px; }
+
 .team-card {
-    background: rgba(37,40,54,0.4); border: 1px solid #363a4f;
-    padding: 14px; border-radius: 4px;
-    display: flex; justify-content: space-between; align-items: center;
-    transition: all 0.2s;
+  background: rgba(18,19,30,.8); border: 1.5px solid var(--border2);
+  border-radius: 9px; padding: 13px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: all .2s; position: relative; overflow: hidden;
 }
-.team-card:hover { border-color: var(--fn-yellow); background: rgba(54,58,79,0.8); transform: translateY(-2px); }
-.team-card.pinned { border-color: var(--fn-yellow); background: rgba(244,197,0,0.05); }
-.t-left { display: flex; flex-direction: column; gap: 2px; }
-.t-name { font-size: 18px; font-weight: 800; text-transform: uppercase; font-style: italic; cursor: pointer; }
-.t-copied { font-size: 11px; color: var(--fn-green); font-weight: bold; opacity: 0; font-style: italic; }
-.t-right { display: flex; align-items: center; gap: 12px; }
-.t-badge {
-    font-size: 11px; font-weight: 900; padding: 4px 10px;
-    border-radius: 4px; text-transform: uppercase; font-style: italic; white-space: nowrap;
-}
-.r-owner    { background: var(--fn-yellow); color: #000; }
-.r-mod      { background: var(--fn-blue); color: #fff; }
-.r-mod_gifter  { background: linear-gradient(135deg, var(--fn-blue), var(--fn-pink)); color: #fff; }
-.r-mod_helper  { background: linear-gradient(135deg, var(--fn-blue), var(--fn-green)); color: #000; }
-.r-helper   { background: var(--fn-green); color: #000; }
-.r-b_helper { background: #12aa4a; color: #fff; }
-.r-gifter   { background: var(--fn-pink); color: #fff; }
-.r-scripter { background: var(--fn-purple); color: #fff; }
-.r-traitor  { background: var(--fn-red); color: #fff; }
-.r-funniest { background: var(--fn-orange); color: #000; }
-.t-actions { display: flex; gap: 10px; }
-.t-actions span { cursor: pointer; font-size: 18px; user-select: none; transition: transform 0.1s; }
-.t-actions span:hover { transform: scale(1.25); }
+.team-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background: var(--border2); transition: background .2s; border-radius: 3px 0 0 3px; }
+.team-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.team-card:hover::before { background: var(--accent); }
+.team-card.pinned { border-color: rgba(244,197,0,.4); background: rgba(244,197,0,.04); }
+.team-card.pinned::before { background: var(--accent); }
 
-/* META */
-.meta-section {
-    background: rgba(27,28,38,0.65); border: 2px solid #363a4f;
-    padding: 15px; border-radius: 4px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
-    transform: skewX(-5deg);
+.tc-left { display: flex; flex-direction: column; gap: 2px; padding-left: 8px; }
+.tc-name { font-size: 17px; font-weight: 900; text-transform: uppercase; font-style: italic; cursor: pointer; transition: color .15s; }
+.tc-name:hover { color: var(--accent); }
+.tc-copied { font-size: 10px; color: var(--green); font-weight: 900; font-style: italic; opacity: 0; transition: opacity .2s; }
+.tc-right { display: flex; align-items: center; gap: 10px; }
+.tc-badge {
+  font-size: 10px; font-weight: 900; padding: 4px 10px;
+  border-radius: 5px; text-transform: uppercase; font-style: italic; white-space: nowrap;
 }
-.meta-box h3 { font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; margin-bottom: 5px; }
-.meta-box p  { font-size: 15px; color: #fff; font-weight: bold; }
+.r-owner    { background: var(--accent); color: #000; }
+.r-mod      { background: var(--blue); color: #fff; }
+.r-mod_gifter  { background: linear-gradient(135deg, var(--blue), var(--pink)); color: #fff; }
+.r-mod_helper  { background: linear-gradient(135deg, var(--blue), var(--green)); color: #000; }
+.r-helper   { background: var(--green); color: #000; }
+.r-b_helper { background: #00a040; color: #fff; }
+.r-gifter   { background: var(--pink); color: #fff; }
+.r-scripter { background: var(--purple); color: #fff; }
+.r-traitor  { background: var(--red); color: #fff; }
+.r-funniest { background: var(--orange); color: #000; }
+.tc-actions { display: flex; gap: 8px; }
+.tc-actions span { cursor: pointer; font-size: 17px; user-select: none; transition: transform .1s; }
+.tc-actions span:hover { transform: scale(1.3); }
 
-/* TERMINAL */
-.terminal-section {
-    background: rgba(27,28,38,0.85); border: 2px solid #363a4f;
-    border-radius: 6px; padding: 20px; transform: skewX(-5deg);
+/* ── META ROW ── */
+.meta-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
 }
-.terminal-section h2 { font-size: 16px; margin-bottom: 12px; color: var(--fn-yellow); text-transform: uppercase; font-style: italic; }
+.meta-card {
+  background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 10px; padding: 16px 20px;
+  transition: border-color .2s;
+}
+.meta-card:hover { border-color: var(--accent); }
+.meta-card h3 { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-style: italic; margin-bottom: 7px; }
+.meta-card p { font-size: 15px; color: #fff; font-weight: 700; font-style: italic; }
+
+/* ── THEME SWITCHER ── */
+.theme-wrap { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.theme-label { font-size: 20px; font-weight: 900; font-style: italic; text-transform: uppercase; color: var(--accent); letter-spacing: 1.5px; }
+.theme-swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.tswatch {
+  width: 40px; height: 40px; border-radius: 8px; cursor: pointer;
+  border: 2.5px solid transparent; transition: all .2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,.5);
+  position: relative;
+}
+.tswatch:hover { transform: scale(1.18); }
+.tswatch.active { border-color: #fff; box-shadow: 0 0 14px rgba(255,255,255,.35); transform: scale(1.1); }
+
+/* ── TERMINAL ── */
+.term-wrap { padding: 18px 24px; }
+.term-title { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; font-style: italic; letter-spacing: 1.5px; margin-bottom: 12px; }
 #chat {
-    height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3);
-    border-radius: 4px; padding: 12px; margin-bottom: 12px;
-    display: flex; flex-direction: column; gap: 8px;
+  height: 140px; overflow-y: auto;
+  background: rgba(0,0,0,.35); border-radius: 8px;
+  padding: 12px; margin-bottom: 12px;
+  display: flex; flex-direction: column; gap: 7px;
+  border: 1.5px solid var(--border);
 }
-#chat::-webkit-scrollbar { width: 5px; }
-#chat::-webkit-scrollbar-thumb { background: var(--fn-yellow); border-radius: 10px; }
-.msg { max-width: 85%; padding: 8px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
-.msg.user { align-self: flex-end; background: var(--fn-yellow); color: #000; }
-.msg.bot  { align-self: flex-start; background: rgba(255,255,255,0.08); color: #fff; }
+#chat::-webkit-scrollbar { width: 4px; }
+#chat::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+.msg { max-width: 85%; padding: 8px 12px; border-radius: 7px; font-size: 14px; font-weight: 700; }
+.msg.user { align-self: flex-end; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
+.msg.bot  { align-self: flex-start; background: var(--card2); color: #ddd; border: 1px solid var(--border2); }
 .term-row { display: flex; gap: 10px; }
 .term-row input {
-    flex: 1; background: rgba(27,28,38,0.9); border: 2px solid #363a4f;
-    border-radius: 4px; color: white; padding: 12px; font-size: 15px;
-    outline: none; font-style: italic; font-family: inherit;
+  flex: 1; background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 7px; color: #fff; padding: 12px 15px; font-size: 15px;
+  outline: none; font-style: italic; font-family: inherit;
+  transition: border-color .2s;
 }
+.term-row input:focus { border-color: var(--accent); }
 .term-row button {
-    background: var(--fn-yellow); color: black; border: none; border-radius: 4px;
-    padding: 0 24px; font-weight: 900; cursor: pointer;
-    text-transform: uppercase; font-style: italic; font-family: inherit;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; border: none; border-radius: 7px;
+  padding: 0 26px; font-weight: 900; cursor: pointer;
+  text-transform: uppercase; font-style: italic; font-family: inherit; font-size: 15px;
+  box-shadow: 0 4px 0 #7a4800;
+  transition: filter .15s;
 }
+.term-row button:hover { filter: brightness(1.1); }
+.term-row button:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a4800; }
 
-/* DOWNLOAD */
-.dl-box {
-    background: rgba(27,28,38,0.85); border: 3px dashed #363a4f;
-    border-radius: 6px; padding: 25px; text-align: center; transform: skewX(-5deg);
-}
+/* ── DOWNLOAD ── */
+.dl-wrap { padding: 24px; text-align: center; }
 .dl-btn {
-    background: linear-gradient(135deg, var(--fn-yellow), #d4aa00);
-    color: black; border: none; border-radius: 4px;
-    padding: 16px 45px; font-size: 22px; font-weight: 900;
-    text-transform: uppercase; font-style: italic; cursor: pointer;
-    box-shadow: 0 6px 0 #8c7000; transition: all 0.1s; font-family: inherit;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  color: #000; border: none; border-radius: 9px;
+  padding: 18px 55px; font-size: 22px; font-weight: 900;
+  text-transform: uppercase; font-style: italic; cursor: pointer;
+  box-shadow: 0 7px 0 #7a4800, 0 12px 30px rgba(244,197,0,.25);
+  font-family: inherit; letter-spacing: 1.5px;
+  transition: filter .15s, transform .1s, box-shadow .1s;
 }
-.dl-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #8c7000; }
+.dl-btn:hover { filter: brightness(1.08); }
+.dl-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #7a4800; }
 
-/* COMING SOON */
-.coming-panel {
-    background: linear-gradient(135deg, rgba(15,16,23,0.85), rgba(27,28,38,0.85));
-    border: 2px solid #2a2c3d; border-radius: 6px; padding: 15px;
-    text-align: center; transform: skewX(-5deg);
-}
+/* ── COMING SOON ── */
+.coming-wrap { padding: 18px; text-align: center; }
 .coming-text {
-    font-size: 24px; font-weight: 900; text-transform: uppercase;
-    font-style: italic; color: #8a8f9e; letter-spacing: 2px;
+  font-size: 22px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; letter-spacing: 3px; color: var(--muted);
 }
-.coming-text span { color: var(--fn-yellow); animation: blink 2s infinite; }
-
-@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.7; } }
-@keyframes blink  { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-
-/* ========== THEME SWITCHER ========== */
-.theme-panel {
-    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
-    border: 3px solid var(--fn-yellow); border-radius: 6px; padding: 22px 28px;
-    transform: skewX(-5deg);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-}
-.theme-title {
-    font-size: 22px; font-weight: 900; color: var(--fn-yellow);
-    text-transform: uppercase; font-style: italic; letter-spacing: 1.5px;
-}
-.theme-swatches { display: flex; gap: 12px; flex-wrap: wrap; }
-.theme-swatch {
-    width: 44px; height: 44px; border-radius: 6px; border: 3px solid transparent;
-    cursor: pointer; transition: all 0.2s; position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-.theme-swatch:hover { transform: scale(1.15); }
-.theme-swatch.active { border-color: #fff; box-shadow: 0 0 16px rgba(255,255,255,0.4); }
-.theme-swatch::after {
-    content: attr(data-label);
-    position: absolute; bottom: -22px; left: 50%; transform: translateX(-50%);
-    font-size: 10px; font-weight: 900; text-transform: uppercase;
-    color: #8a8f9e; white-space: nowrap; font-style: italic;
-}
-.theme-preview-bar {
-    width: 100%; height: 5px; border-radius: 3px; margin-top: 8px;
-    background: var(--fn-yellow);
-    transition: background 0.4s ease;
+.coming-text span {
+  background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 2.5s linear infinite;
 }
 
-/* ========== OVERLAY PREVIEW ========== */
-.overlay-panel {
-    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
-    border: 3px solid #2a2c3d; border-radius: 6px; padding: 22px;
-    transform: skewX(-3deg);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    position: relative; overflow: hidden;
-}
-.overlay-panel::before {
-    content: ''; position: absolute; top: 0; left: 0;
-    width: 8px; height: 100%; background: var(--fn-yellow);
-}
-.overlay-header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 18px;
-}
-.overlay-title {
-    font-size: 24px; font-weight: 900; text-transform: uppercase;
-    color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px;
-}
-.overlay-tabs { display: flex; gap: 8px; }
-.ov-tab {
-    background: rgba(27,28,38,0.9); border: 2px solid #363a4f; color: #8a8f9e;
-    font-size: 13px; font-weight: 900; text-transform: uppercase; font-style: italic;
-    padding: 6px 14px; border-radius: 4px; cursor: pointer; transition: all 0.15s;
-    font-family: inherit;
-}
-.ov-tab.active { background: var(--fn-yellow); color: #000; border-color: var(--fn-yellow); }
-.ov-tab:hover:not(.active) { border-color: var(--fn-yellow); color: #fff; }
-
-.overlay-screen {
-    background: #000; border-radius: 6px; overflow: hidden;
-    aspect-ratio: 16/9; position: relative;
-    border: 2px solid #363a4f;
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-}
-.ov-content { position: absolute; inset: 0; display: none; }
-.ov-content.visible { display: block; }
-
-/* --- Layout A: Fortnite-style --- */
-.ov-fn-bg {
-    width: 100%; height: 100%;
-    background: linear-gradient(160deg, #0d1117 0%, #1a1b2e 50%, #0a0b10 100%);
-    position: relative; overflow: hidden;
-}
-.ov-fn-bg::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(circle at 30% 50%, rgba(140,0,255,0.12) 0%, transparent 60%),
-                radial-gradient(circle at 80% 30%, rgba(0,123,255,0.1) 0%, transparent 50%);
-}
-.ov-fn-topbar {
-    position: absolute; top: 0; left: 0; right: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
-    padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;
-}
-.ov-fn-logo { font-size: 20px; font-weight: 900; color: var(--fn-yellow); font-style: italic; letter-spacing: 2px; }
-.ov-fn-live { background: var(--fn-red); color: #fff; font-size: 11px; font-weight: 900; padding: 3px 10px; border-radius: 3px; font-style: italic; animation: blink 1.5s infinite; }
-.ov-fn-stats {
-    position: absolute; top: 10px; right: 16px;
-    display: flex; gap: 10px;
-}
-.ov-fn-stat {
-    background: rgba(0,0,0,0.7); border: 1px solid rgba(244,197,0,0.3);
-    border-radius: 4px; padding: 4px 10px; text-align: center;
-}
-.ov-fn-stat-v { font-size: 16px; font-weight: 900; color: var(--fn-yellow); font-style: italic; }
-.ov-fn-stat-l { font-size: 9px; color: #8a8f9e; text-transform: uppercase; }
-.ov-fn-bottombar {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, transparent 100%);
-    padding: 12px 16px; display: flex; justify-content: space-between; align-items: flex-end;
-}
-.ov-fn-name { font-size: 28px; font-weight: 900; color: #fff; font-style: italic; text-transform: uppercase; letter-spacing: 1px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8); }
-.ov-fn-socials { display: flex; gap: 8px; }
-.ov-fn-soc { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 3px; font-style: italic; }
-.ov-fn-soc.tt { background: rgba(254,44,85,0.8); color: #fff; }
-.ov-fn-soc.yt { background: rgba(255,0,0,0.8); color: #fff; }
-.ov-fn-soc.dc { background: rgba(88,101,242,0.8); color: #fff; }
-.ov-fn-center {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    text-align: center;
-}
-.ov-fn-game { font-size: 13px; color: #8a8f9e; text-transform: uppercase; font-style: italic; letter-spacing: 3px; }
-
-/* --- Layout B: Minimal --- */
-.ov-min-bg {
-    width: 100%; height: 100%;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.95) 100%),
-                linear-gradient(135deg, #0e1015 0%, #151720 100%);
-    position: relative;
-}
-.ov-min-left {
-    position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
-    background: var(--fn-yellow);
-}
-.ov-min-name {
-    position: absolute; bottom: 18px; left: 22px;
-    font-size: 32px; font-weight: 900; color: #fff; font-style: italic;
-    text-transform: uppercase; letter-spacing: 2px;
-}
-.ov-min-sub {
-    position: absolute; bottom: 8px; left: 22px;
-    font-size: 12px; color: var(--fn-yellow); font-weight: 900;
-    text-transform: uppercase; letter-spacing: 3px; font-style: italic;
-}
-.ov-min-badge {
-    position: absolute; top: 14px; right: 14px;
-    background: var(--fn-red); color: #fff; font-size: 12px; font-weight: 900;
-    padding: 5px 14px; border-radius: 3px; font-style: italic; animation: blink 1.5s infinite;
-}
-.ov-min-grid {
-    position: absolute; top: 14px; left: 14px;
-    display: flex; gap: 8px;
-}
-.ov-min-box {
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px; padding: 6px 12px; text-align: center;
-}
-.ov-min-bv { font-size: 18px; font-weight: 900; color: var(--fn-yellow); font-style: italic; }
-.ov-min-bl { font-size: 9px; color: #8a8f9e; text-transform: uppercase; }
-
-/* --- Layout C: Gaming --- */
-.ov-gm-bg {
-    width: 100%; height: 100%;
-    background: #060810;
-    position: relative; overflow: hidden;
-}
-.ov-gm-corner {
-    position: absolute; top: 0; left: 0;
-    width: 0; height: 0;
-    border-style: solid;
-    border-width: 120px 120px 0 0;
-    border-color: rgba(244,197,0,0.15) transparent transparent transparent;
-}
-.ov-gm-corner2 {
-    position: absolute; bottom: 0; right: 0;
-    width: 0; height: 0;
-    border-style: solid;
-    border-width: 0 0 100px 100px;
-    border-color: transparent transparent rgba(140,0,255,0.12) transparent;
-}
-.ov-gm-scanlines {
-    position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
-    pointer-events: none;
-}
-.ov-gm-logo {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-size: 42px; font-weight: 900; color: var(--fn-yellow); font-style: italic;
-    text-transform: uppercase; letter-spacing: 4px;
-    text-shadow: 0 0 30px rgba(244,197,0,0.5), 3px 3px 0 rgba(0,0,0,0.8);
-}
-.ov-gm-sub {
-    position: absolute; top: calc(50% + 36px); left: 50%; transform: translateX(-50%);
-    font-size: 12px; color: #8a8f9e; text-transform: uppercase; letter-spacing: 5px; font-style: italic;
-}
-.ov-gm-hbar {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, transparent, var(--fn-yellow), var(--fn-purple), transparent);
-}
-.ov-gm-vbar {
-    position: absolute; top: 0; bottom: 0; right: 0; width: 3px;
-    background: linear-gradient(180deg, transparent, var(--fn-yellow), transparent);
-}
-
-/* ========== KEYBOARD SHORTCUTS ========== */
-.keys-panel {
-    background: linear-gradient(135deg, rgba(27,28,38,0.95), rgba(15,16,23,0.95));
-    border: 3px solid #2a2c3d; border-radius: 6px; padding: 22px 28px;
-    transform: skewX(-5deg);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-}
-.keys-header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 3px solid #2a2c3d; padding-bottom: 12px; margin-bottom: 18px;
-}
-.keys-title {
-    font-size: 22px; font-weight: 900; text-transform: uppercase;
-    color: var(--fn-yellow); font-style: italic; letter-spacing: 1.5px;
-}
-.keys-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 10px;
-}
-.key-row {
-    background: rgba(37,40,54,0.5); border: 1px solid #363a4f;
-    border-radius: 4px; padding: 10px 14px;
-    display: flex; align-items: center; gap: 12px;
-    transition: border-color 0.2s;
-}
-.key-row:hover { border-color: var(--fn-yellow); }
-.key-badges { display: flex; gap: 5px; flex-shrink: 0; }
-.key-badge {
-    background: #1f2230; border: 2px solid #363a4f; border-radius: 4px;
-    padding: 3px 10px; font-size: 13px; font-weight: 900; color: #fff;
-    font-style: italic; min-width: 32px; text-align: center;
-    box-shadow: 0 3px 0 #111;
-    font-family: inherit;
-}
-.key-badge.yellow { border-color: var(--fn-yellow); color: var(--fn-yellow); }
-.key-desc { font-size: 14px; color: #c0c4d0; font-weight: bold; font-style: italic; }
-.key-section-label {
-    grid-column: 1/-1;
-    font-size: 12px; font-weight: 900; color: #8a8f9e;
-    text-transform: uppercase; letter-spacing: 2px; font-style: italic;
-    padding: 6px 0 2px;
+/* ── DIVIDER ── */
+.divider {
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  margin: 0 20px;
 }
 </style>
 </head>
 <body>
 
-<div class="bg-rift"></div>
+<!-- BG -->
+<canvas id="bgCanvas"></canvas>
 
-<!-- ======== LOGIN SCREEN ======== -->
-<div class="screen" id="screenLogin">
-  <div class="login-box" id="loginBox">
-    <span class="login-icon">🔐</span>
-    <div class="login-logo">MEJDRIX</div>
-    <div class="login-sub">Stream HUD V2 — Přístup pouze pro autorizované</div>
-
-    <div class="login-field">
-      <label class="login-label">Uživatelské jméno</label>
-      <input class="login-input" id="inUser" type="text" placeholder="Username..." autocomplete="off" spellcheck="false">
+<!-- ══ LOGIN ══ -->
+<div class="screen" id="sLogin">
+  <div class="login-wrap">
+    <div class="login-glow"></div>
+    <div class="login-card" id="loginCard">
+      <span class="login-emblem">🔐</span>
+      <div class="login-title">MEJDRIX</div>
+      <div class="login-sub">Stream HUD V2 — Autorizovaný přístup</div>
+      <div class="lf">
+        <label>Uživatelské jméno</label>
+        <input id="inU" type="text" placeholder="Username..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="lf">
+        <label>Heslo</label>
+        <input id="inP" type="password" placeholder="Password...">
+      </div>
+      <button class="login-btn" id="btnLogin">🔓 PŘIHLÁSIT SE</button>
+      <div class="login-err" id="loginErr">❌ Nesprávné přihlašovací údaje!</div>
     </div>
-    <div class="login-field">
-      <label class="login-label">Heslo</label>
-      <input class="login-input" id="inPass" type="password" placeholder="Password...">
-    </div>
-    <button class="login-btn" id="btnLogin">🔓 PŘIHLÁSIT SE</button>
-    <div class="login-err" id="loginErr">❌ Nesprávné přihlašovací údaje!</div>
   </div>
 </div>
 
-<!-- ======== LOADING SCREEN ======== -->
-<div class="screen hidden" id="screenLoad">
-  <div class="load-middle">
-    <div class="load-skew">
-      <div class="load-title">MEJDRIX STREAM HUD V2</div>
-      <div class="load-subtitle">Načítání herních modulů...</div>
-      <div class="load-files">
-        <div class="file-card" id="fc1"><span class="file-icon">⚙️</span><span class="file-name">Core Engine</span></div>
-        <div class="file-card" id="fc2"><span class="file-icon">🕹️</span><span class="file-name">TikTok Plays</span></div>
-        <div class="file-card" id="fc3"><span class="file-icon">💬</span><span class="file-name">TikFinity API</span></div>
-      </div>
+<!-- ══ LOADING ══ -->
+<div class="screen gone" id="sLoad">
+  <div class="load-inner">
+    <div class="load-logo">MEJDRIX</div>
+    <div class="load-sub">Načítání herních modulů...</div>
+    <div class="load-cards">
+      <div class="load-card" id="lc1"><span>⚙️</span><span>Core Engine</span></div>
+      <div class="load-card" id="lc2"><span>🕹️</span><span>TikTok Plays</span></div>
+      <div class="load-card" id="lc3"><span>💬</span><span>TikFinity API</span></div>
     </div>
-  </div>
-  <div class="load-bottom">
-    <div class="load-bar-bg"><div class="load-bar-fill" id="loadBar"></div></div>
-    <div class="load-status-row">
-      <div class="load-file-txt" id="loadTxt">Připojování k serverům...</div>
+    <div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
+    <div class="load-row">
+      <div class="load-txt" id="loadTxt">Připojování k serverům...</div>
       <div class="load-pct" id="loadPct">0%</div>
     </div>
   </div>
 </div>
 
-<!-- ======== MAIN APP ======== -->
-<div id="appMain">
+<!-- ══ APP ══ -->
+<div id="app">
 
-  <!-- TT PANEL -->
-  <div class="tiktok-panel offline" id="ttPanel">
-    <div class="tt-left">
-      <div class="tt-icon">📱</div>
+  <!-- TOP BANNER -->
+  <div class="top-banner">
+    <div class="banner-left">
+      <div class="banner-logo">MEJDRIX HUD</div>
+      <div class="banner-ver">V2.0</div>
+    </div>
+    <div class="banner-right">
       <div>
-        <div class="tt-name">MEJDRIX TIKTOK LIVE</div>
-        <div class="tt-status" id="ttStatus">⚪ Kontrola statusu streamu...</div>
+        <div class="banner-time" id="clock">--:--:--</div>
+        <div class="banner-date" id="dateStr">---</div>
       </div>
     </div>
-    <a class="tt-btn" id="ttBtn" href="https://www.tiktok.com/@mejdrix/live" target="_blank">ZATÍM OFFLINE</a>
+  </div>
+
+  <!-- TT PANEL -->
+  <div class="tt-panel off" id="ttPanel">
+    <div class="tt-left-row">
+      <div class="tt-icon-wrap">📱</div>
+      <div>
+        <div class="tt-name">MEJDRIX TIKTOK LIVE</div>
+        <div class="tt-status" id="ttStatus">⚪ Kontrola statusu...</div>
+      </div>
+    </div>
+    <a class="tt-live-btn" id="ttBtn" href="https://www.tiktok.com/@mejdrix/live" target="_blank">ZATÍM OFFLINE</a>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card fps"><div class="stat-val fps" id="sFps">60</div><div class="stat-lbl">FPS</div></div>
+    <div class="stat-card ms"><div class="stat-val ms" id="sMs">24ms</div><div class="stat-lbl">Ping</div></div>
+    <div class="stat-card mem"><div class="stat-val mem" id="sMem">482 MB</div><div class="stat-lbl">Memory</div></div>
   </div>
 
   <!-- GAME -->
-  <div class="game-section">
-    <div class="game-header">
-      <div class="game-title">🕹️ MEJDRIX TIKTOK PLAYS</div>
-      <div class="game-select">
-        <select id="gameMode">
-          <option value="survival">MEJDRIX SURVIVAL</option>
-          <option value="coins">SBÍRÁNÍ COINŮ</option>
-        </select>
-      </div>
+  <div class="panel">
+    <div class="sec-head">
+      <div class="sec-title">🕹️ TikTok Plays</div>
+      <select class="game-mode-select" id="gameMode">
+        <option value="survival">Mejdrix Survival</option>
+        <option value="coins">Sbírání Coinů</option>
+      </select>
     </div>
-    <div class="game-layout">
-      <div class="game-canvas" id="gameCanvas">
-        <div id="player">🤖</div>
-        <div id="coin">💰</div>
-      </div>
-      <div class="game-chat-box">
-        <div class="chat-box-title">TikTok Chat</div>
-        <div class="iframe-wrap">
-          <iframe class="tikfinity-iframe" id="tikIframe" src="about:blank"></iframe>
+    <div class="game-wrap">
+      <div class="game-layout">
+        <div class="game-canvas" id="gameCanvas">
+          <div id="player">🤖</div>
+          <div id="coin">💰</div>
         </div>
-        <div class="chat-cfg">
-          <input id="tikInput" placeholder="Vlož kód nebo celé URL...">
-          <button id="tikSave">Uložit</button>
+        <div class="game-chat-panel">
+          <div class="chat-panel-title">TikTok Chat</div>
+          <div class="iframe-wrap">
+            <iframe class="tikfinity-iframe" id="tikIframe" src="about:blank"></iframe>
+          </div>
+          <div class="chat-cfg">
+            <input id="tikInput" placeholder="Vlož kód nebo URL...">
+            <button id="tikSave">Uložit</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- SOCIALS 1 -->
-  <div class="socials-panel">
-    <span class="socials-title">SOCIÁLNÍ SÍTĚ</span>
-    <div class="socials-btns">
-      <a href="https://www.tiktok.com/@mejdrix" target="_blank" class="soc-btn soc-tt">📱 TikTok</a>
-      <a href="https://www.youtube.com/@Mejdrix" target="_blank" class="soc-btn soc-yt">🎥 YouTube</a>
-      <a href="https://discord.com/channels/1491804876978655315/1491804878346129530" target="_blank" class="soc-btn soc-dc">💬 Discord</a>
-      <a href="https://www.roblox.com/users/10023963543/profile" target="_blank" class="soc-btn soc-rbx">🎮 Roblox</a>
+  <div class="panel">
+    <div class="socials-wrap">
+      <div class="socials-label">📡 Sociální sítě</div>
+      <div class="socials-btns">
+        <a href="https://www.tiktok.com/@mejdrix" target="_blank" class="soc-btn soc-tt">📱 TikTok</a>
+        <a href="https://www.youtube.com/@Mejdrix" target="_blank" class="soc-btn soc-yt">🎥 YouTube</a>
+        <a href="https://discord.com/channels/1491804876978655315/1491804878346129530" target="_blank" class="soc-btn soc-dc">💬 Discord</a>
+        <a href="https://www.roblox.com/users/10023963543/profile" target="_blank" class="soc-btn soc-rbx">🎮 Roblox</a>
+      </div>
     </div>
   </div>
 
   <!-- SOCIALS 2 -->
-  <div class="socials-panel">
-    <span class="socials-title">DEV BY ADAM</span>
-    <div class="socials-btns">
-      <a href="https://www.tiktok.com/@adamdevrblx" target="_blank" class="soc-btn soc-tt">📱 TikTok</a>
-      <a href="https://www.youtube.com/@adammatecha8334" target="_blank" class="soc-btn soc-yt">🎥 YouTube</a>
-      <a href="https://www.roblox.com/users/4540263646/profile" target="_blank" class="soc-btn soc-rbx">🎮 Roblox</a>
+  <div class="panel">
+    <div class="socials-wrap">
+      <div class="socials-label">👨‍💻 Dev by Adam</div>
+      <div class="socials-btns">
+        <a href="https://www.tiktok.com/@adamdevrblx" target="_blank" class="soc-btn soc-tt">📱 TikTok</a>
+        <a href="https://www.youtube.com/@adammatecha8334" target="_blank" class="soc-btn soc-yt">🎥 YouTube</a>
+        <a href="https://www.roblox.com/users/4540263646/profile" target="_blank" class="soc-btn soc-rbx">🎮 Roblox</a>
+      </div>
     </div>
   </div>
 
-  <!-- FN HUD -->
-  <div class="fn-hud">
-    <div class="hud-header">
-      <div class="hud-title">MEJDRIX STREAM HUD V2</div>
-      <div class="live-badge">🔴 LIVE MONITOR</div>
+  <!-- HUD -->
+  <div class="panel">
+    <div class="hud-wrap">
+      <div class="hud-header">
+        <div class="hud-title">MEJDRIX STREAM HUD V2</div>
+        <div class="live-pill"><div class="live-dot"></div><div class="live-text">Live Monitor</div></div>
+      </div>
+      <input class="search-box" id="searchBox" placeholder="🔍  Vyhledat uživatele ze streamu...">
+      <div id="teamGrid"></div>
     </div>
-    <div class="stats-grid">
-      <div class="stat-box"><div class="stat-val fps" id="sFps">60</div><div class="stat-lbl">FPS</div></div>
-      <div class="stat-box"><div class="stat-val ms"  id="sMs">24ms</div><div class="stat-lbl">MS PING</div></div>
-      <div class="stat-box"><div class="stat-val mem" id="sMem">482 MB</div><div class="stat-lbl">MEMORY</div></div>
-    </div>
-    <div class="search-wrap">
-      <input class="search-input" id="searchBox" placeholder="VYHLEDAT UŽIVATELE ZE STREAMU...">
-    </div>
-    <div id="teamGrid"></div>
   </div>
 
   <!-- META -->
-  <div class="meta-section">
-    <div class="meta-box"><h3>📌 Pinned Users</h3><p id="mPinned">žádné</p></div>
-    <div class="meta-box"><h3>⭐ Favorite Users</h3><p id="mFavs">žádné</p></div>
+  <div class="meta-row">
+    <div class="meta-card"><h3>📌 Pinned Users</h3><p id="mPinned">žádné</p></div>
+    <div class="meta-card"><h3>⭐ Favorite Users</h3><p id="mFavs">žádné</p></div>
+  </div>
+
+  <!-- THEME -->
+  <div class="panel">
+    <div class="theme-wrap">
+      <div class="theme-label">🎨 Barevné téma</div>
+      <div class="theme-swatches" id="swatches"></div>
+    </div>
   </div>
 
   <!-- TERMINAL -->
-  <div class="terminal-section">
-    <h2>🤖 UPDATE SCRIPT TERMINAL</h2>
-    <div id="chat"></div>
-    <div class="term-row">
-      <input id="termInput" placeholder="Zadej příkazy /live, /add, /remove...">
-      <button id="termSend">Odeslat</button>
-    </div>
-  </div>
-
-  <!-- THEME SWITCHER -->
-  <div class="theme-panel">
-    <span class="theme-title">🎨 Barevné Téma</span>
-    <div style="display:flex;flex-direction:column;gap:10px;flex:1;max-width:600px">
-      <div class="theme-swatches">
-        <div class="theme-swatch active" data-theme="yellow" data-label="Yellow" style="background:#f4c500" onclick="setTheme('yellow',this)"></div>
-        <div class="theme-swatch" data-theme="blue"   data-label="Blue"   style="background:#007bff" onclick="setTheme('blue',this)"></div>
-        <div class="theme-swatch" data-theme="red"    data-label="Red"    style="background:#fe2c55" onclick="setTheme('red',this)"></div>
-        <div class="theme-swatch" data-theme="green"  data-label="Green"  style="background:#00ff66" onclick="setTheme('green',this)"></div>
-        <div class="theme-swatch" data-theme="purple" data-label="Purple" style="background:#8c00ff" onclick="setTheme('purple',this)"></div>
-        <div class="theme-swatch" data-theme="pink"   data-label="Pink"   style="background:#ff007f" onclick="setTheme('pink',this)"></div>
-        <div class="theme-swatch" data-theme="orange" data-label="Orange" style="background:#ffaa00" onclick="setTheme('orange',this)"></div>
-        <div class="theme-swatch" data-theme="white"  data-label="White"  style="background:#ffffff" onclick="setTheme('white',this)"></div>
+  <div class="panel">
+    <div class="term-wrap">
+      <div class="term-title">🤖 Update Script Terminal</div>
+      <div id="chat"></div>
+      <div class="term-row">
+        <input id="termInput" placeholder="Zadej příkazy /live, /add, /remove...">
+        <button id="termSend">Odeslat</button>
       </div>
-      <div class="theme-preview-bar" id="themeBar"></div>
-    </div>
-  </div>
-
-  <!-- OVERLAY PREVIEW -->
-  <div class="overlay-panel">
-    <div class="overlay-header">
-      <div class="overlay-title">🖥️ Stream Overlay Preview</div>
-      <div class="overlay-tabs">
-        <button class="ov-tab active" onclick="switchOverlay('fn',this)">Fortnite</button>
-        <button class="ov-tab" onclick="switchOverlay('min',this)">Minimal</button>
-        <button class="ov-tab" onclick="switchOverlay('gm',this)">Gaming</button>
-      </div>
-    </div>
-    <div class="overlay-screen">
-
-      <!-- LAYOUT A: Fortnite -->
-      <div class="ov-content visible" id="ov-fn">
-        <div class="ov-fn-bg">
-          <div class="ov-fn-topbar">
-            <div class="ov-fn-logo">MEJDRIX</div>
-            <div class="ov-fn-live">🔴 LIVE</div>
-          </div>
-          <div class="ov-fn-stats">
-            <div class="ov-fn-stat"><div class="ov-fn-stat-v">2.4K</div><div class="ov-fn-stat-l">Viewers</div></div>
-            <div class="ov-fn-stat"><div class="ov-fn-stat-v">847</div><div class="ov-fn-stat-l">Likes</div></div>
-            <div class="ov-fn-stat"><div class="ov-fn-stat-v" id="ovFps">60</div><div class="ov-fn-stat-l">FPS</div></div>
-          </div>
-          <div class="ov-fn-center">
-            <div class="ov-fn-game">🎮 Fortnite Chapter 6</div>
-          </div>
-          <div class="ov-fn-bottombar">
-            <div class="ov-fn-name">MEJDRIX</div>
-            <div class="ov-fn-socials">
-              <span class="ov-fn-soc tt">📱 TikTok</span>
-              <span class="ov-fn-soc yt">🎥 YouTube</span>
-              <span class="ov-fn-soc dc">💬 Discord</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- LAYOUT B: Minimal -->
-      <div class="ov-content" id="ov-min">
-        <div class="ov-min-bg">
-          <div class="ov-min-left"></div>
-          <div class="ov-min-grid">
-            <div class="ov-min-box"><div class="ov-min-bv">2.4K</div><div class="ov-min-bl">Viewers</div></div>
-            <div class="ov-min-box"><div class="ov-min-bv">847</div><div class="ov-min-bl">Likes</div></div>
-            <div class="ov-min-box"><div class="ov-min-bv" id="ovFps2">60</div><div class="ov-min-bl">FPS</div></div>
-          </div>
-          <div class="ov-min-badge">🔴 LIVE NOW</div>
-          <div class="ov-min-name">MEJDRIX</div>
-          <div class="ov-min-sub">@mejdrix · tiktok &amp; youtube</div>
-        </div>
-      </div>
-
-      <!-- LAYOUT C: Gaming -->
-      <div class="ov-content" id="ov-gm">
-        <div class="ov-gm-bg">
-          <div class="ov-gm-corner"></div>
-          <div class="ov-gm-corner2"></div>
-          <div class="ov-gm-scanlines"></div>
-          <div class="ov-gm-logo">MEJDRIX</div>
-          <div class="ov-gm-sub">STREAM HUD V2</div>
-          <div class="ov-gm-hbar"></div>
-          <div class="ov-gm-vbar"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- KEYBOARD SHORTCUTS -->
-  <div class="keys-panel">
-    <div class="keys-header">
-      <div class="keys-title">⌨️ Keyboard Shortcuts</div>
-    </div>
-    <div class="keys-grid">
-      <div class="key-section-label">🕹️ Pohyb hráče</div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">W</span><span class="key-badge">▲</span></div><div class="key-desc">Pohyb nahoru</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">S</span><span class="key-badge">▼</span></div><div class="key-desc">Pohyb dolů</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">A</span><span class="key-badge">◄</span></div><div class="key-desc">Pohyb doleva</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">D</span><span class="key-badge">►</span></div><div class="key-desc">Pohyb doprava</div></div>
-      <div class="key-section-label">💻 Terminál — příkazy</div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/live on</span></div><div class="key-desc">Nastav stream jako ONLINE</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/live off</span></div><div class="key-desc">Nastav stream jako OFFLINE</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/add</span></div><div class="key-desc">/add Jméno role — přidá uživatele</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge yellow">/remove</span></div><div class="key-desc">/remove Jméno — odebere uživatele</div></div>
-      <div class="key-section-label">🖥️ Overlay Preview</div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge">Tab 1</span></div><div class="key-desc">Fortnite styl overlay</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge">Tab 2</span></div><div class="key-desc">Minimalistický overlay</div></div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge">Tab 3</span></div><div class="key-desc">Gaming styl overlay</div></div>
-      <div class="key-section-label">🎨 Téma</div>
-      <div class="key-row"><div class="key-badges"><span class="key-badge">Klik</span></div><div class="key-desc">Klikni na barvu pro změnu tématu</div></div>
     </div>
   </div>
 
   <!-- DOWNLOAD -->
-  <div class="dl-box">
-    <button class="dl-btn" id="dlBtn">⬇️ STÁHNOUT SCRIPT (HTML)</button>
+  <div class="panel">
+    <div class="dl-wrap">
+      <button class="dl-btn" id="dlBtn">⬇️ Stáhnout Script (HTML)</button>
+    </div>
   </div>
 
   <!-- COMING SOON -->
-  <div class="coming-panel">
-    <div class="coming-text">🚀 MORE <span>COMING SOON</span>...</div>
+  <div class="panel">
+    <div class="coming-wrap">
+      <div class="coming-text">🚀 More <span>Coming Soon</span>...</div>
+    </div>
   </div>
 
-</div><!-- end appMain -->
+</div><!-- end app -->
 
 <script>
-// ============================================================
-//  LOGIN SYSTEM
-// ============================================================
-const CREDS = { user: "Mejdrixog", pass: "MejdrixStreamsV2" };
-
-const screenLogin = document.getElementById("screenLogin");
-const screenLoad  = document.getElementById("screenLoad");
-const appMain     = document.getElementById("appMain");
-const loginBox    = document.getElementById("loginBox");
-const inUser      = document.getElementById("inUser");
-const inPass      = document.getElementById("inPass");
-const btnLogin    = document.getElementById("btnLogin");
-const loginErr    = document.getElementById("loginErr");
-
-function doLogin() {
-    if (inUser.value.trim() === CREDS.user && inPass.value === CREDS.pass) {
-        // success → fade out login, show loading
-        screenLogin.classList.add("hidden");
-        setTimeout(() => {
-            screenLogin.style.display = "none";
-            screenLoad.classList.remove("hidden");
-            runLoadingScreen();
-        }, 400);
-    } else {
-        // fail → shake + error
-        inUser.classList.add("err");
-        inPass.classList.add("err");
-        loginErr.classList.add("show");
-        loginBox.style.animation = "none";
-        void loginBox.offsetWidth;
-        loginBox.style.animation = "shake 0.45s ease";
-        inPass.value = "";
-        setTimeout(() => {
-            inUser.classList.remove("err");
-            inPass.classList.remove("err");
-        }, 700);
-    }
-}
-
-btnLogin.addEventListener("click", doLogin);
-inPass.addEventListener("keydown", e => { if (e.key === "Enter") doLogin(); });
-inUser.addEventListener("keydown", e => { if (e.key === "Enter") inPass.focus(); });
-inUser.addEventListener("input",  () => loginErr.classList.remove("show"));
-inPass.addEventListener("input",  () => loginErr.classList.remove("show"));
-inUser.focus();
-
-// ============================================================
-//  LOADING ANIMATION  (only called after successful login)
-// ============================================================
-function runLoadingScreen() {
-    const bar  = document.getElementById("loadBar");
-    const pct  = document.getElementById("loadPct");
-    const fc1  = document.getElementById("fc1");
-    const fc2  = document.getElementById("fc2");
-    const fc3  = document.getElementById("fc3");
-    let p = 0;
-
-    const iv = setInterval(() => {
-        p += Math.floor(Math.random() * 4) + 1;
-        if (p > 100) p = 100;
-        bar.style.width = p + "%";
-        pct.innerText   = p + "%";
-        if (p >= 15) fc1.classList.add("active");
-        if (p >= 50) fc2.classList.add("active");
-        if (p >= 80) fc3.classList.add("active");
-        if (p >= 100) {
-            clearInterval(iv);
-            setTimeout(() => {
-                screenLoad.classList.add("hidden");
-                setTimeout(() => { screenLoad.style.display = "none"; }, 400);
-                appMain.style.display = "flex";
-                initApp(); // start the real app only now
-            }, 450);
-        }
-    }, 55);
-}
-
-// ============================================================
-//  APP INIT  (called once after loading screen)
-// ============================================================
-function initApp() {
-    initTikfinity();
-    initGame();
-    initTeamGrid();
-    initMetrics();
-    initTerminal();
-    initDownload();
-    checkTikTokLive();
-    setInterval(checkTikTokLive, 30000);
-}
-
-// ---- TIKFINITY ----
-function initTikfinity() {
-    const iframe  = document.getElementById("tikIframe");
-    const input   = document.getElementById("tikInput");
-    const saveBtn = document.getElementById("tikSave");
-    const saved   = localStorage.getItem("tikfinity_url");
-    if (saved) { iframe.src = saved; input.value = saved; }
-    saveBtn.onclick = () => {
-        let v = input.value.trim(); if (!v) return;
-        let url = v.startsWith("http") ? v : "https://tikfinity.zerody.one/authed/chat/" + v;
-        localStorage.setItem("tikfinity_url", url);
-        iframe.src = url;
-        alert("TikFinity URL uložena!");
-    };
-}
-
-// ---- GAME ----
-function initGame() {
-    const player  = document.getElementById("player");
-    const coin    = document.getElementById("coin");
-    const canvas  = document.getElementById("gameCanvas");
-    const modeEl  = document.getElementById("gameMode");
-    const W = 584, H = 344, S = 22;
-    let px = 270, py = 150, cx = 60, cy = 60;
-
-    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
-    function place() {
-        player.style.left = px + "px";
-        player.style.top  = py + "px";
-        if (modeEl.value === "coins") {
-            let d = Math.hypot(px - cx, py - cy);
-            if (d < 34) spawnCoin();
-        }
-    }
-    function spawnCoin() {
-        cx = Math.floor(Math.random() * (W - 40)) + 10;
-        cy = Math.floor(Math.random() * (H - 40)) + 10;
-        coin.style.left    = cx + "px";
-        coin.style.top     = cy + "px";
-        coin.style.display = "flex";
-    }
-    modeEl.onchange = () => {
-        if (modeEl.value === "coins") spawnCoin();
-        else coin.style.display = "none";
-    };
-    window.addEventListener("keydown", e => {
-        const k = e.key;
-        if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"," "].includes(k)) e.preventDefault();
-        if (k === "ArrowUp"    || k === "w" || k === "W") py = clamp(py - S, 5, H - 48);
-        if (k === "ArrowDown"  || k === "s" || k === "S") py = clamp(py + S, 5, H - 48);
-        if (k === "ArrowLeft"  || k === "a" || k === "A") px = clamp(px - S, 5, W - 48);
-        if (k === "ArrowRight" || k === "d" || k === "D") px = clamp(px + S, 5, W - 48);
-        place();
+/* ══════════════════════════════════════
+   CANVAS BACKGROUND
+══════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('bgCanvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+  function resize(){ W = c.width = innerWidth; H = c.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for(let i=0; i<55; i++) particles.push({
+    x: Math.random()*2000, y: Math.random()*1200,
+    r: Math.random()*1.4+.3,
+    vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25,
+    a: Math.random()*.5+.1
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(244,197,0,${p.a})`;
+      ctx.fill();
     });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════
+   LOGIN
+══════════════════════════════════════ */
+const CREDS = { u:'Mejdrixog', p:'MejdrixStreamsV2' };
+const sLogin = document.getElementById('sLogin');
+const sLoad  = document.getElementById('sLoad');
+const app    = document.getElementById('app');
+
+function doLogin(){
+  const u = document.getElementById('inU').value.trim();
+  const p = document.getElementById('inP').value;
+  const card = document.getElementById('loginCard');
+  const err  = document.getElementById('loginErr');
+  if(u===CREDS.u && p===CREDS.p){
+    sLogin.classList.add('gone');
+    setTimeout(()=>{
+      sLogin.style.display='none';
+      sLoad.classList.remove('gone');
+      runLoader();
+    },500);
+  } else {
+    document.getElementById('inU').classList.add('err');
+    document.getElementById('inP').classList.add('err');
+    err.classList.add('show');
+    card.style.animation='none'; void card.offsetWidth;
+    card.style.animation='shake .45s ease';
+    document.getElementById('inP').value='';
+    setTimeout(()=>{
+      document.getElementById('inU').classList.remove('err');
+      document.getElementById('inP').classList.remove('err');
+    },700);
+  }
+}
+document.getElementById('btnLogin').onclick = doLogin;
+document.getElementById('inP').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('inU').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('inP').focus();});
+['inU','inP'].forEach(id=>document.getElementById(id).addEventListener('input',()=>document.getElementById('loginErr').classList.remove('show')));
+document.getElementById('inU').focus();
+
+/* ══════════════════════════════════════
+   LOADER
+══════════════════════════════════════ */
+function runLoader(){
+  const bar=document.getElementById('loadBar');
+  const pct=document.getElementById('loadPct');
+  const cards=[document.getElementById('lc1'),document.getElementById('lc2'),document.getElementById('lc3')];
+  let p=0;
+  const iv=setInterval(()=>{
+    p+=Math.floor(Math.random()*4)+1; if(p>100)p=100;
+    bar.style.width=p+'%'; pct.innerText=p+'%';
+    if(p>=15) cards[0].classList.add('on');
+    if(p>=50) cards[1].classList.add('on');
+    if(p>=80) cards[2].classList.add('on');
+    if(p>=100){
+      clearInterval(iv);
+      setTimeout(()=>{
+        sLoad.classList.add('gone');
+        setTimeout(()=>sLoad.style.display='none',500);
+        app.style.display='flex';
+        initApp();
+      },500);
+    }
+  },55);
+}
+
+/* ══════════════════════════════════════
+   APP INIT
+══════════════════════════════════════ */
+function initApp(){
+  initClock();
+  initTikfinity();
+  initGame();
+  initTeamGrid();
+  initMetrics();
+  initTheme();
+  initTerminal();
+  initDownload();
+  checkTTLive();
+  setInterval(checkTTLive, 30000);
+}
+
+/* ── CLOCK ── */
+function initClock(){
+  const days=['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
+  function tick(){
+    const d=new Date();
+    document.getElementById('clock').innerText=
+      d.getHours().toString().padStart(2,'0')+':'+
+      d.getMinutes().toString().padStart(2,'0')+':'+
+      d.getSeconds().toString().padStart(2,'0');
+    document.getElementById('dateStr').innerText=
+      days[d.getDay()]+', '+d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear();
+  }
+  tick(); setInterval(tick,1000);
+}
+
+/* ── TIKFINITY ── */
+function initTikfinity(){
+  const iframe=document.getElementById('tikIframe');
+  const input=document.getElementById('tikInput');
+  const saved=localStorage.getItem('tikfinity_url');
+  if(saved){iframe.src=saved;input.value=saved;}
+  document.getElementById('tikSave').onclick=()=>{
+    let v=input.value.trim(); if(!v)return;
+    let url=v.startsWith('http')?v:'https://tikfinity.zerody.one/authed/chat/'+v;
+    localStorage.setItem('tikfinity_url',url); iframe.src=url;
+    alert('TikFinity URL uložena!');
+  };
+}
+
+/* ── GAME ── */
+function initGame(){
+  const player=document.getElementById('player');
+  const coin=document.getElementById('coin');
+  const mode=document.getElementById('gameMode');
+  const W=580,H=340,S=22;
+  let px=270,py=148,cx=80,cy=80;
+  function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+  function place(){
+    player.style.left=px+'px'; player.style.top=py+'px';
+    if(mode.value==='coins'&&Math.hypot(px-cx,py-cy)<36) spawnCoin();
+  }
+  function spawnCoin(){
+    cx=Math.floor(Math.random()*(W-50))+10; cy=Math.floor(Math.random()*(H-50))+10;
+    coin.style.left=cx+'px'; coin.style.top=cy+'px'; coin.style.display='flex';
+  }
+  mode.onchange=()=>{ if(mode.value==='coins')spawnCoin(); else coin.style.display='none'; };
+  window.addEventListener('keydown',e=>{
+    const k=e.key;
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(k))e.preventDefault();
+    if(k==='ArrowUp'||k==='w'||k==='W')   py=clamp(py-S,5,H-48);
+    if(k==='ArrowDown'||k==='s'||k==='S') py=clamp(py+S,5,H-48);
+    if(k==='ArrowLeft'||k==='a'||k==='A') px=clamp(px-S,5,W-48);
+    if(k==='ArrowRight'||k==='d'||k==='D')px=clamp(px+S,5,W-48);
     place();
+  });
+  place();
 }
 
-// ---- TEAM GRID ----
-const defaultUsers = [
-    { name: "Mejdrix",       role: "owner"      },
-    { name: "ViriBLOX",      role: "mod"        },
-    { name: "Xentro",        role: "mod"        },
-    { name: "AdamDevRblx",   role: "mod_gifter" },
-    { name: "T4D34S",        role: "mod_helper" },
-    { name: "Jammes",        role: "mod_gifter" },
-    { name: "Fnaffan",       role: "scripter"   },
-    { name: "Pettrading",    role: "gifter"     },
-    { name: "Kebab",         role: "b_helper"   },
-    { name: "Kifír(Studio)", role: "traitor"    },
-    { name: "Daník",         role: "funniest"   }
+/* ── TEAM GRID ── */
+const DEFAULT_USERS=[
+  {name:'Mejdrix',role:'owner'},{name:'ViriBLOX',role:'mod'},{name:'Xentro',role:'mod'},
+  {name:'AdamDevRblx',role:'mod_gifter'},{name:'T4D34S',role:'mod_helper'},
+  {name:'Jammes',role:'mod_gifter'},{name:'Fnaffan',role:'scripter'},
+  {name:'Pettrading',role:'gifter'},{name:'Kebab',role:'b_helper'},
+  {name:'Kifír(Studio)',role:'traitor'},{name:'Daník',role:'funniest'}
 ];
-const roleLabel = {
-    owner:"Owner", mod:"Moderator", mod_gifter:"Mod & Gifter",
-    mod_helper:"Mod & Helper", helper:"Helper", b_helper:"Brutal Helper",
-    gifter:"Gifter", scripter:"Scripter", traitor:"Traitor", funniest:"Funniest"
+const ROLE_LABEL={
+  owner:'Owner',mod:'Moderator',mod_gifter:'Mod & Gifter',mod_helper:'Mod & Helper',
+  helper:'Helper',b_helper:'Brutal Helper',gifter:'Gifter',
+  scripter:'Scripter',traitor:'Traitor',funniest:'Funniest'
 };
-
-let users  = JSON.parse(localStorage.getItem("fn_users")  || JSON.stringify(defaultUsers));
-let favs   = JSON.parse(localStorage.getItem("fn_favs")   || "[]");
-let pinned = JSON.parse(localStorage.getItem("fn_pinned") || "[]");
-
-function saveMeta() {
-    localStorage.setItem("fn_users",  JSON.stringify(users));
-    localStorage.setItem("fn_favs",   JSON.stringify(favs));
-    localStorage.setItem("fn_pinned", JSON.stringify(pinned));
+let users =JSON.parse(localStorage.getItem('fn_users') ||JSON.stringify(DEFAULT_USERS));
+let favs  =JSON.parse(localStorage.getItem('fn_favs')  ||'[]');
+let pinned=JSON.parse(localStorage.getItem('fn_pinned')||'[]');
+function save(){
+  localStorage.setItem('fn_users',JSON.stringify(users));
+  localStorage.setItem('fn_favs',JSON.stringify(favs));
+  localStorage.setItem('fn_pinned',JSON.stringify(pinned));
 }
-
-function initTeamGrid() {
-    const grid   = document.getElementById("teamGrid");
-    const search = document.getElementById("searchBox");
-    search.addEventListener("input", renderGrid);
-    renderGrid();
+function initTeamGrid(){
+  document.getElementById('searchBox').addEventListener('input',renderGrid);
+  renderGrid();
 }
-
-function renderGrid() {
-    const grid   = document.getElementById("teamGrid");
-    const search = document.getElementById("searchBox");
-    const q = search.value.toLowerCase().trim();
-    grid.innerHTML = "";
-
-    let list = users.filter(u => u.name.toLowerCase().includes(q));
-    list.sort((a, b) => (pinned.includes(b.name) ? 1 : 0) - (pinned.includes(a.name) ? 1 : 0));
-
-    list.forEach((u, i) => {
-        const ip = pinned.includes(u.name), iv = favs.includes(u.name);
-        const card = document.createElement("div");
-        card.className = "team-card" + (ip ? " pinned" : "");
-        card.innerHTML = `
-            <div class="t-left">
-                <span class="t-name" data-name="${u.name}">${u.name}</span>
-                <span class="t-copied" id="cp${i}">Zkopírováno!</span>
-            </div>
-            <div class="t-right">
-                <span class="t-badge r-${u.role}">${roleLabel[u.role] || u.role}</span>
-                <div class="t-actions">
-                    <span class="pin-btn">${ip ? "📌" : "📍"}</span>
-                    <span class="fav-btn">${iv ? "⭐" : "☆"}</span>
-                </div>
-            </div>`;
-        card.querySelector(".t-name").onclick = () => {
-            navigator.clipboard.writeText(u.name);
-            const el = document.getElementById("cp" + i);
-            if (el) { el.style.opacity = "1"; setTimeout(() => el.style.opacity = "0", 1000); }
-        };
-        card.querySelector(".pin-btn").onclick = e => {
-            e.stopPropagation();
-            pinned = pinned.includes(u.name) ? pinned.filter(x => x !== u.name) : [...pinned, u.name];
-            saveMeta(); renderGrid();
-        };
-        card.querySelector(".fav-btn").onclick = e => {
-            e.stopPropagation();
-            favs = favs.includes(u.name) ? favs.filter(x => x !== u.name) : [...favs, u.name];
-            saveMeta(); renderGrid();
-        };
-        grid.appendChild(card);
-    });
-    document.getElementById("mPinned").innerText = pinned.join(", ") || "žádné";
-    document.getElementById("mFavs").innerText   = favs.join(", ")   || "žádné";
-}
-
-// ---- METRICS ----
-function initMetrics() {
-    setInterval(() => {
-        document.getElementById("sFps").innerText = 58 + Math.floor(Math.random() * 6) + "";
-        document.getElementById("sMs").innerText  = (18 + Math.floor(Math.random() * 10)) + "ms";
-        document.getElementById("sMem").innerText = (450 + Math.floor(Math.random() * 20)) + " MB";
-    }, 1000);
-}
-
-// ---- TERMINAL ----
-function initTerminal() {
-    const chatEl = document.getElementById("chat");
-    const inp    = document.getElementById("termInput");
-    const btn    = document.getElementById("termSend");
-
-    function addMsg(txt, type) {
-        const m = document.createElement("div");
-        m.className = "msg " + type; m.innerText = txt;
-        chatEl.appendChild(m); chatEl.scrollTop = chatEl.scrollHeight;
-    }
-    function handle() {
-        const v = inp.value.trim(); if (!v) return;
-        addMsg(v, "user"); inp.value = "";
-        if (v.startsWith("/live")) {
-            const p = v.split(" ")[1];
-            setLiveState(p === "true" || p === "on");
-            addMsg("🤖 Status upraven.", "bot");
-        } else if (v.startsWith("/add ")) {
-            const [, name, role] = v.split(" ");
-            if (name && role && roleLabel[role]) {
-                users.push({ name, role }); saveMeta(); renderGrid();
-                addMsg("🤖 Uživatel " + name + " přidán.", "bot");
-            } else addMsg("🤖 Použití: /add Jméno role", "bot");
-        } else if (v.startsWith("/remove ")) {
-            const name = v.split(" ")[1];
-            users = users.filter(u => u.name.toLowerCase() !== name.toLowerCase());
-            saveMeta(); renderGrid();
-            addMsg("🤖 Uživatel " + name + " odebrán.", "bot");
-        } else {
-            addMsg("🤖 Neznámý příkaz. Zkus /live on|off, /add Jméno role, /remove Jméno", "bot");
-        }
-    }
-    btn.onclick = handle;
-    inp.addEventListener("keydown", e => { if (e.key === "Enter") handle(); });
-}
-
-// ---- TIKTOK LIVE STATUS ----
-let isLive = false;
-function checkTikTokLive() {
-    const url = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.tiktok.com/@mejdrix/live") + "&t=" + Date.now();
-    fetch(url).then(r => r.json()).then(d => {
-        const h = d.contents || "";
-        setLiveState(h.includes("room_id") || h.includes('"liveRoom"') || h.includes('is_live":true'));
-    }).catch(() => {});
-}
-function setLiveState(live) {
-    isLive = live;
-    const panel = document.getElementById("ttPanel");
-    const stat  = document.getElementById("ttStatus");
-    const btn   = document.getElementById("ttBtn");
-    if (live) {
-        panel.classList.remove("offline");
-        stat.innerText = "🔴 Sleduj stream v reálném čase";
-        btn.innerText  = "SLEDOVAT LIVE";
-    } else {
-        panel.classList.add("offline");
-        stat.innerText = "⚪ Momentálně offline";
-        btn.innerText  = "ZATÍM OFFLINE";
-    }
-}
-
-// ---- THEME SWITCHER ----
-const THEMES = {
-    yellow: { main: "#f4c500", dark: "#8c7000" },
-    blue:   { main: "#007bff", dark: "#0044aa" },
-    red:    { main: "#fe2c55", dark: "#b01b3a" },
-    green:  { main: "#00ff66", dark: "#00a040" },
-    purple: { main: "#8c00ff", dark: "#5500aa" },
-    pink:   { main: "#ff007f", dark: "#aa0050" },
-    orange: { main: "#ffaa00", dark: "#aa6e00" },
-    white:  { main: "#ffffff", dark: "#aaaaaa" }
-};
-
-function setTheme(name, el) {
-    const t = THEMES[name]; if (!t) return;
-    const root = document.documentElement;
-    root.style.setProperty("--fn-yellow", t.main);
-    document.querySelectorAll(".theme-swatch").forEach(s => s.classList.remove("active"));
-    if (el) el.classList.add("active");
-    document.getElementById("themeBar").style.background = t.main;
-    localStorage.setItem("hud_theme", name);
-}
-
-function loadSavedTheme() {
-    const saved = localStorage.getItem("hud_theme") || "yellow";
-    const el = document.querySelector(`.theme-swatch[data-theme="${saved}"]`);
-    setTheme(saved, el);
-}
-
-// ---- OVERLAY PREVIEW ----
-function switchOverlay(id, btn) {
-    document.querySelectorAll(".ov-content").forEach(c => c.classList.remove("visible"));
-    document.querySelectorAll(".ov-tab").forEach(b => b.classList.remove("active"));
-    document.getElementById("ov-" + id).classList.add("visible");
-    if (btn) btn.classList.add("active");
-}
-
-function initOverlayFps() {
-    setInterval(() => {
-        const v = 58 + Math.floor(Math.random() * 6);
-        const a = document.getElementById("ovFps");
-        const b = document.getElementById("ovFps2");
-        if (a) a.innerText = v;
-        if (b) b.innerText = v;
-    }, 1000);
-}
-
-// ---- DOWNLOAD ----
-function initDownload() {
-    document.getElementById("dlBtn").onclick = () => {
-        const src  = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-        const blob = new Blob([src], { type: "text/html" });
-        const url  = URL.createObjectURL(blob);
-        const a    = document.createElement("a");
-        a.href = url; a.download = "mejdrix_hud_v2.html"; a.click();
-        URL.revokeObjectURL(url);
+function renderGrid(){
+  const grid=document.getElementById('teamGrid');
+  const q=document.getElementById('searchBox').value.toLowerCase().trim();
+  grid.innerHTML='';
+  let list=users.filter(u=>u.name.toLowerCase().includes(q));
+  list.sort((a,b)=>(pinned.includes(b.name)?1:0)-(pinned.includes(a.name)?1:0));
+  list.forEach((u,i)=>{
+    const ip=pinned.includes(u.name),iv=favs.includes(u.name);
+    const card=document.createElement('div');
+    card.className='team-card'+(ip?' pinned':'');
+    card.innerHTML=`
+      <div class="tc-left">
+        <span class="tc-name">${u.name}</span>
+        <span class="tc-copied" id="cp${i}">✓ Zkopírováno</span>
+      </div>
+      <div class="tc-right">
+        <span class="tc-badge r-${u.role}">${ROLE_LABEL[u.role]||u.role}</span>
+        <div class="tc-actions">
+          <span class="pin-btn" title="Pin">${ip?'📌':'📍'}</span>
+          <span class="fav-btn" title="Fav">${iv?'⭐':'☆'}</span>
+        </div>
+      </div>`;
+    card.querySelector('.tc-name').onclick=()=>{
+      navigator.clipboard.writeText(u.name);
+      const el=document.getElementById('cp'+i);
+      if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1100);}
     };
+    card.querySelector('.pin-btn').onclick=e=>{
+      e.stopPropagation();
+      pinned=pinned.includes(u.name)?pinned.filter(x=>x!==u.name):[...pinned,u.name];
+      save();renderGrid();
+    };
+    card.querySelector('.fav-btn').onclick=e=>{
+      e.stopPropagation();
+      favs=favs.includes(u.name)?favs.filter(x=>x!==u.name):[...favs,u.name];
+      save();renderGrid();
+    };
+    grid.appendChild(card);
+  });
+  document.getElementById('mPinned').innerText=pinned.join(', ')||'žádné';
+  document.getElementById('mFavs').innerText=favs.join(', ')||'žádné';
+}
+
+/* ── METRICS ── */
+function initMetrics(){
+  setInterval(()=>{
+    document.getElementById('sFps').innerText=57+Math.floor(Math.random()*7)+'';
+    document.getElementById('sMs').innerText=(17+Math.floor(Math.random()*11))+'ms';
+    document.getElementById('sMem').innerText=(448+Math.floor(Math.random()*22))+' MB';
+  },1000);
+}
+
+/* ── THEME ── */
+const THEMES=[
+  {name:'yellow', c:'#f4c500',c2:'#ff6b00'},
+  {name:'blue',   c:'#2979ff',c2:'#00b0ff'},
+  {name:'green',  c:'#00e676',c2:'#00bfa5'},
+  {name:'purple', c:'#7c4dff',c2:'#e040fb'},
+  {name:'red',    c:'#ff1744',c2:'#ff6d00'},
+  {name:'pink',   c:'#f50057',c2:'#ff4081'},
+  {name:'cyan',   c:'#00e5ff',c2:'#00b0ff'},
+  {name:'white',  c:'#ffffff',c2:'#cccccc'},
+];
+function initTheme(){
+  const wrap=document.getElementById('swatches');
+  const saved=localStorage.getItem('hud_theme')||'yellow';
+  THEMES.forEach(t=>{
+    const s=document.createElement('div');
+    s.className='tswatch'+(t.name===saved?' active':'');
+    s.style.background=`linear-gradient(135deg,${t.c},${t.c2})`;
+    s.title=t.name;
+    s.onclick=()=>applyTheme(t);
+    wrap.appendChild(s);
+  });
+  const init=THEMES.find(t=>t.name===saved)||THEMES[0];
+  applyThemeVars(init);
+}
+function applyTheme(t){
+  applyThemeVars(t);
+  document.querySelectorAll('.tswatch').forEach(s=>s.classList.remove('active'));
+  document.querySelector(`.tswatch[title="${t.name}"]`).classList.add('active');
+  localStorage.setItem('hud_theme',t.name);
+}
+function applyThemeVars(t){
+  document.documentElement.style.setProperty('--accent',t.c);
+  document.documentElement.style.setProperty('--accent2',t.c2);
+}
+
+/* ── TERMINAL ── */
+function initTerminal(){
+  const chatEl=document.getElementById('chat');
+  const inp=document.getElementById('termInput');
+  function addMsg(txt,type){
+    const m=document.createElement('div');
+    m.className='msg '+type; m.innerText=txt;
+    chatEl.appendChild(m); chatEl.scrollTop=chatEl.scrollHeight;
+  }
+  function handle(){
+    const v=inp.value.trim(); if(!v)return;
+    addMsg(v,'user'); inp.value='';
+    if(v.startsWith('/live')){
+      const param=v.split(' ')[1];
+      setTTLive(param==='true'||param==='on');
+      addMsg('🤖 Status upraven.','bot');
+    } else if(v.startsWith('/add ')){
+      const [,name,role]=v.split(' ');
+      if(name&&role&&ROLE_LABEL[role]){
+        users.push({name,role}); save(); renderGrid();
+        addMsg('🤖 Uživatel '+name+' přidán.','bot');
+      } else addMsg('🤖 Použití: /add Jméno role','bot');
+    } else if(v.startsWith('/remove ')){
+      const name=v.split(' ')[1];
+      users=users.filter(u=>u.name.toLowerCase()!==name.toLowerCase());
+      save(); renderGrid();
+      addMsg('🤖 Uživatel '+name+' odebrán.','bot');
+    } else {
+      addMsg('🤖 Neznámý příkaz. Zkus /live on|off, /add Jméno role, /remove Jméno','bot');
+    }
+  }
+  document.getElementById('termSend').onclick=handle;
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')handle();});
+}
+
+/* ── TT LIVE ── */
+let ttIsLive=false;
+function checkTTLive(){
+  const url='https://api.allorigins.win/get?url='+encodeURIComponent('https://www.tiktok.com/@mejdrix/live')+'&t='+Date.now();
+  fetch(url).then(r=>r.json()).then(d=>{
+    const h=d.contents||'';
+    setTTLive(h.includes('room_id')||h.includes('"liveRoom"')||h.includes('is_live":true'));
+  }).catch(()=>{});
+}
+function setTTLive(live){
+  ttIsLive=live;
+  const panel=document.getElementById('ttPanel');
+  const stat=document.getElementById('ttStatus');
+  const btn=document.getElementById('ttBtn');
+  if(live){
+    panel.classList.remove('off');
+    stat.innerText='🔴 Sleduj stream v reálném čase';
+    btn.innerText='SLEDOVAT LIVE';
+  } else {
+    panel.classList.add('off');
+    stat.innerText='⚪ Momentálně offline';
+    btn.innerText='ZATÍM OFFLINE';
+  }
+}
+
+/* ── DOWNLOAD ── */
+function initDownload(){
+  document.getElementById('dlBtn').onclick=()=>{
+    const src='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    const blob=new Blob([src],{type:'text/html'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='mejdrix_hud_v2.html'; a.click();
+    URL.revokeObjectURL(url);
+  };
 }
 </script>
 </body>
