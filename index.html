@@ -6,7 +6,7 @@
 <title>MEJDRIX HUD V2</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
-
+ 
 :root {
   --accent: #f4c500;
   --accent2: #ff6b00;
@@ -30,9 +30,9 @@
   --rbx: #2b2d32;
   --glow: rgba(244,197,0,0.18);
 }
-
+ 
 *{box-sizing:border-box;margin:0;padding:0}
-
+ 
 body {
   background: var(--bg);
   color: var(--text);
@@ -40,17 +40,17 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-
+ 
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:rgba(0,0,0,0.3)}
 ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
-
+ 
 /* ── ANIMATED BACKGROUND ── */
 #bgCanvas {
   position: fixed; inset: 0; z-index: 0;
   pointer-events: none;
 }
-
+ 
 /* ── SCREENS ── */
 .screen {
   position: fixed; inset: 0; z-index: 200;
@@ -59,19 +59,19 @@ body {
   transition: opacity .5s ease, visibility .5s ease;
 }
 .screen.gone { opacity: 0; visibility: hidden; pointer-events: none; }
-
+ 
 /* ── LOGIN ── */
 #sLogin {
   background: radial-gradient(ellipse at 30% 40%, rgba(124,77,255,.22) 0%, transparent 55%),
               radial-gradient(ellipse at 75% 70%, rgba(41,121,255,.18) 0%, transparent 50%),
               var(--bg);
 }
-
+ 
 .login-wrap {
   position: relative;
   width: 420px; max-width: 96vw;
 }
-
+ 
 .login-glow {
   position: absolute; inset: -2px;
   border-radius: 12px;
@@ -81,7 +81,7 @@ body {
   z-index: -1;
   animation: glowPulse 3s ease-in-out infinite;
 }
-
+ 
 .login-card {
   background: linear-gradient(160deg, rgba(22,23,36,.98), rgba(12,13,20,.99));
   border: 1.5px solid rgba(244,197,0,.35);
@@ -96,7 +96,7 @@ body {
   height: 3px;
   background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), var(--accent), transparent);
 }
-
+ 
 .login-emblem {
   font-size: 56px; text-align: center; display: block;
   margin-bottom: 12px;
@@ -115,7 +115,7 @@ body {
   text-transform: uppercase; letter-spacing: 2.5px; font-weight: 700;
   margin-bottom: 38px; font-style: italic;
 }
-
+ 
 .lf { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
 .lf label {
   font-size: 11px; font-weight: 900; text-transform: uppercase;
@@ -132,7 +132,7 @@ body {
 }
 .lf input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(244,197,0,.12); }
 .lf input.err   { border-color: var(--red);    box-shadow: 0 0 0 3px rgba(255,23,68,.15); }
-
+ 
 .login-btn {
   width: 100%; margin-top: 8px;
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
@@ -145,7 +145,7 @@ body {
 }
 .login-btn:hover  { filter: brightness(1.1); }
 .login-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #7a4800; }
-
+ 
 .login-err {
   text-align: center; font-size: 13px; color: var(--red);
   font-weight: 900; font-style: italic; text-transform: uppercase;
@@ -153,7 +153,7 @@ body {
   transition: opacity .2s;
 }
 .login-err.show { opacity: 1; }
-
+ 
 @keyframes shake {
   0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)}
   40%{transform:translateX(10px)}  60%{transform:translateX(-6px)}
@@ -169,7 +169,7 @@ body {
   0%  { background-position: -200% center; }
   100%{ background-position:  200% center; }
 }
-
+ 
 /* ── LOADING ── */
 #sLoad {
   background: radial-gradient(ellipse at center, rgba(22,23,36,.99) 0%, var(--bg) 100%);
@@ -199,7 +199,7 @@ body {
 .load-card.on { opacity: 1; transform: translateY(0); border-color: var(--accent); }
 .load-card span:first-child { font-size: 28px; }
 .load-card span:last-child { font-size: 12px; color: var(--muted); text-transform: uppercase; font-weight: 900; font-style: italic; letter-spacing: 1px; }
-
+ 
 .load-bar-wrap { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
 .load-bar {
   height: 100%; width: 0%; border-radius: 3px;
@@ -210,7 +210,7 @@ body {
 .load-row { width: 100%; display: flex; justify-content: space-between; }
 .load-txt { font-size: 14px; color: var(--muted); font-style: italic; text-transform: uppercase; }
 .load-pct { font-size: 28px; font-weight: 900; font-style: italic; color: var(--accent); }
-
+ 
 /* ── APP ── */
 #app {
   position: relative; z-index: 1;
@@ -218,7 +218,7 @@ body {
   margin: 0 auto; padding: 28px 20px;
   display: none; flex-direction: column; gap: 20px;
 }
-
+ 
 /* ── SECTION BASE ── */
 .panel {
   background: linear-gradient(160deg, var(--card2), var(--card));
@@ -231,7 +231,7 @@ body {
   background: linear-gradient(90deg, transparent 0%, var(--accent) 30%, var(--accent2) 70%, transparent 100%);
   opacity: .7;
 }
-
+ 
 /* ── TOP BANNER ── */
 .top-banner {
   background: linear-gradient(135deg, rgba(7,8,15,.95), rgba(18,19,30,.95));
@@ -264,7 +264,7 @@ body {
   text-shadow: 0 0 15px rgba(244,197,0,.4);
 }
 .banner-date { font-size: 12px; color: var(--muted); text-transform: uppercase; font-style: italic; text-align: right; }
-
+ 
 /* ── TT PANEL ── */
 .tt-panel {
   padding: 18px 24px; border-radius: 12px;
@@ -286,7 +286,7 @@ body {
 .tt-name { font-size: 24px; font-weight: 900; text-transform: uppercase; font-style: italic; }
 .tt-status { font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--tt-red); margin-top: 2px; transition: color .3s; }
 .tt-panel.off .tt-status { color: var(--muted); }
-
+ 
 .tt-live-btn {
   background: linear-gradient(135deg, var(--tt-red), #c01a42);
   color: #fff; text-decoration: none;
@@ -299,7 +299,7 @@ body {
 .tt-live-btn:hover { filter: brightness(1.15); transform: translateY(-2px); }
 .tt-live-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #7a0f28; }
 .tt-panel.off .tt-live-btn { background: var(--border2); box-shadow: 0 4px 0 #111; color: var(--muted); }
-
+ 
 /* ── STATS ROW ── */
 .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
 .stat-card {
@@ -324,7 +324,7 @@ body {
 .stat-val.ms  { color: var(--accent); text-shadow: 0 0 20px rgba(244,197,0,.35); }
 .stat-val.mem { color: var(--blue);   text-shadow: 0 0 20px rgba(41,121,255,.35); }
 .stat-lbl { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: 2px; font-weight: 700; }
-
+ 
 /* ── SECTION HEADER ── */
 .sec-head {
   display: flex; justify-content: space-between; align-items: center;
@@ -342,7 +342,7 @@ body {
   background: rgba(244,197,0,.12); color: var(--accent);
   border: 1px solid rgba(244,197,0,.25);
 }
-
+ 
 /* ── GAME SECTION ── */
 .game-wrap { padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 14px; }
 .game-top { display: flex; justify-content: space-between; align-items: center; }
@@ -405,7 +405,7 @@ body {
   padding: 0 14px; font-size: 13px; font-weight: 900; cursor: pointer;
   text-transform: uppercase; font-style: italic; font-family: inherit;
 }
-
+ 
 /* ── SOCIALS ── */
 .socials-wrap {
   padding: 18px 24px; display: flex;
@@ -429,7 +429,7 @@ body {
 .soc-yt  { background: var(--yt);  box-shadow: 0 4px 0 #7a0000; }
 .soc-dc  { background: var(--dc);  box-shadow: 0 4px 0 #2c3280; }
 .soc-rbx { background: var(--rbx); border: 1.5px solid #444; box-shadow: 0 4px 0 #111; }
-
+ 
 /* ── HUD + TEAM ── */
 .hud-wrap { padding: 20px 24px; }
 .hud-header {
@@ -451,7 +451,7 @@ body {
 }
 .live-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: blink 1.2s infinite; }
 .live-text { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--red); font-style: italic; }
-
+ 
 .search-box {
   width: 100%; background: var(--card); border: 1.5px solid var(--border2);
   border-radius: 8px; color: #fff; padding: 14px 18px; font-size: 15px;
@@ -459,9 +459,9 @@ body {
   font-family: inherit; transition: border-color .2s, box-shadow .2s;
 }
 .search-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(244,197,0,.08); }
-
+ 
 #teamGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(285px,1fr)); gap: 10px; margin-bottom: 20px; }
-
+ 
 .team-card {
   background: rgba(18,19,30,.8); border: 1.5px solid var(--border2);
   border-radius: 9px; padding: 13px 16px;
@@ -473,7 +473,7 @@ body {
 .team-card:hover::before { background: var(--accent); }
 .team-card.pinned { border-color: rgba(244,197,0,.4); background: rgba(244,197,0,.04); }
 .team-card.pinned::before { background: var(--accent); }
-
+ 
 .tc-left { display: flex; flex-direction: column; gap: 2px; padding-left: 8px; }
 .tc-name { font-size: 17px; font-weight: 900; text-transform: uppercase; font-style: italic; cursor: pointer; transition: color .15s; }
 .tc-name:hover { color: var(--accent); }
@@ -496,7 +496,7 @@ body {
 .tc-actions { display: flex; gap: 8px; }
 .tc-actions span { cursor: pointer; font-size: 17px; user-select: none; transition: transform .1s; }
 .tc-actions span:hover { transform: scale(1.3); }
-
+ 
 /* ── META ROW ── */
 .meta-row {
   display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
@@ -509,7 +509,7 @@ body {
 .meta-card:hover { border-color: var(--accent); }
 .meta-card h3 { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; font-style: italic; margin-bottom: 7px; }
 .meta-card p { font-size: 15px; color: #fff; font-weight: 700; font-style: italic; }
-
+ 
 /* ── THEME SWITCHER ── */
 .theme-wrap { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
 .theme-label { font-size: 20px; font-weight: 900; font-style: italic; text-transform: uppercase; color: var(--accent); letter-spacing: 1.5px; }
@@ -522,7 +522,7 @@ body {
 }
 .tswatch:hover { transform: scale(1.18); }
 .tswatch.active { border-color: #fff; box-shadow: 0 0 14px rgba(255,255,255,.35); transform: scale(1.1); }
-
+ 
 /* ── TERMINAL ── */
 .term-wrap { padding: 18px 24px; }
 .term-title { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; font-style: italic; letter-spacing: 1.5px; margin-bottom: 12px; }
@@ -556,7 +556,7 @@ body {
 }
 .term-row button:hover { filter: brightness(1.1); }
 .term-row button:active { transform: translateY(2px); box-shadow: 0 2px 0 #7a4800; }
-
+ 
 /* ── DOWNLOAD ── */
 .dl-wrap { padding: 24px; text-align: center; }
 .dl-btn {
@@ -570,7 +570,7 @@ body {
 }
 .dl-btn:hover { filter: brightness(1.08); }
 .dl-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #7a4800; }
-
+ 
 /* ── COMING SOON ── */
 .coming-wrap { padding: 18px; text-align: center; }
 .coming-text {
@@ -584,14 +584,14 @@ body {
   background-clip: text;
   animation: shimmer 2.5s linear infinite;
 }
-
+ 
 /* ── DIVIDER ── */
 .divider {
   height: 1.5px;
   background: linear-gradient(90deg, transparent, var(--border2), transparent);
   margin: 0 20px;
 }
-
+ 
 /* ── GAMES SECTION ── */
 .games-wrap { padding: 20px 24px; }
 .games-header {
@@ -643,14 +643,14 @@ body {
   opacity: 0; transform: translateY(-4px); transition: all .2s;
 }
 .game-card:hover .game-card-play-btn { opacity: 1; transform: translateY(0); }
-
+ 
 </style>
 </head>
 <body>
-
+ 
 <!-- BG -->
 <canvas id="bgCanvas"></canvas>
-
+ 
 <!-- ══ LOGIN ══ -->
 <div class="screen" id="sLogin">
   <div class="login-wrap">
@@ -672,7 +672,7 @@ body {
     </div>
   </div>
 </div>
-
+ 
 <!-- ══ LOADING ══ -->
 <div class="screen gone" id="sLoad">
   <div class="load-inner">
@@ -690,10 +690,10 @@ body {
     </div>
   </div>
 </div>
-
+ 
 <!-- ══ APP ══ -->
 <div id="app">
-
+ 
   <!-- TOP BANNER -->
   <div class="top-banner">
     <div class="banner-left">
@@ -707,7 +707,7 @@ body {
       </div>
     </div>
   </div>
-
+ 
   <!-- TT PANEL -->
   <div class="tt-panel off" id="ttPanel">
     <div class="tt-left-row">
@@ -719,14 +719,14 @@ body {
     </div>
     <a class="tt-live-btn" id="ttBtn" href="https://www.tiktok.com/@mejdrix/live" target="_blank">ZATÍM OFFLINE</a>
   </div>
-
+ 
   <!-- STATS -->
   <div class="stats-row">
     <div class="stat-card fps"><div class="stat-val fps" id="sFps">60</div><div class="stat-lbl">FPS</div></div>
     <div class="stat-card ms"><div class="stat-val ms" id="sMs">24ms</div><div class="stat-lbl">Ping</div></div>
     <div class="stat-card mem"><div class="stat-val mem" id="sMem">482 MB</div><div class="stat-lbl">Memory</div></div>
   </div>
-
+ 
   <!-- GAME -->
   <div class="panel">
     <div class="sec-head">
@@ -755,7 +755,7 @@ body {
       </div>
     </div>
   </div>
-
+ 
   <!-- SOCIALS 1 -->
   <div class="panel">
     <div class="socials-wrap">
@@ -768,7 +768,7 @@ body {
       </div>
     </div>
   </div>
-
+ 
   <!-- SOCIALS 2 -->
   <div class="panel">
     <div class="socials-wrap">
@@ -780,7 +780,7 @@ body {
       </div>
     </div>
   </div>
-
+ 
   <!-- HUD -->
   <div class="panel">
     <div class="hud-wrap">
@@ -792,13 +792,13 @@ body {
       <div id="teamGrid"></div>
     </div>
   </div>
-
+ 
   <!-- META -->
   <div class="meta-row">
     <div class="meta-card"><h3>📌 Pinned Users</h3><p id="mPinned">žádné</p></div>
     <div class="meta-card"><h3>⭐ Favorite Users</h3><p id="mFavs">žádné</p></div>
   </div>
-
+ 
   <!-- THEME -->
   <div class="panel">
     <div class="theme-wrap">
@@ -806,7 +806,7 @@ body {
       <div class="theme-swatches" id="swatches"></div>
     </div>
   </div>
-
+ 
   <!-- TERMINAL -->
   <div class="panel">
     <div class="term-wrap">
@@ -818,15 +818,15 @@ body {
       </div>
     </div>
   </div>
-
+ 
   <!-- DOWNLOAD -->
   <div class="panel">
     <div class="dl-wrap">
       <button class="dl-btn" id="dlBtn">⬇️ Stáhnout Script (HTML)</button>
     </div>
   </div>
-
-
+ 
+ 
   <!-- GAMES -->
   <div class="panel">
     <div class="games-wrap">
@@ -849,16 +849,16 @@ body {
       </div>
     </div>
   </div>
-
+ 
   <!-- COMING SOON -->
   <div class="panel">
     <div class="coming-wrap">
       <div class="coming-text">🚀 More <span>Coming Soon</span>...</div>
     </div>
   </div>
-
+ 
 </div><!-- end app -->
-
+ 
 <script>
 /* ══════════════════════════════════════
    CANVAS BACKGROUND
@@ -890,7 +890,7 @@ body {
   }
   draw();
 })();
-
+ 
 /* ══════════════════════════════════════
    LOGIN
 ══════════════════════════════════════ */
@@ -898,7 +898,7 @@ const CREDS = { u:'Mejdrixog', p:'MejdrixStreamsV2' };
 const sLogin = document.getElementById('sLogin');
 const sLoad  = document.getElementById('sLoad');
 const app    = document.getElementById('app');
-
+ 
 function doLogin(){
   const u = document.getElementById('inU').value.trim();
   const p = document.getElementById('inP').value;
@@ -929,7 +929,7 @@ document.getElementById('inP').addEventListener('keydown',e=>{if(e.key==='Enter'
 document.getElementById('inU').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('inP').focus();});
 ['inU','inP'].forEach(id=>document.getElementById(id).addEventListener('input',()=>document.getElementById('loginErr').classList.remove('show')));
 document.getElementById('inU').focus();
-
+ 
 /* ══════════════════════════════════════
    LOADER
 ══════════════════════════════════════ */
@@ -955,7 +955,7 @@ function runLoader(){
     }
   },55);
 }
-
+ 
 /* ══════════════════════════════════════
    APP INIT
 ══════════════════════════════════════ */
@@ -971,7 +971,7 @@ function initApp(){
   checkTTLive();
   setInterval(checkTTLive, 30000);
 }
-
+ 
 /* ── CLOCK ── */
 function initClock(){
   const days=['Neděle','Pondělí','Úterý','Středa','Čtvrtek','Pátek','Sobota'];
@@ -986,7 +986,7 @@ function initClock(){
   }
   tick(); setInterval(tick,1000);
 }
-
+ 
 /* ── TIKFINITY ── */
 function initTikfinity(){
   const iframe=document.getElementById('tikIframe');
@@ -1000,7 +1000,7 @@ function initTikfinity(){
     alert('TikFinity URL uložena!');
   };
 }
-
+ 
 /* ── GAME ── */
 function initGame(){
   const player=document.getElementById('player');
@@ -1029,7 +1029,7 @@ function initGame(){
   });
   place();
 }
-
+ 
 /* ── TEAM GRID ── */
 const DEFAULT_USERS=[
   {name:'Mejdrix',role:'owner'},{name:'ViriBLOX',role:'mod'},{name:'Xentro',role:'mod'},
@@ -1097,7 +1097,7 @@ function renderGrid(){
   document.getElementById('mPinned').innerText=pinned.join(', ')||'žádné';
   document.getElementById('mFavs').innerText=favs.join(', ')||'žádné';
 }
-
+ 
 /* ── METRICS ── */
 function initMetrics(){
   setInterval(()=>{
@@ -1106,7 +1106,7 @@ function initMetrics(){
     document.getElementById('sMem').innerText=(448+Math.floor(Math.random()*22))+' MB';
   },1000);
 }
-
+ 
 /* ── THEME ── */
 const THEMES=[
   {name:'yellow', c:'#f4c500',c2:'#ff6b00'},
@@ -1142,7 +1142,7 @@ function applyThemeVars(t){
   document.documentElement.style.setProperty('--accent',t.c);
   document.documentElement.style.setProperty('--accent2',t.c2);
 }
-
+ 
 /* ── TERMINAL ── */
 function initTerminal(){
   const chatEl=document.getElementById('chat');
@@ -1177,7 +1177,7 @@ function initTerminal(){
   document.getElementById('termSend').onclick=handle;
   inp.addEventListener('keydown',e=>{if(e.key==='Enter')handle();});
 }
-
+ 
 /* ── TT LIVE ── */
 let ttIsLive=false;
 function checkTTLive(){
@@ -1202,7 +1202,7 @@ function setTTLive(live){
     btn.innerText='ZATÍM OFFLINE';
   }
 }
-
+ 
 /* ── DOWNLOAD ── */
 function initDownload(){
   document.getElementById('dlBtn').onclick=()=>{
@@ -1217,3 +1217,4 @@ function initDownload(){
 </script>
 </body>
 </html>
+ 
