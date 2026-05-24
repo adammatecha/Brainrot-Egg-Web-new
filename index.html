@@ -1570,20 +1570,26 @@ function initTikfinity(){
 
   // ── AUTO-DETECT COMMANDS FROM TIKTOK CHAT ──
   // Listen for postMessage from TikFinity iframe
+  // Listen for postMessage from TikFinity iframe
   window.addEventListener('message', (event) => {
-    // Check if message is from TikFinity
     if (!event.data) return;
     
-    const msg = String(event.data.message || event.data.text || event.data || '').toLowerCase();
+    console.log('[TikFinity message]', event.data);
+    
+    const msg = String(event.data.message || event.data.text || event.data.comment || event.data || '').toLowerCase();
     
     // Detect commands
     if (msg.includes('!dopredu')) {
+      console.log('✓ Command detected: !dopredu');
       moveRobot({dy:-_S});
     } else if (msg.includes('!dozadu')) {
+      console.log('✓ Command detected: !dozadu');
       moveRobot({dy:_S});
     } else if (msg.includes('!doleva')) {
+      console.log('✓ Command detected: !doleva');
       moveRobot({dx:-_S});
     } else if (msg.includes('!doprava')) {
+      console.log('✓ Command detected: !doprava');
       moveRobot({dx:_S});
     }
   });
@@ -1639,8 +1645,15 @@ function initGame(){
 
   window.addEventListener('keydown',e=>{
     const k=e.key;
-    if(document.activeElement && ['termInput','bannerInput','tikInput','inU','inP'].includes(document.activeElement.id)) return;
-    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(k))e.preventDefault();
+    // Don't capture if typing in input fields
+    if(document.activeElement && ['termInput','bannerInput','tikfinityCodeInput','inU','inP','chatCmd','ttMsg','ttName'].includes(document.activeElement.id)) return;
+    
+    // Prevent default scroll for game keys
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','W','a','A','s','S','d','D',' '].includes(k)){
+      e.preventDefault();
+    }
+    
+    // Move robot
     if(k==='ArrowUp'||k==='w'||k==='W')   _py=clamp(_py-_S,5,_H-44);
     if(k==='ArrowDown'||k==='s'||k==='S') _py=clamp(_py+_S,5,_H-44);
     if(k==='ArrowLeft'||k==='a'||k==='A') _px=clamp(_px-_S,5,_W-44);
