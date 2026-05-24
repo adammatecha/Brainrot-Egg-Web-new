@@ -1377,12 +1377,29 @@ const sLogin = document.getElementById('sLogin');
 const sLoad  = document.getElementById('sLoad');
 const app    = document.getElementById('app');
 
+// ── AUTO-LOGIN CHECK ──
+function checkAutoLogin(){
+  const saved = localStorage.getItem('mejdrix_logged_in');
+  if(saved === 'true'){
+    // Skip login screen entirely
+    sLogin.style.display = 'none';
+    sLoad.style.display = 'flex';
+    sLoad.classList.remove('gone');
+    runLoader();
+    return true;
+  }
+  return false;
+}
+
 function doLogin(){
   const u = document.getElementById('inU').value.trim();
   const p = document.getElementById('inP').value;
   const card = document.getElementById('loginCard');
   const err  = document.getElementById('loginErr');
   if(u===CREDS.u && p===CREDS.p){
+    // Save login state
+    localStorage.setItem('mejdrix_logged_in', 'true');
+    
     sLogin.classList.add('gone');
     setTimeout(()=>{
       sLogin.style.display='none';
@@ -1403,11 +1420,16 @@ function doLogin(){
     },700);
   }
 }
-document.getElementById('btnLogin').onclick = doLogin;
-document.getElementById('inP').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-document.getElementById('inU').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('inP').focus();});
-['inU','inP'].forEach(id=>document.getElementById(id).addEventListener('input',()=>document.getElementById('loginErr').classList.remove('show')));
-document.getElementById('inU').focus();
+
+// Check auto-login on page load
+if(!checkAutoLogin()){
+  // Show login screen
+  document.getElementById('btnLogin').onclick = doLogin;
+  document.getElementById('inP').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('inU').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('inP').focus();});
+  ['inU','inP'].forEach(id=>document.getElementById(id).addEventListener('input',()=>document.getElementById('loginErr').classList.remove('show')));
+  document.getElementById('inU').focus();
+}
 
 /* ══════════════════════════════════════
    LOADER
@@ -1494,6 +1516,14 @@ function initBanner(){
     setTimeout(()=>btn.innerText='✓ Uložit', 1500);
   };
   input.addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('bannerSave').click(); });
+  
+  // Logout button
+  document.getElementById('logoutBtn').onclick = () => {
+    if(confirm('Opravdu se chceš odhlásit?')){
+      localStorage.removeItem('mejdrix_logged_in');
+      location.reload();
+    }
+  };
 }
 
 /* ── CLOCK ── */
