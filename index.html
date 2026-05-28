@@ -60,6 +60,107 @@ body {
 }
 .screen.gone { opacity: 0; visibility: hidden; pointer-events: none; }
 
+/* ── END SCREEN ── */
+#sEnd {
+  background: linear-gradient(135deg, #0a0b10 0%, #1a1b2e 50%, #0f1020 100%);
+  overflow: hidden;
+  cursor: none !important;
+  user-select: none;
+}
+#sEnd::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(244,197,0,.2) 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(41,121,255,.15) 0%, transparent 50%);
+  animation: endGlow 4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes endGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.end-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 90vw;
+  animation: endFadeIn 1.2s ease-out;
+  pointer-events: none;
+}
+@keyframes endFadeIn {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.end-logo {
+  font-size: 180px;
+  margin-bottom: 40px;
+  animation: endBounce 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 60px rgba(244,197,0,.6));
+  line-height: 1;
+}
+@keyframes endBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-40px) scale(1.1); }
+}
+
+.end-title {
+  font-size: 96px;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 8px;
+  background: linear-gradient(135deg, #fff 0%, var(--accent) 40%, var(--accent2) 80%, var(--purple) 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 30px;
+  animation: gradientShift 5s linear infinite, endSlideDown 1s ease-out;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px rgba(244,197,0,.4));
+}
+@keyframes gradientShift {
+  0% { background-position: 0% center; }
+  100% { background-position: 300% center; }
+}
+@keyframes endSlideDown {
+  0% { opacity: 0; transform: translateY(-60px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.end-message {
+  font-size: 42px;
+  font-style: italic;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 60px;
+  letter-spacing: 3px;
+  animation: endSlideUp 1s ease-out .3s both;
+  line-height: 1.8;
+  text-shadow: 0 0 40px rgba(244,197,0,.3);
+}
+@keyframes endSlideUp {
+  0% { opacity: 0; transform: translateY(60px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.end-footer {
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+  color: rgba(244,197,0,.6);
+  letter-spacing: 3px;
+  font-style: italic;
+  font-weight: 900;
+  animation: endFadeIn 1.5s ease-out .5s both;
+  text-shadow: 0 0 20px rgba(244,197,0,.2);
+}
+
 /* ── LOGIN ── */
 #sLogin {
   background: radial-gradient(ellipse at 30% 40%, rgba(124,77,255,.22) 0%, transparent 55%),
@@ -916,6 +1017,86 @@ body:has(button:hover) #cursorRing { width: 52px; height: 52px; border-color: va
   text-align: center; font-style: italic;
 }
 
+/* ── SOUND BOARD ── */
+.sound-panel {
+  padding: 18px 20px;
+}
+.sound-title {
+  font-size: 16px; font-weight: 900; font-style: italic;
+  text-transform: uppercase; letter-spacing: 2px;
+  background: linear-gradient(135deg, #fff, var(--purple));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+}
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+}
+.sound-btn {
+  background: linear-gradient(135deg, rgba(124,77,255,.15), rgba(41,121,255,.15));
+  border: 1px solid rgba(124,77,255,.3);
+  border-radius: 10px;
+  padding: 12px 8px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-style: italic;
+  letter-spacing: .5px;
+  color: var(--purple);
+  cursor: none;
+  font-family: inherit;
+  transition: all .15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.sound-btn:hover {
+  background: linear-gradient(135deg, rgba(124,77,255,.25), rgba(41,121,255,.25));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124,77,255,.3);
+}
+.sound-btn:active {
+  transform: scale(.95);
+}
+.sound-emoji {
+  font-size: 24px;
+}
+
+/* ── VIEWER COUNTER ── */
+.viewer-panel {
+  padding: 20px;
+  text-align: center;
+}
+.viewer-count {
+  font-size: 64px;
+  font-weight: 900;
+  font-style: italic;
+  background: linear-gradient(135deg, var(--tt-red), #ff6b9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 8px;
+  text-shadow: none;
+  filter: drop-shadow(0 0 20px rgba(254,44,85,.4));
+  animation: countPulse 2s ease-in-out infinite;
+}
+@keyframes countPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.viewer-label {
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 900;
+  font-style: italic;
+}
+
 .coming-wrap { padding: 22px; text-align: center; }
 .coming-text {
   font-size: 24px; font-weight: 900; font-style: italic;
@@ -1279,6 +1460,16 @@ body:has(button:hover) #cursorRing { width: 52px; height: 52px; border-color: va
   </div>
 
 </div><!-- end app -->
+
+<!-- END SCREEN -->
+<div class="screen gone" id="sEnd" style="display:none;pointer-events:none">
+  <div class="end-content" style="pointer-events:none;user-select:none">
+    <div class="end-logo">🎬</div>
+    <div class="end-title">STREAM SKONČIL</div>
+    <div class="end-message">Děkujeme za sledování! 🙏<br>Až na příště! ✨</div>
+    <div class="end-footer">Mejdrix HUD v2.0</div>
+  </div>
+</div>
 
 <script>
 /* ══════════════════════════════════════
@@ -2045,6 +2236,135 @@ function initGoalTracker(){
     }
   }, 30000);
 }
+
+/* ── VIEWER COUNTER ── */
+function initViewerCounter(){
+  const counter = document.getElementById('viewerCount');
+  let viewers = 0;
+  
+  // Simulate viewer count
+  function updateViewers(){
+    const change = Math.floor(Math.random() * 7) - 3; // -3 to +3
+    viewers = Math.max(0, viewers + change);
+    
+    // Animate number change
+    counter.style.transform = 'scale(1.15)';
+    setTimeout(() => counter.style.transform = 'scale(1)', 200);
+    
+    counter.textContent = viewers;
+  }
+  
+  // Start with random number
+  viewers = 120 + Math.floor(Math.random() * 50);
+  counter.textContent = viewers;
+  
+  // Update every 5-10s
+  setInterval(updateViewers, 5000 + Math.random() * 5000);
+}
+
+/* ── SOUND BOARD ── */
+function initSoundBoard(){
+  // Web Audio API for sound generation
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  
+  const sounds = {
+    airhorn: () => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.value = 300;
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.5);
+    },
+    bruh: () => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+      gain.gain.value = 0.2;
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    },
+    wow: () => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.2);
+      gain.gain.value = 0.15;
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.2);
+    },
+    yay: () => {
+      for(let i=0; i<3; i++){
+        setTimeout(() => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.frequency.value = 500 + i*200;
+          gain.gain.value = 0.1;
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.1);
+        }, i*100);
+      }
+    },
+    nope: () => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.4);
+      gain.gain.value = 0.15;
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.4);
+    },
+    oof: () => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sawtooth';
+      osc.frequency.value = 100;
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    }
+  };
+  
+  document.querySelectorAll('.sound-btn').forEach(btn => {
+    btn.onclick = () => {
+      const sound = btn.dataset.sound;
+      if(sounds[sound]) sounds[sound]();
+    };
+  });
+}
+
+/* ── END SCREEN ── */
+function showEndScreen(){
+  const sEnd = document.getElementById('sEnd');
+  const app = document.getElementById('app');
+  
+  // Hide app, show end screen only
+  app.style.display = 'none';
+  sEnd.style.display = 'flex';
+  sEnd.classList.remove('gone');
+}
+
+// Keyboard shortcut: Ctrl+Shift+End = end stream
+document.addEventListener('keydown', e => {
+  if(e.ctrlKey && e.shiftKey && e.key === 'End') {
+    showEndScreen();
+  }
+});
 
 /* ── DOWNLOAD ── */
 function initDownload(){
