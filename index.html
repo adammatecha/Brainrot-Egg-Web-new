@@ -95,23 +95,23 @@ body {
 }
 
 .end-logo {
-  font-size: 180px;
-  margin-bottom: 40px;
+  font-size: 240px;
+  margin-bottom: 60px;
   animation: endBounce 3s ease-in-out infinite;
-  filter: drop-shadow(0 0 60px rgba(244,197,0,.6));
+  filter: drop-shadow(0 0 80px rgba(244,197,0,.8));
   line-height: 1;
 }
 @keyframes endBounce {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-40px) scale(1.1); }
+  50% { transform: translateY(-60px) scale(1.15); }
 }
 
 .end-title {
-  font-size: 96px;
+  font-size: 120px;
   font-weight: 900;
   font-style: italic;
   text-transform: uppercase;
-  letter-spacing: 8px;
+  letter-spacing: 10px;
   background: linear-gradient(135deg, #fff 0%, var(--accent) 40%, var(--accent2) 80%, var(--purple) 100%);
   background-size: 300% auto;
   -webkit-background-clip: text;
@@ -132,12 +132,12 @@ body {
 }
 
 .end-message {
-  font-size: 42px;
+  font-size: 56px;
   font-style: italic;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.95);
-  margin-bottom: 60px;
-  letter-spacing: 3px;
+  margin-bottom: 80px;
+  letter-spacing: 4px;
   animation: endSlideUp 1s ease-out .3s both;
   line-height: 1.8;
   text-shadow: 0 0 40px rgba(244,197,0,.3);
@@ -149,16 +149,16 @@ body {
 
 .end-footer {
   position: absolute;
-  bottom: 50px;
+  bottom: 80px;
   width: 100%;
   text-align: center;
-  font-size: 16px;
-  color: rgba(244,197,0,.6);
-  letter-spacing: 3px;
+  font-size: 22px;
+  color: rgba(244,197,0,.7);
+  letter-spacing: 4px;
   font-style: italic;
   font-weight: 900;
   animation: endFadeIn 1.5s ease-out .5s both;
-  text-shadow: 0 0 20px rgba(244,197,0,.2);
+  text-shadow: 0 0 30px rgba(244,197,0,.3);
 }
 
 /* ── LOGIN ── */
@@ -1214,6 +1214,11 @@ body:has(button:hover) #cursorRing { width: 52px; height: 52px; border-color: va
 <!-- BG -->
 <canvas id="bgCanvas"></canvas>
 
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" loop preload="auto" style="display:none">
+  <source src="scary_sushi.mp3" type="audio/mpeg">
+</audio>
+
 <!-- CUSTOM CURSOR -->
 <div id="cursor"></div>
 <div id="cursorRing"></div>
@@ -1462,8 +1467,8 @@ body:has(button:hover) #cursorRing { width: 52px; height: 52px; border-color: va
 </div><!-- end app -->
 
 <!-- END SCREEN -->
-<div class="screen gone" id="sEnd" style="display:none;pointer-events:none">
-  <div class="end-content" style="pointer-events:none;user-select:none">
+<div class="screen gone" id="sEnd" style="display:none;pointer-events:none;width:100vw;height:100vh;cursor:none !important">
+  <div class="end-content" style="pointer-events:none;user-select:none;width:100%;height:100%">
     <div class="end-logo">🎬</div>
     <div class="end-title">STREAM SKONČIL</div>
     <div class="end-message">Děkujeme za sledování! 🙏<br>Až na příště! ✨</div>
@@ -2348,15 +2353,40 @@ function initSoundBoard(){
   });
 }
 
+/* ── BACKGROUND MUSIC ── */
+function initBackgroundMusic(){
+  const audio = document.getElementById('bgMusic');
+  if(!audio) return;
+  audio.volume = 0.5;
+  // Auto play (may be blocked by browser)
+  audio.play().catch(() => {
+    // If auto-play blocked, play on first user interaction
+    document.addEventListener('click', () => audio.play(), {once: true});
+  });
+}
+
 /* ── END SCREEN ── */
 function showEndScreen(){
   const sEnd = document.getElementById('sEnd');
   const app = document.getElementById('app');
+  const bgMusic = document.getElementById('bgMusic');
   
-  // Hide app, show end screen only
+  // Play music when END screen shows
+  if(bgMusic) {
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(() => {
+      console.log('Music playback blocked');
+    });
+  }
+  
+  // Fullscreen END
   app.style.display = 'none';
   sEnd.style.display = 'flex';
   sEnd.classList.remove('gone');
+  
+  // Lock everything
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
 }
 
 // Keyboard shortcut: Ctrl+Shift+End = end stream
@@ -2364,6 +2394,11 @@ document.addEventListener('keydown', e => {
   if(e.ctrlKey && e.shiftKey && e.key === 'End') {
     showEndScreen();
   }
+});
+
+// Init music when page loads
+window.addEventListener('load', () => {
+  setTimeout(initBackgroundMusic, 500);
 });
 
 /* ── DOWNLOAD ── */
